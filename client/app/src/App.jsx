@@ -45,6 +45,7 @@ const TRANSLATIONS = {
     tagline: 'Real-time analysis of FIR records, hotspot prediction, offender networks, anomaly detection and strategic policing intelligence.',
     langToggle: 'ಕನ್ನಡ',
     tabs: {
+      dashboard: 'Dashboard',
       map: 'Crime Map',
       hotspots: 'Hotspots',
       network: 'Network Analysis',
@@ -138,6 +139,7 @@ const TRANSLATIONS = {
     tagline: 'ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳು, ಹಾಟ್‌ಸ್ಪಾಟ್ ಮುನ್ಸೂಚನೆ, ಅಪರಾಧಿ ಜಾಲ ಮತ್ತು ಕಾರ್ಯತಂತ್ರದ ಪೊಲೀಸ್ ತನಿಖೆ.',
     langToggle: 'English',
     tabs: {
+      dashboard: 'ದಿಕ್ಸೂಚಿ',
       map: 'ಅಪರಾಧ ನಕ್ಷೆ',
       hotspots: 'ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು',
       network: 'ಜಾಲ ವಿಶ್ಲೇಷಣೆ',
@@ -256,7 +258,7 @@ function RefreshIcon() {
   );
 }
 
-// Bug 2 Fix: Compact KPI Stat Card Component
+// Compact KPI Stat Card Component
 function StatCard({ label, value, subtext, trendUp, isDark }) {
   return (
     <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-3.5 shadow-sm hover:shadow-md transition-all border`}>
@@ -271,7 +273,7 @@ function StatCard({ label, value, subtext, trendUp, isDark }) {
   );
 }
 
-// Bug 1 Fix: Leaflet Map Bounds Controller (Prevents map from zooming out to Southeast Asia when filtered)
+// Leaflet Map Bounds Controller (Prevents map from zooming out to Southeast Asia when filtered)
 function MapBoundsController({ cases }) {
   const map = useMap();
 
@@ -305,7 +307,7 @@ function MapBoundsController({ cases }) {
 export default function App() {
   const [lang, setLang] = useState('en');
   const [isDark, setIsDark] = useState(false);
-  const [activeTab, setActiveTab] = useState('map');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [cases, setCases] = useState([]);
   const [stats, setStats] = useState(null);
   const [dbTotalCases, setDbTotalCases] = useState(825);
@@ -560,9 +562,10 @@ export default function App() {
           </div>
         </div>
 
-        {/* Clean Enterprise Horizontal Navigation Bar */}
+        {/* Clean Enterprise Horizontal Navigation Bar (Dedicated Dashboard tab first) */}
         <nav className={`px-6 flex gap-6 border-t text-[15px] font-semibold overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           {[
+            { id: 'dashboard', label: t.tabs.dashboard },
             { id: 'map', label: t.tabs.map },
             { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})` },
             { id: 'network', label: `${t.tabs.network} (${network?.repeatOffenderCount ?? 0})` },
@@ -600,215 +603,19 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* Bug 2 Fix: Compact KPI Cards Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
-              <StatCard label={t.stats.totalCases} value={displayTotalFIRs} subtext={t.stats.totalSub} trendUp isDark={isDark} />
-              <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
-              <StatCard label={t.stats.districts} value={selectedDistrict === 'All Districts' ? (stats?.totalDistricts ?? '10') : '1'} subtext={t.stats.districtsSub} isDark={isDark} />
-              <StatCard label={t.stats.hotspots} value={filteredHotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
-              <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
-            </div>
-
-            {/* SINGLE GLOBAL STICKY FILTER PANEL (Directly below KPI cards) */}
-            <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
-              <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
-                {/* Search Bar */}
-                <div className="relative flex-1 sm:flex-initial">
-                  <span className="absolute left-2.5 top-2">
-                    <SearchIcon />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder={t.filters.searchPlaceholder}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-[#2563EB]'
-                    }`}
-                  />
-                </div>
-
-                {/* District Dropdown */}
-                <div className="flex items-center gap-1">
-                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.districtLabel}</span>
-                  <select
-                    value={selectedDistrict}
-                    onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none cursor-pointer ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-blue-400' : 'bg-white border-slate-300 text-[#1E3A5F]'
-                    }`}
-                  >
-                    {DISTRICT_LIST.map(d => (
-                      <option key={d} value={d}>{d === 'All Districts' ? t.filters.allDistricts : d}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Time Window Dropdown */}
-                <div className="flex items-center gap-1">
-                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.timeLabel}</span>
-                  <select
-                    value={selectedTimeOfDay}
-                    onChange={(e) => setSelectedTimeOfDay(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
-                    }`}
-                  >
-                    <option value="All Times">{t.filters.allTimes}</option>
-                    <option value="Night">{t.timeOptions.night}</option>
-                    <option value="Morning">{t.timeOptions.morning}</option>
-                    <option value="Afternoon">{t.timeOptions.afternoon}</option>
-                    <option value="Evening">{t.timeOptions.evening}</option>
-                  </select>
-                </div>
-
-                {/* Crime Type Dropdown */}
-                <div className="flex items-center gap-1">
-                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.crimeLabel}</span>
-                  <select
-                    value={selectedCrimeType}
-                    onChange={(e) => setSelectedCrimeType(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
-                    }`}
-                  >
-                    <option value="All Types">{t.filters.allCrimes}</option>
-                    {Object.keys(CRIME_COLORS).map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year') && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedDistrict('All Districts');
-                    setSelectedTimeOfDay('All Times');
-                    setSelectedCrimeType('All Types');
-                    setTimelineRange('Last Year');
-                  }}
-                  className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    isDark ? 'bg-[#2563EB] border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
-                  }`}
-                >
-                  <RefreshIcon />
-                  {t.filters.reset}
-                </button>
-              )}
-            </div>
-
-            {/* TAB 1: SPATIAL CRIME MAP TAB (Bug 2 Fix: Map & Interactive Controls positioned FIRST above intelligence text) */}
-            {activeTab === 'map' && (
+            {/* TAB 1: EXECUTIVE DASHBOARD LANDING PAGE */}
+            {activeTab === 'dashboard' && (
               <div className="space-y-6">
-                {/* SPATIAL CRIME MAP CARD (Primary Interactive Content) */}
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
-                    </div>
-
-                    {/* Interactive Crime Type Filter Legend Buttons */}
-                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
-                      <button
-                        onClick={() => setSelectedCrimeType('All Types')}
-                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                          selectedCrimeType === 'All Types'
-                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
-                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
-                        }`}
-                      >
-                        All Categories
-                      </button>
-                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
-                        const isSelected = selectedCrimeType === type;
-                        return (
-                          <button
-                            key={type}
-                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
-                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
-                            }`}
-                          >
-                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                            <span>{type}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Functional Timeline Analysis Window Selector Bar */}
-                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
-                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                  }`}>
-                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
-                      <span>📅 Timeline Analysis Window:</span>
-                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
-                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
-                        <button
-                          key={range}
-                          onClick={() => setTimelineRange(range)}
-                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
-                            timelineRange === range
-                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
-                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
-                          }`}
-                        >
-                          {range}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Bug 1 Fix: Map Container with minZoom={6} & MapBoundsController bounds protection */}
-                  <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                    <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap contributors'
-                      />
-                      <MapBoundsController cases={filteredCases} />
-                      {filteredCases.map(c => (
-                        c.lat && c.lng ? (
-                          <CircleMarker
-                            key={c.id}
-                            center={[c.lat, c.lng]}
-                            radius={6}
-                            pathOptions={{
-                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillOpacity: 0.8
-                            }}
-                          >
-                            <Popup>
-                              <div className="text-slate-800 p-1 min-w-[190px]">
-                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
-                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
-                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
-                                </div>
-                              </div>
-                            </Popup>
-                          </CircleMarker>
-                        ) : null
-                      ))}
-                    </MapContainer>
-                  </div>
+                {/* 5 Top Executive KPI Stat Cards */}
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+                  <StatCard label={t.stats.totalCases} value={displayTotalFIRs} subtext={t.stats.totalSub} trendUp isDark={isDark} />
+                  <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
+                  <StatCard label={t.stats.districts} value={selectedDistrict === 'All Districts' ? (stats?.totalDistricts ?? '10') : '1'} subtext={t.stats.districtsSub} isDark={isDark} />
+                  <StatCard label={t.stats.hotspots} value={filteredHotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
+                  <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
                 </div>
 
-                {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED (Secondary Supporting Content Below Map) */}
+                {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
                   <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
@@ -948,7 +755,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* AI POLICE RECOMMENDATIONS CARD WITH COMPACT BADGES */}
+                {/* AI POLICE RECOMMENDATIONS CARD */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
                     <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
@@ -1042,90 +849,305 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 2: HOTSPOTS & EXPLAINABLE AI */}
-            {activeTab === 'hotspots' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border relative z-0 isolate`} style={{ height: '580px' }}>
-                  <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    {filteredHotspots.map(h => (
-                      <CircleMarker
-                        key={h.id}
-                        center={[h.lat, h.lng]}
-                        radius={12 + h.totalIncidents}
-                        pathOptions={{
-                          color: h.isAnomaly ? '#dc2626' : '#d97706',
-                          fillColor: h.isAnomaly ? '#dc2626' : '#f59e0b',
-                          fillOpacity: 0.6
-                        }}
+            {/* TAB 2: SPATIAL CRIME MAP TAB (Map + Filters ONLY - Zero Distractions) */}
+            {activeTab === 'map' && (
+              <div className="space-y-4">
+                {/* STICKY GLOBAL FILTER PANEL FOR CRIME MAP */}
+                <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
+                  <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 sm:flex-initial">
+                      <span className="absolute left-2.5 top-2">
+                        <SearchIcon />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder={t.filters.searchPlaceholder}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-[#2563EB]'
+                        }`}
+                      />
+                    </div>
+
+                    {/* District Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.districtLabel}</span>
+                      <select
+                        value={selectedDistrict}
+                        onChange={(e) => setSelectedDistrict(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-blue-400' : 'bg-white border-slate-300 text-[#1E3A5F]'
+                        }`}
                       >
-                        <Popup>
-                          <div className="text-slate-800 p-1">
-                            <strong className="text-red-700 font-bold">{h.id}</strong><br />
-                            <strong>{t.hotspotPanel.dominant}</strong> {h.dominantCrime}<br />
-                            <strong>{t.hotspotPanel.totalFirs}</strong> {h.totalIncidents} FIRs<br />
-                            <strong>{t.hotspotPanel.station}</strong> {h.primaryStation}<br />
-                            <span className="text-xs text-red-600 font-bold block mt-1">{h.surgeMetric}</span>
-                          </div>
-                        </Popup>
-                      </CircleMarker>
-                    ))}
-                  </MapContainer>
+                        {DISTRICT_LIST.map(d => (
+                          <option key={d} value={d}>{d === 'All Districts' ? t.filters.allDistricts : d}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Time Window Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.timeLabel}</span>
+                      <select
+                        value={selectedTimeOfDay}
+                        onChange={(e) => setSelectedTimeOfDay(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      >
+                        <option value="All Times">{t.filters.allTimes}</option>
+                        <option value="Night">{t.timeOptions.night}</option>
+                        <option value="Morning">{t.timeOptions.morning}</option>
+                        <option value="Afternoon">{t.timeOptions.afternoon}</option>
+                        <option value="Evening">{t.timeOptions.evening}</option>
+                      </select>
+                    </div>
+
+                    {/* Crime Type Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.crimeLabel}</span>
+                      <select
+                        value={selectedCrimeType}
+                        onChange={(e) => setSelectedCrimeType(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      >
+                        <option value="All Types">{t.filters.allCrimes}</option>
+                        {Object.keys(CRIME_COLORS).map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year') && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedDistrict('All Districts');
+                        setSelectedTimeOfDay('All Times');
+                        setSelectedCrimeType('All Types');
+                        setTimelineRange('Last Year');
+                      }}
+                      className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        isDark ? 'bg-[#2563EB] border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
+                      }`}
+                    >
+                      <RefreshIcon />
+                      {t.filters.reset}
+                    </button>
+                  )}
                 </div>
 
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 overflow-y-auto shadow-sm border`} style={{ maxHeight: '580px' }}>
-                  <h3 className={`font-semibold text-[26px] mb-3 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.hotspotPanel.title}</h3>
-                  <div className="space-y-3">
-                    {filteredHotspots.map(h => (
-                      <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
-                        h.isAnomaly ? (isDark ? 'bg-red-950/40 border-red-800/60' : 'bg-red-50 border-red-200') : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200')
-                      }`}>
-                        <div className="flex justify-between items-start font-bold">
-                          <span className={isDark ? 'text-slate-100' : 'text-slate-900'}>{h.id}</span>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
-                            h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-900'
-                          }`}>
-                            {h.isAnomaly ? t.hotspotPanel.surge : t.hotspotPanel.cluster}
-                          </span>
-                        </div>
-                        <div className={`mt-2 space-y-1 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
-                          <div>{t.hotspotPanel.station} <strong>{h.primaryStation}</strong></div>
-                          <div>{t.hotspotPanel.totalFirs} <strong>{h.totalIncidents}</strong></div>
-                          <div>{t.hotspotPanel.dominant} <strong>{h.dominantCrime}</strong></div>
-                          <div>{t.hotspotPanel.peakTime} <strong>{h.peakTimeWindow}</strong></div>
-                        </div>
+                {/* SPATIAL CRIME MAP CARD (Visible immediately with minimal scrolling) */}
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
+                    </div>
 
-                        {/* EXPLAINABLE AI "WHY?" SECTION */}
-                        <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                    {/* Interactive Crime Type Filter Legend Buttons */}
+                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
+                      <button
+                        onClick={() => setSelectedCrimeType('All Types')}
+                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                          selectedCrimeType === 'All Types'
+                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
+                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
+                        }`}
+                      >
+                        All Categories
+                      </button>
+                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
+                        const isSelected = selectedCrimeType === type;
+                        return (
                           <button
-                            onClick={() => toggleRationale(h.id)}
-                            className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
+                            key={type}
+                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
+                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
+                            }`}
                           >
-                            <span>Why?</span>
-                            <span>{showRationale[h.id] ? '▲' : '▼'}</span>
+                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
+                            <span>{type}</span>
                           </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                          {showRationale[h.id] && (
-                            <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700 text-[11px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                              <div className="font-extrabold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
-                              <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18% over past 30 days</div>
-                              <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected in jurisdiction</div>
-                              <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend matched</div>
-                              <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
-                              <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours (22:00 - 04:00)</div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                  {/* Functional Timeline Analysis Window Selector Bar */}
+                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
+                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
+                      <span>📅 Timeline Analysis Window:</span>
+                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
+                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
+                        <button
+                          key={range}
+                          onClick={() => setTimelineRange(range)}
+                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+                            timelineRange === range
+                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
+                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
+                          }`}
+                        >
+                          {range}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Map Container with minZoom={6} & MapBoundsController bounds protection */}
+                  <div style={{ height: '620px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                    <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; OpenStreetMap contributors'
+                      />
+                      <MapBoundsController cases={filteredCases} />
+                      {filteredCases.map(c => (
+                        c.lat && c.lng ? (
+                          <CircleMarker
+                            key={c.id}
+                            center={[c.lat, c.lng]}
+                            radius={6}
+                            pathOptions={{
+                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillOpacity: 0.8
+                            }}
+                          >
+                            <Popup>
+                              <div className="text-slate-800 p-1 min-w-[190px]">
+                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
+                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
+                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
+                                </div>
+                              </div>
+                            </Popup>
+                          </CircleMarker>
+                        ) : null
+                      ))}
+                    </MapContainer>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 3: NETWORK ANALYSIS & MODUS OPERANDI (MO) INTELLIGENCE */}
+            {/* TAB 3: HOTSPOTS & EXPLAINABLE AI */}
+            {activeTab === 'hotspots' && (
+              <div className="space-y-4">
+                {/* 2 Contextual Stat Cards for Hotspots */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label={t.stats.hotspots} value={filteredHotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
+                  <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border relative z-0 isolate`} style={{ height: '580px' }}>
+                    <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      {filteredHotspots.map(h => (
+                        <CircleMarker
+                          key={h.id}
+                          center={[h.lat, h.lng]}
+                          radius={12 + h.totalIncidents}
+                          pathOptions={{
+                            color: h.isAnomaly ? '#dc2626' : '#d97706',
+                            fillColor: h.isAnomaly ? '#dc2626' : '#f59e0b',
+                            fillOpacity: 0.6
+                          }}
+                        >
+                          <Popup>
+                            <div className="text-slate-800 p-1">
+                              <strong className="text-red-700 font-bold">{h.id}</strong><br />
+                              <strong>{t.hotspotPanel.dominant}</strong> {h.dominantCrime}<br />
+                              <strong>{t.hotspotPanel.totalFirs}</strong> {h.totalIncidents} FIRs<br />
+                              <strong>{t.hotspotPanel.station}</strong> {h.primaryStation}<br />
+                              <span className="text-xs text-red-600 font-bold block mt-1">{h.surgeMetric}</span>
+                            </div>
+                          </Popup>
+                        </CircleMarker>
+                      ))}
+                    </MapContainer>
+                  </div>
+
+                  <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 overflow-y-auto shadow-sm border`} style={{ maxHeight: '580px' }}>
+                    <h3 className={`font-semibold text-[26px] mb-3 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.hotspotPanel.title}</h3>
+                    <div className="space-y-3">
+                      {filteredHotspots.map(h => (
+                        <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
+                          h.isAnomaly ? (isDark ? 'bg-red-950/40 border-red-800/60' : 'bg-red-50 border-red-200') : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200')
+                        }`}>
+                          <div className="flex justify-between items-start font-bold">
+                            <span className={isDark ? 'text-slate-100' : 'text-slate-900'}>{h.id}</span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
+                              h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-900'
+                            }`}>
+                              {h.isAnomaly ? t.hotspotPanel.surge : t.hotspotPanel.cluster}
+                            </span>
+                          </div>
+                          <div className={`mt-2 space-y-1 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
+                            <div>{t.hotspotPanel.station} <strong>{h.primaryStation}</strong></div>
+                            <div>{t.hotspotPanel.totalFirs} <strong>{h.totalIncidents}</strong></div>
+                            <div>{t.hotspotPanel.dominant} <strong>{h.dominantCrime}</strong></div>
+                            <div>{t.hotspotPanel.peakTime} <strong>{h.peakTimeWindow}</strong></div>
+                          </div>
+
+                          {/* EXPLAINABLE AI "WHY?" SECTION */}
+                          <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <button
+                              onClick={() => toggleRationale(h.id)}
+                              className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
+                            >
+                              <span>Why?</span>
+                              <span>{showRationale[h.id] ? '▲' : '▼'}</span>
+                            </button>
+
+                            {showRationale[h.id] && (
+                              <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700 text-[11px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
+                                <div className="font-extrabold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18% over past 30 days</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected in jurisdiction</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend matched</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours (22:00 - 04:00)</div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: NETWORK ANALYSIS & MODUS OPERANDI (MO) INTELLIGENCE */}
             {activeTab === 'network' && (
-              <div className="space-y-6">
+              <div className="space-y-4">
+                {/* 2 Contextual Stat Cards for Network */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label="Repeat Offenders Linked" value={network?.repeatOffenderCount ?? 7} subtext="Inter-station habitual offenders" isDark={isDark} />
+                  <StatCard label="Dominant Modus Operandi" value="Night Burglary" subtext="Rear window break method" isDark={isDark} />
+                </div>
+
                 {/* Modus Operandi (MO) Intelligence Card */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border space-y-3`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
@@ -1294,224 +1316,248 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 4: RISK MATRIX WITH COLOR-CODED INDEX */}
+            {/* TAB 5: RISK MATRIX WITH COLOR-CODED INDEX */}
             {activeTab === 'risk' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title} ({selectedDistrict})</h3>
-                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.riskPanel.sub}</p>
-                  </div>
+              <div className="space-y-4">
+                {/* 2 Contextual Stat Cards for Risk Matrix */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label="High-Risk Stations" value={riskScores.filter(r => r.level.includes('High')).length} subtext="Weighted severity index >= 75%" isDark={isDark} />
+                  <StatCard label="Peak Risk Window" value="22:00 - 04:00" subtext="Night shift patrol window" isDark={isDark} />
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className={`border-b font-bold uppercase ${isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'}`}>
-                        <th className="py-3 px-3">{t.riskPanel.colStation}</th>
-                        <th className="py-3 px-3">{t.riskPanel.colFirs}</th>
-                        <th className="py-3 px-3">{t.riskPanel.colCrime}</th>
-                        <th className="py-3 px-3">{t.riskPanel.colRisk}</th>
-                        <th className="py-3 px-3">{t.riskPanel.colPatrol}</th>
-                        <th className="py-3 px-3">{t.riskPanel.colStatus}</th>
-                        <th className="py-3 px-3">Explainable AI</th>
-                      </tr>
-                    </thead>
-                    <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
-                      {riskScores.map((r, idx) => {
-                        const score = parseInt(r.riskScore);
-                        const riskBadgeStyle =
-                          score >= 90 ? 'bg-red-100 text-red-900 border-red-300 font-extrabold' :
-                          score >= 75 ? 'bg-orange-100 text-orange-900 border-orange-300 font-extrabold' :
-                          score >= 50 ? 'bg-yellow-100 text-yellow-900 border-yellow-300 font-extrabold' :
-                          'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold';
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title} ({selectedDistrict})</h3>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.riskPanel.sub}</p>
+                    </div>
+                  </div>
 
-                        return (
-                          <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
-                            <td className={`py-3 px-3 font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
-                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.totalCases}</td>
-                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.topCrime}</td>
-                            <td className="py-3 px-3">
-                              <span className={`px-2.5 py-1 rounded border text-xs ${riskBadgeStyle}`}>
-                                {r.riskScore}%
-                              </span>
-                            </td>
-                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.predictedSurgeWindow}</td>
-                            <td className="py-3 px-3">
-                              <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
-                                r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
-                              }`}>
-                                {r.level}
-                              </span>
-                            </td>
-                            <td className="py-3 px-3">
-                              <button
-                                onClick={() => toggleRationale(`risk-${idx}`)}
-                                className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline cursor-pointer"
-                              >
-                                Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
-                              </button>
-                              {showRationale[`risk-${idx}`] && (
-                                <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18%</div>
-                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected</div>
-                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend</div>
-                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
-                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours</div>
-                                </div>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className={`border-b font-bold uppercase ${isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'}`}>
+                          <th className="py-3 px-3">{t.riskPanel.colStation}</th>
+                          <th className="py-3 px-3">{t.riskPanel.colFirs}</th>
+                          <th className="py-3 px-3">{t.riskPanel.colCrime}</th>
+                          <th className="py-3 px-3">{t.riskPanel.colRisk}</th>
+                          <th className="py-3 px-3">{t.riskPanel.colPatrol}</th>
+                          <th className="py-3 px-3">{t.riskPanel.colStatus}</th>
+                          <th className="py-3 px-3">Explainable AI</th>
+                        </tr>
+                      </thead>
+                      <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
+                        {riskScores.map((r, idx) => {
+                          const score = parseInt(r.riskScore);
+                          const riskBadgeStyle =
+                            score >= 90 ? 'bg-red-100 text-red-900 border-red-300 font-extrabold' :
+                            score >= 75 ? 'bg-orange-100 text-orange-900 border-orange-300 font-extrabold' :
+                            score >= 50 ? 'bg-yellow-100 text-yellow-900 border-yellow-300 font-extrabold' :
+                            'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold';
+
+                          return (
+                            <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
+                              <td className={`py-3 px-3 font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
+                              <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.totalCases}</td>
+                              <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.topCrime}</td>
+                              <td className="py-3 px-3">
+                                <span className={`px-2.5 py-1 rounded border text-xs ${riskBadgeStyle}`}>
+                                  {r.riskScore}%
+                                </span>
+                              </td>
+                              <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.predictedSurgeWindow}</td>
+                              <td className="py-3 px-3">
+                                <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
+                                  r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
+                                }`}>
+                                  {r.level}
+                                </span>
+                              </td>
+                              <td className="py-3 px-3">
+                                <button
+                                  onClick={() => toggleRationale(`risk-${idx}`)}
+                                  className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline cursor-pointer"
+                                >
+                                  Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
+                                </button>
+                                {showRationale[`risk-${idx}`] && (
+                                  <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
+                                    <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18%</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours</div>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 5: SOCIO-ECONOMIC INSIGHTS WITH PROGRESS INDICATORS */}
+            {/* TAB 6: SOCIO-ECONOMIC INSIGHTS WITH PROGRESS INDICATORS */}
             {activeTab === 'socio' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
-                <div>
-                  <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
-                  <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+              <div className="space-y-4">
+                {/* 2 Contextual Stat Cards for Socio-Economic */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label="Urbanization Tiers" value="10 Districts" subtext="Metro, Coastal & Transit corridors" isDark={isDark} />
+                  <StatCard label="Vulnerability Exposure" value="High (0.88)" subtext="Infrastructure & population correlation" isDark={isDark} />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {socioEconomic.map((s, idx) => {
-                    const districtKn = lang === 'kn' ? (
-                      s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
-                      s.district === 'Mysuru' ? 'ಮೈಸೂರು' :
-                      s.district === 'Mangaluru (Dakshina Kannada)' ? 'ಮಂಗಳೂರು (ದಕ್ಷಿಣ ಕನ್ನಡ)' :
-                      s.district === 'Belagavi' ? 'ಬೆಳಗಾವಿ' :
-                      s.district === 'Hubballi-Dharwad' ? 'ಹುಬ್ಬಳ್ಳಿ-ಧಾರವಾಡ' :
-                      s.district === 'Kalaburagi' ? 'ಕಲಬುರಗಿ' :
-                      s.district === 'Ballari' ? 'ಬಳ್ಳಾರಿ' :
-                      s.district === 'Shivamogga' ? 'ಶಿವಮೊಗ್ಗ' :
-                      s.district === 'Tumakuru' ? 'ತುಮಕೂರು' : 'ಉಡುಪಿ'
-                    ) : s.district;
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
+                  <div>
+                    <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
+                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+                  </div>
 
-                    const tierKn = lang === 'kn' ? (
-                      s.urbanizationTier.includes('Metropolitan') ? 'ಮೆಟ್ರೋಪಾಲಿಟನ್ (ಟೈರ್ 1)' :
-                      s.urbanizationTier.includes('Heritage') ? 'ಪಾರಂಪರಿಕ / ನಗರ (ಟೈರ್ 2)' :
-                      s.urbanizationTier.includes('Coastal') ? 'ಕರಾವಳಿ ಕೈಗಾರಿಕಾ' :
-                      s.urbanizationTier.includes('Border') ? 'ಗಡಿ ಕೈಗಾರಿಕಾ' :
-                      s.urbanizationTier.includes('Commercial') ? 'ವಾಣಿಜ್ಯ ಜಂಕ್ಷನ್' : 'ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ವಲಯ'
-                    ) : s.urbanizationTier;
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {socioEconomic.map((s, idx) => {
+                      const districtKn = lang === 'kn' ? (
+                        s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
+                        s.district === 'Mysuru' ? 'ಮೈಸೂರು' :
+                        s.district === 'Mangaluru (Dakshina Kannada)' ? 'ಮಂಗಳೂರು (ದಕ್ಷಿಣ ಕನ್ನಡ)' :
+                        s.district === 'Belagavi' ? 'ಬೆಳಗಾವಿ' :
+                        s.district === 'Hubballi-Dharwad' ? 'ಹುಬ್ಬಳ್ಳಿ-ಧಾರವಾಡ' :
+                        s.district === 'Kalaburagi' ? 'ಕಲಬುರಗಿ' :
+                        s.district === 'Ballari' ? 'ಬಳ್ಳಾರಿ' :
+                        s.district === 'Shivamogga' ? 'ಶಿವಮೊಗ್ಗ' :
+                        s.district === 'Tumakuru' ? 'ತುಮಕೂರು' : 'ಉಡುಪಿ'
+                      ) : s.district;
 
-                    const profileKn = lang === 'kn' ? (
-                      s.socioIndex.includes('Tech') ? 'ಉನ್ನತ ನಗರೀಕರಣ / ಐಟಿ ಕಾರಿಡಾರ್' :
-                      s.socioIndex.includes('Tourism') ? 'ಪ್ರವಾಸೋದ್ಯಮ ಮತ್ತು ಶಿಕ್ಷಣ ಸಂಸ್ಥೆಗಳು' :
-                      s.socioIndex.includes('Port') ? 'ಬಂದರು ಮತ್ತು ಸಾಗರ ಸಾರಿಗೆ ಜಂಕ್ಷನ್' :
-                      s.socioIndex.includes('Transit') ? 'ರಾಜ್ಯಗಳ ನಡುವಿನ ಸಾರಿಗೆ ಹಾದಿ' : 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೃಷಿ ವಲಯ'
-                    ) : s.socioIndex;
+                      const tierKn = lang === 'kn' ? (
+                        s.urbanizationTier.includes('Metropolitan') ? 'ಮೆಟ್ರೋಪಾಲಿಟನ್ (ಟೈರ್ 1)' :
+                        s.urbanizationTier.includes('Heritage') ? 'ಪಾರಂಪರಿಕ / ನಗರ (ಟೈರ್ 2)' :
+                        s.urbanizationTier.includes('Coastal') ? 'ಕರಾವಳಿ ಕೈಗಾರಿಕಾ' :
+                        s.urbanizationTier.includes('Border') ? 'ಗಡಿ ಕೈಗಾರಿಕಾ' :
+                        s.urbanizationTier.includes('Commercial') ? 'ವಾಣಿಜ್ಯ ಜಂಕ್ಷನ್' : 'ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ವಲಯ'
+                      ) : s.urbanizationTier;
 
-                    const typologyKn = lang === 'kn' ? (
-                      s.dominantTypology.includes('Cyber') ? 'ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ವಾಣಿಜ್ಯ ಕಳವು' :
-                      s.dominantTypology.includes('Maritime') ? 'ಸಾಗರ ಸಾರಿಗೆ ಮತ್ತು ಆಸ್ತಿ ಕಳವು' :
-                      s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ಸರಕು ವಂಚನೆ' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಗಲಾಟೆ'
-                    ) : s.dominantTypology;
+                      const profileKn = lang === 'kn' ? (
+                        s.socioIndex.includes('Tech') ? 'ಉನ್ನತ ನಗರೀಕರಣ / ಐಟಿ ಕಾರಿಡಾರ್' :
+                        s.socioIndex.includes('Tourism') ? 'ಪ್ರವಾಸೋದ್ಯಮ ಮತ್ತು ಶಿಕ್ಷಣ ಸಂಸ್ಥೆಗಳು' :
+                        s.socioIndex.includes('Port') ? 'ಬಂದರು ಮತ್ತು ಸಾಗರ ಸಾರಿಗೆ ಜಂಕ್ಷನ್' :
+                        s.socioIndex.includes('Transit') ? 'ರಾಜ್ಯಗಳ ನಡುವಿನ ಸಾರಿಗೆ ಹಾದಿ' : 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೃಷಿ ವಲಯ'
+                      ) : s.socioIndex;
 
-                    return (
-                      <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-3 border`}>
-                        <div className="flex justify-between items-center">
-                          <h4 className={`font-bold text-[18px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
-                          <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
-                        </div>
+                      const typologyKn = lang === 'kn' ? (
+                        s.dominantTypology.includes('Cyber') ? 'ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ವಾಣಿಜ್ಯ ಕಳವು' :
+                        s.dominantTypology.includes('Maritime') ? 'ಸಾಗರ ಸಾರಿಗೆ ಮತ್ತು ಆಸ್ತಿ ಕಳವು' :
+                        s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ಸರಕು ವಂಚನೆ' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಗಲಾಟೆ'
+                      ) : s.dominantTypology;
 
-                        {/* COMPACT PROGRESS INDICATORS FOR SOCIO-ECONOMIC INDEX */}
-                        <div className="space-y-2">
-                          <div>
-                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                              <span>Population Density ({s.populationDensity})</span>
-                              <span>85%</span>
+                      return (
+                        <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-3 border`}>
+                          <div className="flex justify-between items-center">
+                            <h4 className={`font-bold text-[18px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
+                            <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
+                          </div>
+
+                          {/* COMPACT PROGRESS INDICATORS FOR SOCIO-ECONOMIC INDEX */}
+                          <div className="space-y-2">
+                            <div>
+                              <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                                <span>Population Density ({s.populationDensity})</span>
+                                <span>85%</span>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                <div className="bg-blue-600 h-full w-[85%]"></div>
+                              </div>
                             </div>
-                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                              <div className="bg-blue-600 h-full w-[85%]"></div>
+
+                            <div>
+                              <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                                <span>Crime Vulnerability Index</span>
+                                <span>78%</span>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                <div className="bg-red-600 h-full w-[78%]"></div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                                <span>Urbanization & Economic Activity</span>
+                                <span>92%</span>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                <div className="bg-emerald-600 h-full w-[92%]"></div>
+                              </div>
                             </div>
                           </div>
 
-                          <div>
-                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                              <span>Crime Vulnerability Index</span>
-                              <span>78%</span>
-                            </div>
-                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                              <div className="bg-red-600 h-full w-[78%]"></div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                              <span>Urbanization & Economic Activity</span>
-                              <span>92%</span>
-                            </div>
-                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                              <div className="bg-emerald-600 h-full w-[92%]"></div>
-                            </div>
+                          <div className="text-slate-800 dark:text-slate-200 font-medium">Profile: {profileKn}</div>
+                          <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2 rounded border font-semibold flex justify-between items-center`}>
+                            <span><strong>Typology:</strong> {typologyKn}</span>
+                            <span className="text-blue-700 dark:text-blue-400 font-bold">AI Correlation: 0.88</span>
                           </div>
                         </div>
-
-                        <div className="text-slate-800 dark:text-slate-200 font-medium">Profile: {profileKn}</div>
-                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2 rounded border font-semibold flex justify-between items-center`}>
-                          <span><strong>Typology:</strong> {typologyKn}</span>
-                          <span className="text-blue-700 dark:text-blue-400 font-bold">AI Correlation: 0.88</span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 6: REPORTS WITH DETAILED REPORT HEADER & APPROVAL */}
+            {/* TAB 7: REPORTS WITH DETAILED REPORT HEADER & APPROVAL */}
             {activeTab === 'reports' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-6 border`}>
-                <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
-                  <div>
-                    <h3 className={`text-[26px] font-semibold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      Official SCRB Crime Intelligence Summary Document
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300">
-                      <div><span className="text-slate-400 font-medium block text-[10px]">Generated By:</span> SCRB AI Intelligence Engine</div>
-                      <div><span className="text-slate-400 font-medium block text-[10px]">Generated On:</span> 26 Jul 2026 • 18:25 IST</div>
-                      <div><span className="text-slate-400 font-medium block text-[10px]">Classification:</span> <span className="text-red-600 font-bold">Internal Use Only</span></div>
-                      <div><span className="text-slate-400 font-medium block text-[10px]">Doc Ref:</span> SCRB-INTEL-2026-07-KSP</div>
-                    </div>
-                    <div className="text-xs font-bold text-emerald-600 mt-2">
-                      ✔ Officer Approval: Approved by ADGP Crime & SCRB (Govt of Karnataka)
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap cursor-pointer"
-                  >
-                    📄 Export Intelligence Report (PDF)
-                  </button>
+              <div className="space-y-4">
+                {/* 2 Contextual Stat Cards for Reports */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label="Total Compiled FIRs" value={displayTotalFIRs} subtext="100% SCRB verified database" isDark={isDark} />
+                  <StatCard label="Officer Approval Status" value="APPROVED" subtext="ADGP Crime & SCRB clearance" isDark={isDark} />
                 </div>
 
-                <div className="space-y-4 text-xs">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">1. Executive Summary</h4>
-                    <p className="text-slate-800 dark:text-slate-300 font-medium">
-                      The State Crime Records Bureau (SCRB) analyzed {displayTotalFIRs} active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.
-                    </p>
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-6 border`}>
+                  <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div>
+                      <h3 className={`text-[26px] font-semibold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                        Official SCRB Crime Intelligence Summary Document
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                        <div><span className="text-slate-400 font-medium block text-[10px]">Generated By:</span> SCRB AI Intelligence Engine</div>
+                        <div><span className="text-slate-400 font-medium block text-[10px]">Generated On:</span> 26 Jul 2026 • 18:25 IST</div>
+                        <div><span className="text-slate-400 font-medium block text-[10px]">Classification:</span> <span className="text-red-600 font-bold">Internal Use Only</span></div>
+                        <div><span className="text-slate-400 font-medium block text-[10px]">Doc Ref:</span> SCRB-INTEL-2026-07-KSP</div>
+                      </div>
+                      <div className="text-xs font-bold text-emerald-600 mt-2">
+                        ✔ Officer Approval: Approved by ADGP Crime & SCRB (Govt of Karnataka)
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => window.print()}
+                      className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap cursor-pointer"
+                    >
+                      📄 Export Intelligence Report (PDF)
+                    </button>
                   </div>
 
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">2. AI Spatial Hotspots & Risk Assessment</h4>
-                    <p className="text-slate-800 dark:text-slate-300 font-medium">
-                      DBSCAN machine learning algorithms identified 50 active crime hotspots statewide. Isolation Forest anomaly detection flagged a 14% property theft surge wave in June 2026.
-                    </p>
-                  </div>
+                  <div className="space-y-4 text-xs">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">1. Executive Summary</h4>
+                      <p className="text-slate-800 dark:text-slate-300 font-medium">
+                        The State Crime Records Bureau (SCRB) analyzed {displayTotalFIRs} active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.
+                      </p>
+                    </div>
 
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">3. Repeat Offender Network Analysis</h4>
-                    <p className="text-slate-800 dark:text-slate-300 font-medium">
-                      Graph relationship analysis discovered 7 habitual repeat offenders operating across multiple police station limits with identical burglary and theft modus operandi.
-                    </p>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">2. AI Spatial Hotspots & Risk Assessment</h4>
+                      <p className="text-slate-800 dark:text-slate-300 font-medium">
+                        DBSCAN machine learning algorithms identified 50 active crime hotspots statewide. Isolation Forest anomaly detection flagged a 14% property theft surge wave in June 2026.
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">3. Repeat Offender Network Analysis</h4>
+                      <p className="text-slate-800 dark:text-slate-300 font-medium">
+                        Graph relationship analysis discovered 7 habitual repeat offenders operating across multiple police station limits with identical burglary and theft modus operandi.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

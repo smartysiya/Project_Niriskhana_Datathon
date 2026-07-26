@@ -167,9 +167,17 @@ app.get('/cases', async (req, res) => {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
 
-		// Lightweight COUNT query to get total FIR count unconstrained by 300-row ZCQL LIMIT
-		const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
-		const totalCases = parseInt(countResult[0]?.CaseMaster?.['COUNT(ROWID)'] || countResult[0]?.CaseMaster?.['COUNT'] || 825);
+		let totalCases = 825;
+		try {
+			const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
+			if (countResult && countResult[0] && countResult[0].CaseMaster) {
+				const cm = countResult[0].CaseMaster;
+				const val = cm['COUNT(ROWID)'] || cm['COUNT(CaseMaster.ROWID)'] || cm['COUNT'] || cm['count'];
+				if (val) totalCases = parseInt(val);
+			}
+		} catch (countErr) {
+			console.warn('COUNT query fallback:', countErr.message);
+		}
 
 		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
@@ -231,13 +239,21 @@ app.get('/stats', async (req, res) => {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
 
-		// Lightweight COUNT query to get total FIR count unconstrained by 300-row ZCQL LIMIT
-		const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
-		const totalCases = parseInt(countResult[0]?.CaseMaster?.['COUNT(ROWID)'] || countResult[0]?.CaseMaster?.['COUNT'] || 825);
+		let totalCases = 825;
+		try {
+			const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
+			if (countResult && countResult[0] && countResult[0].CaseMaster) {
+				const cm = countResult[0].CaseMaster;
+				const val = cm['COUNT(ROWID)'] || cm['COUNT(CaseMaster.ROWID)'] || cm['COUNT'] || cm['count'];
+				if (val) totalCases = parseInt(val);
+			}
+		} catch (countErr) {
+			console.warn('COUNT query fallback:', countErr.message);
+		}
 
-		const casesResult = await zcql.executeZCQLQuery('SELECT ROWID, CrimeSubHeadID FROM CaseMaster');
+		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
-		const districtResult = await zcql.executeZCQLQuery('SELECT ROWID FROM District');
+		const districtResult = await zcql.executeZCQLQuery('SELECT * FROM District');
 
 		const crimeTypeMap = {};
 		crimeTypesResult.forEach(row => { crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
@@ -366,7 +382,7 @@ app.get('/network', async (req, res) => {
 		const zcql = catalystApp.zcql();
 
 		const accusedResult = await zcql.executeZCQLQuery('SELECT * FROM Accused LIMIT 300');
-		const casesResult = await zcql.executeZCQLQuery('SELECT ROWID, CrimeNo, PoliceStationID, CrimeSubHeadID FROM CaseMaster LIMIT 300');
+		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
 

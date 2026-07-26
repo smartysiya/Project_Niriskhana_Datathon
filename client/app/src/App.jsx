@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
@@ -231,7 +232,7 @@ function LogoIcon() {
     <img
       src={LOGO_DATA_URI}
       alt="NIRIKSHANA Logo"
-      className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-md transition-transform hover:scale-105"
+      className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md transition-transform hover:scale-105"
     />
   );
 }
@@ -255,18 +256,50 @@ function RefreshIcon() {
   );
 }
 
+// Bug 2 Fix: Compact KPI Stat Card Component
 function StatCard({ label, value, subtext, trendUp, isDark }) {
   return (
-    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm hover:shadow-md transition-all border`}>
-      <div className={`text-[13px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{label}</div>
-      <div className={`text-[32px] font-extrabold mt-1 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
+    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-3.5 shadow-sm hover:shadow-md transition-all border`}>
+      <div className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{label}</div>
+      <div className={`text-[24px] font-extrabold mt-0.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
       {subtext && (
-        <div className={`text-[13px] font-semibold mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : (isDark ? 'text-slate-400' : 'text-slate-600')}`}>
+        <div className={`text-[11px] font-semibold mt-0.5 flex items-center gap-1 ${trendUp ? 'text-red-600' : (isDark ? 'text-slate-400' : 'text-slate-600')}`}>
           <span>{subtext}</span>
         </div>
       )}
     </div>
   );
+}
+
+// Bug 1 Fix: Leaflet Map Bounds Controller (Prevents map from zooming out to Southeast Asia when filtered)
+function MapBoundsController({ cases }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    const validPoints = cases.filter(c => c.lat && c.lng && !isNaN(c.lat) && !isNaN(c.lng));
+
+    if (validPoints.length === 0) {
+      // Default to Karnataka Center view (Zoom level 7)
+      map.setView([15.3, 75.7], 7, { animate: true });
+      return;
+    }
+
+    if (validPoints.length < 5) {
+      // Small number of filtered points (1 to 4): center on average of valid points, capped at Karnataka-focused zoom (8)
+      const avgLat = validPoints.reduce((s, p) => s + p.lat, 0) / validPoints.length;
+      const avgLng = validPoints.reduce((s, p) => s + p.lng, 0) / validPoints.length;
+      map.setView([avgLat, avgLng], 8, { animate: true });
+      return;
+    }
+
+    // 5+ points: fit bounds but enforce maxZoom/minZoom constraints to keep view bounded within Karnataka
+    const bounds = L.latLngBounds(validPoints.map(p => [p.lat, p.lng]));
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10, animate: true });
+  }, [cases, map]);
+
+  return null;
 }
 
 export default function App() {
@@ -300,7 +333,7 @@ export default function App() {
     { id: 4, time: '09:05 AM', tag: 'Anomaly Flagged', tagColor: 'amber', text: 'New anomaly: Vehicle theft surge wave' }
   ]);
 
-  // Timeline Filter State (Bug 3: Dynamic Date Filter)
+  // Timeline Filter State
   const [timelineRange, setTimelineRange] = useState('Last Month');
 
   // Selected Offender Drawer State
@@ -357,7 +390,7 @@ export default function App() {
     return !isNaN(t) && t > max ? t : max;
   }, 0) || new Date('2026-12-31').getTime();
 
-  // Filter cases array by Search, District, Time of Day, Crime Type, AND Timeline Date Window (Bug 2 & Bug 3)
+  // Filter cases array by Search, District, Time of Day, Crime Type, AND Timeline Date Window
   const filteredCases = cases.filter(c => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || c.crimeNo.toLowerCase().includes(q) || c.station.toLowerCase().includes(q) || c.crimeType.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
@@ -365,7 +398,7 @@ export default function App() {
     const matchTime = selectedTimeOfDay === 'All Times' || c.timeOfDay.includes(selectedTimeOfDay);
     const matchCrime = selectedCrimeType === 'All Types' || c.crimeType === selectedCrimeType;
 
-    // Bug 3: Relative Timeline Date Window Filter
+    // Relative Timeline Date Window Filter
     const matchTimeline = (() => {
       if (!c.date || timelineRange === 'Last Year' || timelineRange === 'All Time') return true;
       const cTime = new Date(c.date).getTime();
@@ -439,17 +472,17 @@ export default function App() {
         </div>
 
         {/* Main Title & Notification Bell */}
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-5">
+        <div className="px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <LogoIcon />
             <div>
-              <h1 className={`text-[32px] font-extrabold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+              <h1 className={`text-[28px] font-extrabold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                 {t.title}
               </h1>
-              <div className={`text-[15px] font-semibold mt-0.5 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
+              <div className={`text-[14px] font-semibold mt-0.5 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                 {t.subtitle}
               </div>
-              <p className={`text-[13px] font-medium mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              <p className={`text-[12px] font-medium mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 {t.tagline}
               </p>
             </div>
@@ -540,7 +573,7 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-3 transition-colors border-b-2 whitespace-nowrap cursor-pointer ${
+              className={`py-2.5 transition-colors border-b-2 whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-[#2563EB] text-[#2563EB] font-bold'
                   : (isDark ? 'border-transparent text-slate-400 hover:text-slate-200' : 'border-transparent text-slate-600 hover:text-slate-900')
@@ -553,7 +586,7 @@ export default function App() {
       </header>
 
       {/* Main Body Content */}
-      <main className="p-6 max-w-7xl mx-auto space-y-7">
+      <main className="p-5 max-w-7xl mx-auto space-y-5">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-xs font-semibold flex items-center gap-2">
             <span>⚠️</span> {error}
@@ -567,8 +600,8 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* KPI Cards Row (Contextual to Active Tab) */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* Bug 2 Fix: Compact KPI Cards Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
               <StatCard label={t.stats.totalCases} value={displayTotalFIRs} subtext={t.stats.totalSub} trendUp isDark={isDark} />
               <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
               <StatCard label={t.stats.districts} value={selectedDistrict === 'All Districts' ? (stats?.totalDistricts ?? '10') : '1'} subtext={t.stats.districtsSub} isDark={isDark} />
@@ -577,7 +610,7 @@ export default function App() {
             </div>
 
             {/* SINGLE GLOBAL STICKY FILTER PANEL (Directly below KPI cards) */}
-            <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
+            <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
               <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
                 {/* Search Bar */}
                 <div className="relative flex-1 sm:flex-initial">
@@ -666,10 +699,116 @@ export default function App() {
               )}
             </div>
 
-            {/* TAB 1: SPATIAL CRIME MAP & AI INTELLIGENCE BRIEF (Bug 1 Fix: AI Intelligence Brief appears ONLY on Crime Map tab) */}
+            {/* TAB 1: SPATIAL CRIME MAP TAB (Bug 2 Fix: Map & Interactive Controls positioned FIRST above intelligence text) */}
             {activeTab === 'map' && (
               <div className="space-y-6">
-                {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
+                {/* SPATIAL CRIME MAP CARD (Primary Interactive Content) */}
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
+                    </div>
+
+                    {/* Interactive Crime Type Filter Legend Buttons */}
+                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
+                      <button
+                        onClick={() => setSelectedCrimeType('All Types')}
+                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                          selectedCrimeType === 'All Types'
+                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
+                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
+                        }`}
+                      >
+                        All Categories
+                      </button>
+                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
+                        const isSelected = selectedCrimeType === type;
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
+                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
+                            }`}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
+                            <span>{type}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Functional Timeline Analysis Window Selector Bar */}
+                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
+                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
+                      <span>📅 Timeline Analysis Window:</span>
+                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
+                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
+                        <button
+                          key={range}
+                          onClick={() => setTimelineRange(range)}
+                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+                            timelineRange === range
+                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
+                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
+                          }`}
+                        >
+                          {range}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bug 1 Fix: Map Container with minZoom={6} & MapBoundsController bounds protection */}
+                  <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                    <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; OpenStreetMap contributors'
+                      />
+                      <MapBoundsController cases={filteredCases} />
+                      {filteredCases.map(c => (
+                        c.lat && c.lng ? (
+                          <CircleMarker
+                            key={c.id}
+                            center={[c.lat, c.lng]}
+                            radius={6}
+                            pathOptions={{
+                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillOpacity: 0.8
+                            }}
+                          >
+                            <Popup>
+                              <div className="text-slate-800 p-1 min-w-[190px]">
+                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
+                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
+                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
+                                </div>
+                              </div>
+                            </Popup>
+                          </CircleMarker>
+                        ) : null
+                      ))}
+                    </MapContainer>
+                  </div>
+                </div>
+
+                {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED (Secondary Supporting Content Below Map) */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
                   <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
@@ -900,110 +1039,6 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
-                {/* SPATIAL CRIME MAP CARD */}
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
-                    </div>
-
-                    {/* Bug 2 Fix: Interactive Crime Type Filter Legend Buttons */}
-                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
-                      <button
-                        onClick={() => setSelectedCrimeType('All Types')}
-                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                          selectedCrimeType === 'All Types'
-                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
-                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
-                        }`}
-                      >
-                        All Categories
-                      </button>
-                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
-                        const isSelected = selectedCrimeType === type;
-                        return (
-                          <button
-                            key={type}
-                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
-                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
-                            }`}
-                          >
-                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                            <span>{type}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Bug 3 Fix: Functional Timeline Analysis Window Selector Bar */}
-                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
-                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                  }`}>
-                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
-                      <span>📅 Timeline Analysis Window:</span>
-                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
-                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
-                        <button
-                          key={range}
-                          onClick={() => setTimelineRange(range)}
-                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
-                            timelineRange === range
-                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
-                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
-                          }`}
-                        >
-                          {range}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                    <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap contributors'
-                      />
-                      {filteredCases.map(c => (
-                        c.lat && c.lng ? (
-                          <CircleMarker
-                            key={c.id}
-                            center={[c.lat, c.lng]}
-                            radius={6}
-                            pathOptions={{
-                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillOpacity: 0.8
-                            }}
-                          >
-                            <Popup>
-                              <div className="text-slate-800 p-1 min-w-[190px]">
-                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
-                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
-                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
-                                </div>
-                              </div>
-                            </Popup>
-                          </CircleMarker>
-                        ) : null
-                      ))}
-                    </MapContainer>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -1011,7 +1046,7 @@ export default function App() {
             {activeTab === 'hotspots' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border relative z-0 isolate`} style={{ height: '580px' }}>
-                  <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
+                  <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {filteredHotspots.map(h => (
                       <CircleMarker

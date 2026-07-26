@@ -439,6 +439,114 @@ export default function App() {
   const isFiltered = searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year';
   const displayTotalFIRs = isFiltered ? filteredCases.length : (dbTotalCases || stats?.totalCases || 825);
 
+  // Helper render method for the Spatial Crime Map Panel (Used on both Dashboard and Crime Map tabs)
+  const renderSpatialMapCard = () => (
+    <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
+          <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
+        </div>
+
+        {/* Interactive Crime Type Filter Legend Buttons */}
+        <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
+          <button
+            onClick={() => setSelectedCrimeType('All Types')}
+            className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+              selectedCrimeType === 'All Types'
+                ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
+                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
+            }`}
+          >
+            All Categories
+          </button>
+          {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
+            const isSelected = selectedCrimeType === type;
+            return (
+              <button
+                key={type}
+                onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
+                    : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
+                }`}
+              >
+                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
+                <span>{type}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Functional Timeline Analysis Window Selector Bar */}
+      <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
+        isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+      }`}>
+        <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
+          <span>📅 Timeline Analysis Window:</span>
+          <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
+          <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
+        </div>
+
+        <div className="flex gap-2">
+          {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
+            <button
+              key={range}
+              onClick={() => setTimelineRange(range)}
+              className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+                timelineRange === range
+                  ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
+                  : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
+              }`}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Map Container with minZoom={6} & MapBoundsController bounds protection */}
+      <div style={{ height: '600px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+        <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; OpenStreetMap contributors'
+          />
+          <MapBoundsController cases={filteredCases} />
+          {filteredCases.map(c => (
+            c.lat && c.lng ? (
+              <CircleMarker
+                key={c.id}
+                center={[c.lat, c.lng]}
+                radius={6}
+                pathOptions={{
+                  color: CRIME_COLORS[c.crimeType] || '#2563eb',
+                  fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
+                  fillOpacity: 0.8
+                }}
+              >
+                <Popup>
+                  <div className="text-slate-800 p-1 min-w-[190px]">
+                    <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
+                    <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
+                    <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
+                    <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
+                    <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
+                    <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
+                      <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
+                    </div>
+                  </div>
+                </Popup>
+              </CircleMarker>
+            ) : null
+          ))}
+        </MapContainer>
+      </div>
+    </div>
+  );
+
   return (
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
       {/* Header Area */}
@@ -603,7 +711,7 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* TAB 1: EXECUTIVE DASHBOARD LANDING PAGE */}
+            {/* TAB 1: EXECUTIVE DASHBOARD LANDING PAGE (Includes Stat Cards, AI Brief, Feed, Dispatches & Spatial Crime Map) */}
             {activeTab === 'dashboard' && (
               <div className="space-y-6">
                 {/* 5 Top Executive KPI Stat Cards */}
@@ -613,6 +721,96 @@ export default function App() {
                   <StatCard label={t.stats.districts} value={selectedDistrict === 'All Districts' ? (stats?.totalDistricts ?? '10') : '1'} subtext={t.stats.districtsSub} isDark={isDark} />
                   <StatCard label={t.stats.hotspots} value={filteredHotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
                   <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
+                </div>
+
+                {/* SINGLE GLOBAL STICKY FILTER PANEL */}
+                <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
+                  <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 sm:flex-initial">
+                      <span className="absolute left-2.5 top-2">
+                        <SearchIcon />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder={t.filters.searchPlaceholder}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-[#2563EB]'
+                        }`}
+                      />
+                    </div>
+
+                    {/* District Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.districtLabel}</span>
+                      <select
+                        value={selectedDistrict}
+                        onChange={(e) => setSelectedDistrict(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-blue-400' : 'bg-white border-slate-300 text-[#1E3A5F]'
+                        }`}
+                      >
+                        {DISTRICT_LIST.map(d => (
+                          <option key={d} value={d}>{d === 'All Districts' ? t.filters.allDistricts : d}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Time Window Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.timeLabel}</span>
+                      <select
+                        value={selectedTimeOfDay}
+                        onChange={(e) => setSelectedTimeOfDay(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      >
+                        <option value="All Times">{t.filters.allTimes}</option>
+                        <option value="Night">{t.timeOptions.night}</option>
+                        <option value="Morning">{t.timeOptions.morning}</option>
+                        <option value="Afternoon">{t.timeOptions.afternoon}</option>
+                        <option value="Evening">{t.timeOptions.evening}</option>
+                      </select>
+                    </div>
+
+                    {/* Crime Type Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.crimeLabel}</span>
+                      <select
+                        value={selectedCrimeType}
+                        onChange={(e) => setSelectedCrimeType(e.target.value)}
+                        className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      >
+                        <option value="All Types">{t.filters.allCrimes}</option>
+                        {Object.keys(CRIME_COLORS).map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year') && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedDistrict('All Districts');
+                        setSelectedTimeOfDay('All Times');
+                        setSelectedCrimeType('All Types');
+                        setTimelineRange('Last Year');
+                      }}
+                      className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        isDark ? 'bg-[#2563EB] border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
+                      }`}
+                    >
+                      <RefreshIcon />
+                      {t.filters.reset}
+                    </button>
+                  )}
                 </div>
 
                 {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
@@ -846,10 +1044,13 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+
+                {/* SPATIAL CRIME MAP ON DASHBOARD TAB */}
+                {renderSpatialMapCard()}
               </div>
             )}
 
-            {/* TAB 2: SPATIAL CRIME MAP TAB (Map + Filters ONLY - Zero Distractions) */}
+            {/* TAB 2: SPATIAL CRIME MAP TAB (Map + Filters ONLY - Dedicated Map View) */}
             {activeTab === 'map' && (
               <div className="space-y-4">
                 {/* STICKY GLOBAL FILTER PANEL FOR CRIME MAP */}
@@ -942,111 +1143,8 @@ export default function App() {
                   )}
                 </div>
 
-                {/* SPATIAL CRIME MAP CARD (Visible immediately with minimal scrolling) */}
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
-                    </div>
-
-                    {/* Interactive Crime Type Filter Legend Buttons */}
-                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
-                      <button
-                        onClick={() => setSelectedCrimeType('All Types')}
-                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                          selectedCrimeType === 'All Types'
-                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
-                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
-                        }`}
-                      >
-                        All Categories
-                      </button>
-                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
-                        const isSelected = selectedCrimeType === type;
-                        return (
-                          <button
-                            key={type}
-                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
-                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
-                            }`}
-                          >
-                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                            <span>{type}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Functional Timeline Analysis Window Selector Bar */}
-                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
-                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                  }`}>
-                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
-                      <span>📅 Timeline Analysis Window:</span>
-                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
-                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
-                        <button
-                          key={range}
-                          onClick={() => setTimelineRange(range)}
-                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
-                            timelineRange === range
-                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
-                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
-                          }`}
-                        >
-                          {range}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Map Container with minZoom={6} & MapBoundsController bounds protection */}
-                  <div style={{ height: '620px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                    <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap contributors'
-                      />
-                      <MapBoundsController cases={filteredCases} />
-                      {filteredCases.map(c => (
-                        c.lat && c.lng ? (
-                          <CircleMarker
-                            key={c.id}
-                            center={[c.lat, c.lng]}
-                            radius={6}
-                            pathOptions={{
-                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
-                              fillOpacity: 0.8
-                            }}
-                          >
-                            <Popup>
-                              <div className="text-slate-800 p-1 min-w-[190px]">
-                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
-                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
-                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
-                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
-                                </div>
-                              </div>
-                            </Popup>
-                          </CircleMarker>
-                        ) : null
-                      ))}
-                    </MapContainer>
-                  </div>
-                </div>
+                {/* SPATIAL CRIME MAP CARD */}
+                {renderSpatialMapCard()}
               </div>
             )}
 

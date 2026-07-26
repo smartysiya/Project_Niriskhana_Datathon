@@ -1,11 +1,11 @@
-# Project Nirikshana 🚨  
+# Project Nirikshana 
 ### KSP Datathon 2026 — Challenge 02: AI-Driven Crime Analytics Platform
 
 **Project Nirikshana** (निरीक्षण / निरीक्षणा) is an end-to-end AI-driven crime analytics and intelligence platform built for Karnataka State Police (KSP). It empowers law enforcement agencies with real-time geospatial visualization, incident tracking, anomaly detection, and actionable crime statistics across police stations and districts in Karnataka.
 
 ---
 
-## 🌐 Live Application & Links
+## Live Application & Links
 
 - **Live Dashboard**: [Project Nirikshana App](https://project-nirikshana-60077343924.development.catalystserverless.in/app/index.html)
 - **Backend API Base**: `https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function`
@@ -13,7 +13,7 @@
 
 ---
 
-## 🎯 Problem Statement
+## Problem Statement
 
 Modern law enforcement agencies collect vast amounts of crime data across districts and units. However, legacy systems lack real-time geospatial visualization, predictive hotspot identification, and relational link analysis for repeat offenders. 
 
@@ -25,7 +25,7 @@ Modern law enforcement agencies collect vast amounts of crime data across distri
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - 📍 **Interactive Geospatial Map**: Color-coded Leaflet interactive visualization depicting exact incident locations, police station jurisdictions, and crime types across Karnataka.
 - 📊 **Real-Time Key Performance Cards**: Dynamic metrics tracking Total Cases, Top Crime Head, Active Districts, and Mapped Incidents.
@@ -35,7 +35,7 @@ Modern law enforcement agencies collect vast amounts of crime data across distri
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### **Frontend**
 - **Framework**: React 18 + Vite
@@ -50,7 +50,7 @@ Modern law enforcement agencies collect vast amounts of crime data across distri
 
 ---
 
-## 🗄️ Database Architecture
+## Database Architecture
 
 The platform operates on 5 relational entities in Zoho Catalyst Data Store:
 - **District**: `DistrictName`, `Active`
@@ -61,7 +61,7 @@ The platform operates on 5 relational entities in Zoho Catalyst Data Store:
 
 ---
 
-## 🚀 Local Development & Deployment
+## Local Development & Deployment
 
 ### Prerequisites
 - Node.js 18+

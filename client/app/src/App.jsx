@@ -43,14 +43,12 @@ const TRANSLATIONS = {
     subtitle: 'AI-Driven Crime Intelligence & Criminological Analytics Platform',
     langToggle: 'ಕನ್ನಡ',
     tabs: {
-      dashboard: 'Dashboard',
       map: 'Crime Map',
       hotspots: 'Hotspots',
       network: 'Network Analysis',
       risk: 'Risk Matrix',
       socio: 'Socio-Economic Insights',
-      reports: 'Reports',
-      settings: 'Settings'
+      reports: 'Reports'
     },
     stats: {
       totalCases: 'Total FIR Records',
@@ -81,8 +79,8 @@ const TRANSLATIONS = {
       evening: 'Evening Shift (17:00-22:00)'
     },
     mapPanel: {
-      title: 'Karnataka Crime Map & Jurisdiction Overview',
-      sub: 'incident records mapped across police station limits',
+      title: 'Statewide Command Map & Station Limits',
+      sub: 'incident records mapped across active police station limits',
       popupStation: 'Station:',
       popupDistrict: 'District:',
       popupDate: 'Date:',
@@ -134,12 +132,6 @@ const TRANSLATIONS = {
       bullet2: 'Identified 50 Spatial Hotspots using DBSCAN machine learning clustering.',
       bullet3: 'Tracked Habitual Repeat Offenders linked to inter-station burglary and cyber crimes.',
       bullet4: 'Calculated Risk Indices across all station limits for optimized patrol shift allocation.'
-    },
-    settingsPanel: {
-      title: 'System Configuration & Status',
-      backend: 'Backend Engine: Zoho Catalyst Advanced I/O Serverless Function',
-      db: 'Data Store Engine: Relational ZCQL Database Layer',
-      status: 'Deployment Status: Live Production Environment'
     }
   },
   kn: {
@@ -148,14 +140,12 @@ const TRANSLATIONS = {
     subtitle: 'ಎಐ-ಆಧಾರಿತ ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ವಿಜಿಲೆನ್ಸ್ ಕಮಾಂಡ್ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್',
     langToggle: 'English',
     tabs: {
-      dashboard: 'ದಿಕ್ಸೂಚಿ',
       map: 'ಅಪರಾಧ ನಕ್ಷೆ',
       hotspots: 'ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು',
       network: 'ಜಾಲ ವಿಶ್ಲೇಷಣೆ',
       risk: 'ಅಪಾಯದ ಶ್ರೇಣಿ',
       socio: 'ಸಾಮಾಜಿಕ-ಆರ್ಥಿಕ ನಂಟು',
-      reports: 'ವರದಿಗಳು',
-      settings: 'ಸಂರಚನೆ'
+      reports: 'ವರದಿಗಳು'
     },
     stats: {
       totalCases: 'ಒಟ್ಟು ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳು',
@@ -186,7 +176,7 @@ const TRANSLATIONS = {
       evening: 'ಸಂಜೆಯ ಪಾಳಿ (17:00-22:00)'
     },
     mapPanel: {
-      title: 'ಕರ್ನಾಟಕ ಅಪರಾಧ ನಕ್ಷೆ ಮತ್ತು ಠಾಣಾ ವ್ಯಾಪ್ತಿ',
+      title: 'ರಾಜ್ಯಾದ್ಯಂತ ಅಪರಾಧ ನಕ್ಷೆ ಮತ್ತು ಠಾಣಾ ವ್ಯಾಪ್ತಿ',
       sub: 'ಪೊಲೀಸ್ ಠಾಣಾ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ದಾಖಲಾದ ಅಪರಾಧ ಪ್ರಕರಣಗಳ ನಕ್ಷೆ',
       popupStation: 'ಠಾಣೆ:',
       popupDistrict: 'ಜಿಲ್ಲೆ:',
@@ -239,12 +229,6 @@ const TRANSLATIONS = {
       bullet2: 'DBSCAN ಯಂತ್ರ ಕಲಿಕೆಯ ಮೂಲಕ 50 ಸ್ಥಳೀಯ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳನ್ನು ಗುರುತಿಸಲಾಗಿದೆ.',
       bullet3: 'ವಿವಿಧ ಠಾಣೆಗಳ ನಡುವಿನ ಕಳವು ಮತ್ತು ಸೈಬರ್ ಅಪರಾಧಿಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಲಾಗಿದೆ.',
       bullet4: 'ಪೊಲೀಸ್ ಕಾವಲು ಸಮಯದ ಸೂಕ್ತ ಹಂಚಿಕೆಗಾಗಿ ಅಪಾಯದ ಶ್ರೇಣಿಯನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ.'
-    },
-    settingsPanel: {
-      title: 'ಸಂರಚನೆ ಮತ್ತು ಸಿಸ್ಟಮ್ ಸ್ಥಿತಿ',
-      backend: 'ಬ್ಯಾಕೆಂಡ್ ಇಂಜಿನ್: ಜೊಹೊ ಕ್ಯಾಟಲಿಸ್ಟ್ ಸರ್ವರ್‌ಲೆಸ್ ಫಂಕ್ಷನ್',
-      db: 'ಡೇಟಾಬೇಸ್ ಇಂಜಿನ್: ರಿಲೇಶನಲ್ ZCQL ಡೇಟಾಬೇಸ್',
-      status: 'ನಿಯೋಜನೆ ಸ್ಥಿತಿ: ಸಕ್ರಿಯ ಪ್ರೊಡಕ್ಷನ್ ಸಿಸ್ಟಮ್'
     }
   }
 };
@@ -296,7 +280,7 @@ function StatCard({ label, value, subtext, trendUp, isDark }) {
 export default function App() {
   const [lang, setLang] = useState('en');
   const [isDark, setIsDark] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('map');
   const [cases, setCases] = useState([]);
   const [stats, setStats] = useState(null);
   const [hotspots, setHotspots] = useState([]);
@@ -305,6 +289,7 @@ export default function App() {
   const [socioEconomic, setSocioEconomic] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAlerts, setShowAlerts] = useState(false);
 
   // Filters State
   const [searchQuery, setSearchQuery] = useState('');
@@ -359,10 +344,24 @@ export default function App() {
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-800'}`}>
       {/* Header Area */}
       <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-        {/* Top Government Subtitle Line */}
-        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-xs flex justify-between items-center font-medium">
-          <div>{t.govSub}</div>
+        {/* Top Government Subtitle & Network Status Bar */}
+        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-xs flex flex-wrap justify-between items-center font-medium gap-2">
           <div className="flex items-center gap-2">
+            <span>Government of Karnataka</span>
+            <span className="opacity-40">|</span>
+            <span>Karnataka State Police</span>
+            <span className="opacity-40">|</span>
+            <span className="text-blue-300 font-semibold">State Crime Records Bureau (SCRB)</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[11px]">
+            <div className="flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 px-2 py-0.5 rounded font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Secure Network</span>
+            </div>
+            <span className="text-slate-300">Env: <strong className="text-white">Production</strong></span>
+            <span className="text-slate-300">Last Sync: <strong className="text-white">26 Jul 2026 • 17:45</strong></span>
+
             {/* Theme Toggle Button */}
             <button
               onClick={() => setIsDark(!isDark)}
@@ -382,8 +381,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Main Logo & Title Branding Area */}
-        <div className="px-6 py-5 flex items-center justify-between">
+        {/* Main Logo, Title & Logged-in Officer Profile */}
+        <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-5">
             <LogoIcon />
             <div>
@@ -395,19 +394,99 @@ export default function App() {
               </p>
             </div>
           </div>
+
+          {/* Authenticated Officer Session Card */}
+          <div className="flex items-center gap-4">
+            {/* Notification Bell with Badge */}
+            <div className="relative">
+              <button
+                onClick={() => setShowAlerts(!showAlerts)}
+                className={`p-2.5 rounded-lg border relative transition-colors ${
+                  isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                }`}
+                title="Intelligence Alerts"
+              >
+                <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full animate-bounce">
+                  3
+                </span>
+              </button>
+
+              {/* Notification Alerts Dropdown */}
+              {showAlerts && (
+                <div className={`absolute right-0 mt-2 w-72 rounded-lg border shadow-lg z-50 p-3 text-xs space-y-2 ${
+                  isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-800'
+                }`}>
+                  <div className="font-bold border-b pb-1.5 flex justify-between items-center text-blue-600">
+                    <span>🔔 SCRB Intelligence Alerts</span>
+                    <span className="text-[10px] text-slate-400">Live Stream</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="p-2 rounded bg-red-50 text-red-800 border border-red-200 font-medium">
+                      🚨 <strong>New Hotspot Detected:</strong> Hubballi-Dharwad PS-1 (DBSCAN Cluster #1)
+                    </div>
+                    <div className="p-2 rounded bg-amber-50 text-amber-800 border border-amber-200 font-medium">
+                      ⚠️ <strong>Risk Prediction Updated:</strong> Tumakuru PS-2 Night Shift Threat Level 88
+                    </div>
+                    <div className="p-2 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium">
+                      🔍 <strong>Repeat Offender Identified:</strong> Habitual Offender linked to 3 inter-station FIRs
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Officer Profile Badge */}
+            <div className={`flex items-center gap-3 px-3.5 py-2 rounded-lg border ${
+              isDark ? 'bg-slate-900/90 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'
+            }`}>
+              <div className="w-9 h-9 rounded-full bg-[#1E3A5F] text-white flex items-center justify-center font-bold text-xs border border-blue-400 shadow-sm">
+                AR
+              </div>
+              <div className="text-xs leading-tight">
+                <div className="font-bold flex items-center gap-1.5">
+                  <span>Inspector Ananya Rao</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" title="Status: Online"></span>
+                </div>
+                <div className="text-[11px] text-slate-500 font-medium">Crime Intelligence Division • SCRB</div>
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5">ID: SCRB-2045 | Role: Crime Intelligence Analyst</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Security Classification Badges Bar */}
+        <div className={`px-6 py-1.5 border-t border-b flex flex-wrap items-center justify-between text-[11px] font-mono ${
+          isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-100/70 border-slate-200 text-slate-600'
+        }`}>
+          <div className="flex items-center gap-4">
+            <span className="text-emerald-600 font-semibold flex items-center gap-1">✔ Internal Use Only</span>
+            <span className="text-blue-600 font-semibold flex items-center gap-1">✔ Secure Session</span>
+            <span className="text-purple-600 font-semibold flex items-center gap-1">✔ AI Enabled</span>
+            <span className="text-slate-500 flex items-center gap-1">✔ SCRB Intelligence Portal</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[11px]">
+            <span>Database Status: <strong className="text-emerald-500">● Connected</strong></span>
+            <span>AI Engine: <strong className="text-emerald-500">● Running</strong></span>
+            <span>ML Models: <strong className="text-emerald-500">● Active</strong></span>
+            <span>Data Refresh: <strong>2 mins ago</strong></span>
+            <span>Catalyst: <strong className="text-blue-500">Healthy</strong></span>
+          </div>
         </div>
 
         {/* Clean Enterprise Horizontal Navigation Bar */}
         <nav className={`px-6 flex gap-6 border-t text-sm font-medium overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           {[
-            { id: 'dashboard', label: t.tabs.dashboard },
             { id: 'map', label: t.tabs.map },
             { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})` },
             { id: 'network', label: `${t.tabs.network} (${network?.repeatOffenderCount ?? 0})` },
             { id: 'risk', label: t.tabs.risk },
             { id: 'socio', label: t.tabs.socio },
-            { id: 'reports', label: t.tabs.reports },
-            { id: 'settings', label: t.tabs.settings }
+            { id: 'reports', label: t.tabs.reports }
           ].map(tab => (
             <button
               key={tab.id}
@@ -435,10 +514,40 @@ export default function App() {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-80 gap-3">
             <div className="w-8 h-8 border-3 border-[#2563EB] border-t-transparent rounded-full animate-spin"></div>
-            <div className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Loading SCRB Intelligence Data...</div>
+            <div className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Loading SCRB Command Center Intelligence...</div>
           </div>
         ) : (
           <>
+            {/* AI Intelligence Engine & Officer Session Bar */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* AI Engine Status Widget */}
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'} p-3.5 rounded-lg border shadow-sm flex items-center justify-between text-xs`}>
+                <div>
+                  <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>AI Intelligence Engine Status</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">DBSCAN • Random Forest • Isolation Forest • Graph Analytics</div>
+                </div>
+                <div className="text-right font-mono text-[11px]">
+                  <div>Status: <strong className="text-emerald-500">Running</strong></div>
+                  <div>Confidence Engine: <strong className="text-blue-500">Enabled</strong></div>
+                </div>
+              </div>
+
+              {/* Officer Duty Session Widget */}
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'} p-3.5 rounded-lg border shadow-sm flex items-center justify-between text-xs`}>
+                <div>
+                  <div className="font-bold text-slate-900 dark:text-slate-100">Officer Intelligence Workspace</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">Inspector Ananya Rao (SCRB-2045)</div>
+                </div>
+                <div className="text-right font-mono text-[11px] text-slate-500">
+                  <div>Logged In: <strong className="text-slate-700 dark:text-slate-300">09:12 AM</strong></div>
+                  <div>Shift: <strong className="text-slate-700 dark:text-slate-300">Morning</strong> | Access: <strong className="text-blue-600">Level 4</strong></div>
+                </div>
+              </div>
+            </div>
+
             {/* KPI Cards Row */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard label={t.stats.totalCases} value={stats?.totalCases ?? '300'} subtext={t.stats.totalSub} trendUp isDark={isDark} />
@@ -537,8 +646,8 @@ export default function App() {
               )}
             </div>
 
-            {/* TAB 1 & DASHBOARD: SPATIAL MAP */}
-            {(activeTab === 'dashboard' || activeTab === 'map') && (
+            {/* TAB 1: SPATIAL CRIME MAP */}
+            {activeTab === 'map' && (
               <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-4 space-y-4 border`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
@@ -843,21 +952,29 @@ export default function App() {
                 </div>
               </div>
             )}
-
-            {/* TAB 7: SETTINGS */}
-            {activeTab === 'settings' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
-                <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.settingsPanel.title}</h3>
-                <div className={`text-xs space-y-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                  <div>{t.settingsPanel.backend}</div>
-                  <div>{t.settingsPanel.db}</div>
-                  <div>{t.settingsPanel.status}</div>
-                </div>
-              </div>
-            )}
           </>
         )}
       </main>
+
+      {/* Official Government Internal Command Center Footer */}
+      <footer className={`mt-12 border-t px-6 py-6 text-xs transition-colors ${
+        isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-900 text-slate-300 border-slate-800'
+      }`}>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div className="font-bold text-white text-sm">Government of Karnataka | Karnataka State Police</div>
+            <div className="text-slate-400 text-xs mt-0.5">State Crime Records Bureau (SCRB) • Project NIRIKSHANA v1.0</div>
+            <div className="text-slate-500 text-[11px] mt-1 font-mono">
+              AI Models: DBSCAN • Random Forest • Isolation Forest • Relationship Analysis
+            </div>
+          </div>
+
+          <div className="text-right text-xs font-mono text-slate-400">
+            <div>Powered by <strong>Zoho Catalyst Serverless Infrastructure</strong></div>
+            <div className="text-slate-500 text-[11px] mt-0.5">© Government Internal Prototype • Restricted Command Access</div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

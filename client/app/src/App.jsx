@@ -218,9 +218,11 @@ export default function App() {
         {/* Main Header & Language Switcher */}
         <header className="mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border-2 border-amber-500/80 flex items-center justify-center font-bold text-2xl shadow-lg text-amber-400 shadow-amber-950/40">
-              🛡️
-            </div>
+            <img
+              src="karnataka_emblem.png"
+              alt="Government of Karnataka Emblem"
+              className="w-12 h-12 object-contain drop-shadow-md"
+            />
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-2">

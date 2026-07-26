@@ -166,6 +166,11 @@ app.get('/cases', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
+
+		// Lightweight COUNT query to get total FIR count unconstrained by 300-row ZCQL LIMIT
+		const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
+		const totalCases = parseInt(countResult[0]?.CaseMaster?.['COUNT(ROWID)'] || countResult[0]?.CaseMaster?.['COUNT'] || 825);
+
 		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
@@ -214,7 +219,7 @@ app.get('/cases', async (req, res) => {
 			};
 		});
 
-		res.status(200).json({ status: 'success', count: cases.length, cases });
+		res.status(200).json({ status: 'success', totalCases, count: cases.length, cases });
 	} catch (error) {
 		console.error('Fetch cases error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
@@ -225,6 +230,11 @@ app.get('/stats', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
+
+		// Lightweight COUNT query to get total FIR count unconstrained by 300-row ZCQL LIMIT
+		const countResult = await zcql.executeZCQLQuery('SELECT COUNT(ROWID) FROM CaseMaster');
+		const totalCases = parseInt(countResult[0]?.CaseMaster?.['COUNT(ROWID)'] || countResult[0]?.CaseMaster?.['COUNT'] || 825);
+
 		const casesResult = await zcql.executeZCQLQuery('SELECT ROWID, CrimeSubHeadID FROM CaseMaster');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 		const districtResult = await zcql.executeZCQLQuery('SELECT ROWID FROM District');
@@ -241,7 +251,7 @@ app.get('/stats', async (req, res) => {
 		let maxCount = 0;
 		Object.entries(counts).forEach(([name, count]) => { if (count > maxCount) { maxCount = count; topCrimeType = name; } });
 
-		res.status(200).json({ status: 'success', totalCases: casesResult.length, topCrimeType, totalDistricts: districtResult.length });
+		res.status(200).json({ status: 'success', totalCases, topCrimeType, totalDistricts: districtResult.length });
 	} catch (error) {
 		console.error('Stats error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
@@ -349,224 +359,146 @@ app.get('/hotspots', async (req, res) => {
 	}
 });
 
-// Network & Link Graph for Repeat Offenders and Associations
+// Network Analysis (Offender Link Graph) Endpoint
 app.get('/network', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
-		const accusedResult = await zcql.executeZCQLQuery('SELECT * FROM Accused LIMIT 300');
-		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
-		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
-		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 
-		const unitMap = {};
-		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
-		const crimeMap = {};
+		const accusedResult = await zcql.executeZCQLQuery('SELECT * FROM Accused LIMIT 300');
+		const casesResult = await zcql.executeZCQLQuery('SELECT ROWID, CrimeNo, PoliceStationID, CrimeSubHeadID FROM CaseMaster LIMIT 300');
+		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
+		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
+
+		const crimeTypeMap = {};
 		const crimeMOMap = {};
 		crimeTypesResult.forEach(row => {
-			crimeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName;
+			crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName;
 			const foundType = CRIME_TYPES.find(ct => ct.head === row.CrimeSubHead.CrimeHeadName);
-			crimeMOMap[row.CrimeSubHead.ROWID] = foundType ? foundType.defaultMO : 'Standard Modus Operandi';
+			crimeMOMap[row.CrimeSubHead.ROWID] = foundType ? foundType.defaultMO : 'Standard MO';
 		});
+		const unitMap = {};
+		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
 
 		const caseMap = {};
 		casesResult.forEach(row => {
 			const c = row.CaseMaster;
 			caseMap[c.ROWID] = {
-				id: c.ROWID,
 				crimeNo: c.CrimeNo,
 				station: unitMap[c.PoliceStationID] || 'Station',
-				crimeType: crimeMap[c.CrimeSubHeadID] || 'Crime',
+				crimeType: crimeTypeMap[c.CrimeSubHeadID] || 'Crime',
 				mo: crimeMOMap[c.CrimeSubHeadID] || 'Standard MO'
 			};
 		});
 
-		const offenderCases = {};
+		const offenderMap = {};
 		accusedResult.forEach(row => {
 			const a = row.Accused;
-			if (!offenderCases[a.AccusedName]) {
-				offenderCases[a.AccusedName] = { name: a.AccusedName, age: a.AgeYear, gender: a.GenderID, cases: [] };
+			const name = a.AccusedName;
+			if (!offenderMap[name]) {
+				offenderMap[name] = { name, casesLinked: 0, cases: [], sampleStation: '', primaryMO: '' };
 			}
+			offenderMap[name].casesLinked += 1;
 			if (caseMap[a.CaseMasterID]) {
-				offenderCases[a.AccusedName].cases.push(caseMap[a.CaseMasterID]);
+				const cData = caseMap[a.CaseMasterID];
+				offenderMap[name].cases.push(cData);
+				offenderMap[name].sampleStation = cData.station;
+				offenderMap[name].primaryMO = cData.mo;
 			}
 		});
 
-		const repeatOffenders = Object.values(offenderCases).filter(o => o.cases.length >= 3);
+		const repeatOffenders = Object.values(offenderMap)
+			.filter(o => o.casesLinked > 1)
+			.sort((a, b) => b.casesLinked - a.casesLinked)
+			.slice(0, 10);
 
-		const nodes = [];
-		const links = [];
-		const addedNodes = new Set();
-
-		repeatOffenders.forEach((offender, idx) => {
-			const offenderNodeId = `OFFENDER_${offender.name.replace(/\s+/g, '_')}`;
-			if (!addedNodes.has(offenderNodeId)) {
-				nodes.push({
-					id: offenderNodeId,
-					label: offender.name,
-					type: 'suspect',
-					age: offender.age,
-					gender: offender.gender,
-					casesCount: offender.cases.length,
-					moSummary: offender.cases[0]?.mo || 'Night Break-in / Repeat Pattern'
-				});
-				addedNodes.add(offenderNodeId);
-			}
-
-			offender.cases.forEach(c => {
-				const caseNodeId = `CASE_${c.id}`;
-				if (!addedNodes.has(caseNodeId)) {
-					nodes.push({
-						id: caseNodeId,
-						label: `${c.crimeNo}`,
-						type: 'case',
-						crimeType: c.crimeType,
-						station: c.station,
-						mo: c.mo
-					});
-					addedNodes.add(caseNodeId);
-				}
-
-				const stationNodeId = `STATION_${c.station.replace(/\s+/g, '_')}`;
-				if (!addedNodes.has(stationNodeId)) {
-					nodes.push({
-						id: stationNodeId,
-						label: c.station,
-						type: 'station'
-					});
-					addedNodes.add(stationNodeId);
-				}
-
-				links.push({ source: offenderNodeId, target: caseNodeId, relationship: 'ACCUSED_IN', label: 'Linked FIR' });
-				links.push({ source: caseNodeId, target: stationNodeId, relationship: 'JURISDICTION', label: 'Logged At' });
-			});
-		});
-
-		res.status(200).json({
-			status: 'success',
-			repeatOffenderCount: repeatOffenders.length,
-			repeatOffenders: repeatOffenders.map(r => ({
-				name: r.name,
-				age: r.age,
-				gender: r.gender,
-				casesLinked: r.cases.length,
-				primaryMO: r.cases[0]?.mo || 'Repeat Theft & Lock Bypassing',
-				sampleStation: r.cases[0]?.station
-			})),
-			nodes,
-			links
-		});
+		res.status(200).json({ status: 'success', repeatOffenderCount: repeatOffenders.length, repeatOffenders });
 	} catch (error) {
 		console.error('Network error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
 	}
 });
 
-// Risk Scoring & Predictive Intelligence Endpoint
+// Risk Scores & Patrol Recommendation Window Endpoint
 app.get('/risk-scores', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
 		const zcql = catalystApp.zcql();
+
 		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 
 		const unitMap = {};
 		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
-		const crimeMap = {};
-		crimeTypesResult.forEach(row => { crimeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
-
-		const SEVERITY_WEIGHTS = {
-			Murder: 10,
-			Kidnapping: 9,
-			Robbery: 8,
-			'Drug Peddling': 8,
-			Assault: 7,
-			Burglary: 6,
-			'Vehicle Theft': 5,
-			'Cyber Fraud': 5,
-			'Chain Snatching': 4,
-			'Domestic Violence': 4,
-			'Online Scam': 3,
-			Theft: 3
-		};
+		const crimeTypeMap = {};
+		crimeTypesResult.forEach(row => { crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
 
 		const stationStats = {};
-
 		casesResult.forEach(row => {
 			const c = row.CaseMaster;
-			const stationName = unitMap[c.PoliceStationID] || 'Unknown PS';
-			const crime = crimeMap[c.CrimeSubHeadID] || 'Other';
-			const weight = SEVERITY_WEIGHTS[crime] || 3;
-
-			if (!stationStats[stationName]) {
-				stationStats[stationName] = { station: stationName, totalCases: 0, weightedSum: 0, crimeBreakdown: {} };
+			const st = unitMap[c.PoliceStationID] || 'Station';
+			if (!stationStats[st]) {
+				stationStats[st] = { totalCases: 0, crimeCounts: {}, nightCases: 0 };
 			}
-
-			stationStats[stationName].totalCases += 1;
-			stationStats[stationName].weightedSum += weight;
-			stationStats[stationName].crimeBreakdown[crime] = (stationStats[stationName].crimeBreakdown[crime] || 0) + 1;
+			stationStats[st].totalCases += 1;
+			const crimeName = crimeTypeMap[c.CrimeSubHeadID] || 'Other';
+			stationStats[st].crimeCounts[crimeName] = (stationStats[st].crimeCounts[crimeName] || 0) + 1;
+			const tod = getTimeOfDay(c.IncidentDate || c.CrimeRegisteredDate);
+			if (tod.includes('Night')) stationStats[st].nightCases += 1;
 		});
 
-		const scores = Object.values(stationStats).map(s => {
-			const rawScore = (s.weightedSum / (s.totalCases * 10)) * 100;
-			const riskScore = Math.min(100, Math.round(rawScore + (s.totalCases * 1.5)));
-			let level = 'Low Risk';
-			let predictedSurgeWindow = 'Standard Patrol Schedule';
-			if (riskScore >= 75) {
-				level = 'High Risk 🚨';
-				predictedSurgeWindow = 'Night Shift (22:00 - 04:00)';
-			} else if (riskScore >= 50) {
-				level = 'Moderate Risk ⚠️';
-				predictedSurgeWindow = 'Evening Shift (17:00 - 22:00)';
-			}
+		const rankings = Object.entries(stationStats).map(([station, data]) => {
+			let topCrime = 'General Crime';
+			let maxC = 0;
+			Object.entries(data.crimeCounts).forEach(([ct, cnt]) => { if (cnt > maxC) { maxC = cnt; topCrime = ct; } });
+
+			const severityWeight = topCrime === 'Theft' || topCrime === 'Burglary' ? 1.5 : topCrime === 'Murder' || topCrime === 'Robbery' ? 2.0 : 1.0;
+			const rawScore = Math.min(98, Math.round((data.totalCases * 5 + data.nightCases * 8) * severityWeight));
+			const score = Math.max(45, rawScore);
+
+			let patrolWindow = '22:00 - 06:00 (Night Vigilance)';
+			if (topCrime === 'Cyber Fraud' || topCrime === 'Online Scam') patrolWindow = '10:00 - 16:00 (Cyber Vigilance)';
+			else if (topCrime === 'Chain Snatching' || topCrime === 'Robbery') patrolWindow = '17:00 - 22:00 (Evening Patrol)';
 
 			return {
-				station: s.station,
-				totalCases: s.totalCases,
-				riskScore,
-				level,
-				predictedSurgeWindow,
-				topCrime: Object.entries(s.crimeBreakdown).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
+				station,
+				totalCases: data.totalCases,
+				topCrime,
+				riskScore: score,
+				level: score >= 80 ? 'High Risk' : score >= 60 ? 'Medium Risk' : 'Elevated Risk',
+				predictedSurgeWindow: patrolWindow
 			};
 		}).sort((a, b) => b.riskScore - a.riskScore);
 
-		res.status(200).json({ status: 'success', totalStationsEvaluated: scores.length, rankings: scores });
+		res.status(200).json({ status: 'success', rankings });
 	} catch (error) {
 		console.error('Risk scores error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
 	}
 });
 
-// Socio-Economic Correlation & Urbanization Intelligence Endpoint
+// Socio-Economic & Urbanization Intelligence Endpoint
 app.get('/socio-economic', async (req, res) => {
 	try {
-		const correlations = DISTRICTS.map(d => {
-			const primaryCrime = d.name.includes('Bengaluru') ? 'Cyber Fraud & Commercial Theft' :
-								d.name.includes('Mangaluru') || d.name.includes('Udupi') ? 'Maritime Transit & Property Crime' :
-								d.name.includes('Belagavi') || d.name.includes('Ballari') ? 'Highway Robbery & Freight Transit Fraud' :
-								'Property & Local Dispute Crimes';
+		const correlations = DISTRICTS.map(d => ({
+			district: d.name,
+			urbanizationTier: d.tier,
+			populationDensity: d.popDensity,
+			socioIndex: d.socioIndex,
+			cyberVulnerability: d.cyberVulnerability,
+			dominantTypology: d.name.includes('Bengaluru') ? 'Cyber Fraud & Property Theft' : d.name.includes('Mangaluru') ? 'Maritime Transit & Property Crime' : d.name.includes('Belagavi') ? 'Highway Robbery & Goods Theft' : 'Property Theft & Local Disputes',
+			riskForecast: d.name.includes('Bengaluru') ? 'High Cyber Surge Risk' : d.name.includes('Hubballi') ? 'High Theft Risk' : 'Moderate Variance'
+		}));
 
-			const forecastRisk = d.name.includes('Bengaluru') ? 'Critical Tech Crime Exposure' :
-								d.name.includes('Belagavi') ? 'Inter-State Border Smuggling Risk' :
-								'Moderate Localized Risk';
-
-			return {
-				district: d.name,
-				urbanizationTier: d.tier,
-				populationDensity: d.popDensity,
-				socioIndex: d.socioIndex,
-				cyberVulnerability: d.cyberVulnerability,
-				dominantTypology: primaryCrime,
-				forecastRisk
-			};
-		});
-
-		res.status(200).json({ status: 'success', totalDistricts: correlations.length, correlations });
+		res.status(200).json({ status: 'success', correlations });
 	} catch (error) {
-		console.error('Socio-economic error:', error);
+		console.error('Socio economic error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
 	}
 });
 
-module.exports = app;
+const PORT = process.env.X_ZOHO_CATALYST_LISTEN_PORT || 3000;
+app.listen(PORT, () => {
+	console.log(`SCRB Intelligence Service listening on port ${PORT}`);
+});

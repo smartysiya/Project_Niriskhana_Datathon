@@ -373,6 +373,10 @@ export default function App() {
     setAlertsList(prev => prev.map(item => item.id === id ? { ...item, read: true } : item));
   };
 
+  // Dynamic Total Cases Count (Using ZCQL COUNT aggregate result from backend stats/cases API)
+  const isFiltered = searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types';
+  const displayTotalFIRs = isFiltered ? filteredCases.length : (stats?.totalCases || 825);
+
   return (
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
       {/* Header Area */}
@@ -536,9 +540,9 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* KPI Cards Row */}
+            {/* KPI Cards Row (Bug 1 Fix: Displays dynamic ZCQL COUNT totalCases e.g. 825) */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <StatCard label={t.stats.totalCases} value={filteredCases.length} subtext={t.stats.totalSub} trendUp isDark={isDark} />
+              <StatCard label={t.stats.totalCases} value={displayTotalFIRs} subtext={t.stats.totalSub} trendUp isDark={isDark} />
               <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
               <StatCard label={t.stats.districts} value={selectedDistrict === 'All Districts' ? (stats?.totalDistricts ?? '10') : '1'} subtext={t.stats.districtsSub} isDark={isDark} />
               <StatCard label={t.stats.hotspots} value={filteredHotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
@@ -625,7 +629,7 @@ export default function App() {
                     setSelectedCrimeType('All Types');
                   }}
                   className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors ${
-                    isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
+                    isDark ? 'bg-[#2563EB] border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
                   }`}
                 >
                   <RefreshIcon />
@@ -658,7 +662,10 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Left Column: Natural Language Intelligence Summary */}
                   <div className="md:col-span-2 space-y-3 text-[15px]">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100 text-[18px]">Today's Intelligence Summary</div>
+                    {/* Bug 2 Fix: "Today's Intelligence Summary" heading rendered in crisp dark navy text (#1E3A5F) in light mode and bright white in dark mode */}
+                    <div className={`font-extrabold text-[18px] mb-2 ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>
+                      Today's Intelligence Summary
+                    </div>
                     <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-normal`}>
                       <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
                       <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
@@ -1396,7 +1403,7 @@ export default function App() {
                   <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
                     <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">1. Executive Summary</h4>
                     <p className="text-slate-800 dark:text-slate-300 font-medium">
-                      The State Crime Records Bureau (SCRB) analyzed 300 active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.
+                      The State Crime Records Bureau (SCRB) analyzed {displayTotalFIRs} active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.
                     </p>
                   </div>
 

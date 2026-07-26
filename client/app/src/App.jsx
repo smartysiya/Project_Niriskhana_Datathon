@@ -798,8 +798,8 @@ export default function App() {
 
   return (
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
-      {/* Header Area */}
-      <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+      {/* Header Area (Sticky navigation on scroll) */}
+      <header className={`sticky top-0 z-50 backdrop-blur-md border-b shadow-sm ${isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-200'}`}>
         {/* Clean Government Header Top Line with Live Operations Header */}
         <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-[13px] flex flex-wrap justify-between items-center font-medium gap-2">
           <div className="flex items-center gap-2">

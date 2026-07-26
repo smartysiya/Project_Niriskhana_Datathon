@@ -255,11 +255,11 @@ function RefreshIcon() {
 
 function StatCard({ label, value, subtext, trendUp, isDark }) {
   return (
-    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'} rounded-lg p-5 shadow-sm hover:shadow transition-shadow border`}>
-      <div className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</div>
-      <div className={`text-2xl font-bold mt-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
+    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm hover:shadow transition-shadow border`}>
+      <div className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{label}</div>
+      <div className={`text-2xl font-extrabold mt-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
       {subtext && (
-        <div className={`text-xs font-medium mt-1 flex items-center gap-1 ${trendUp ? 'text-red-500' : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
+        <div className={`text-xs font-semibold mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : (isDark ? 'text-slate-400' : 'text-slate-600')}`}>
           <span>{subtext}</span>
         </div>
       )}
@@ -344,7 +344,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-800'}`}>
+    <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
       {/* Header Area */}
       <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
         {/* Clean Government Header Top Line */}
@@ -382,10 +382,10 @@ export default function App() {
           <div className="flex items-center gap-5">
             <LogoIcon />
             <div>
-              <h1 className={`text-2xl md:text-3xl font-bold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+              <h1 className={`text-2xl md:text-3xl font-extrabold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                 {t.title}
               </h1>
-              <p className={`text-xs font-medium mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              <p className={`text-xs font-semibold mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                 {t.subtitle}
               </p>
             </div>
@@ -412,20 +412,20 @@ export default function App() {
             {/* Notification Alerts Dropdown */}
             {showAlerts && (
               <div className={`absolute right-0 mt-2 w-72 rounded-lg border shadow-lg z-50 p-3 text-xs space-y-2 ${
-                isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-800'
+                isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
               }`}>
-                <div className="font-bold border-b pb-1.5 flex justify-between items-center text-blue-600">
+                <div className="font-bold border-b pb-1.5 flex justify-between items-center text-blue-700 dark:text-blue-400">
                   <span>🔔 SCRB Intelligence Alerts</span>
                   <span className="text-[10px] text-slate-400">Live Stream</span>
                 </div>
                 <div className="space-y-1.5">
-                  <div className="p-2 rounded bg-red-50 text-red-800 border border-red-200 font-medium">
+                  <div className="p-2 rounded bg-red-50 text-red-900 border border-red-200 font-semibold">
                     🚨 <strong>New Hotspot Detected:</strong> Hubballi-Dharwad PS-1
                   </div>
-                  <div className="p-2 rounded bg-amber-50 text-amber-800 border border-amber-200 font-medium">
+                  <div className="p-2 rounded bg-amber-50 text-amber-900 border border-amber-200 font-semibold">
                     ⚠️ <strong>Risk Prediction Updated:</strong> Tumakuru PS-2 Night Shift Threat Level 88
                   </div>
-                  <div className="p-2 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium">
+                  <div className="p-2 rounded bg-blue-50 text-blue-900 border border-blue-200 font-semibold">
                     🔍 <strong>Repeat Offender Linked:</strong> Habitual Offender linked to 5 FIRs
                   </div>
                 </div>
@@ -435,7 +435,7 @@ export default function App() {
         </div>
 
         {/* Clean Enterprise Horizontal Navigation Bar */}
-        <nav className={`px-6 flex gap-6 border-t text-sm font-medium overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+        <nav className={`px-6 flex gap-6 border-t text-sm font-semibold overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           {[
             { id: 'map', label: t.tabs.map },
             { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})` },
@@ -449,7 +449,7 @@ export default function App() {
               onClick={() => setActiveTab(tab.id)}
               className={`py-3 transition-colors border-b-2 whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-[#2563EB] text-[#2563EB] font-semibold'
+                  ? 'border-[#2563EB] text-[#2563EB] font-bold'
                   : (isDark ? 'border-transparent text-slate-400 hover:text-slate-200' : 'border-transparent text-slate-600 hover:text-slate-900')
               }`}
             >
@@ -462,7 +462,7 @@ export default function App() {
       {/* Main Body Content */}
       <main className="p-6 max-w-7xl mx-auto space-y-6">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-xs font-medium flex items-center gap-2">
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-xs font-semibold flex items-center gap-2">
             <span>⚠️</span> {error}
           </div>
         )}
@@ -470,7 +470,7 @@ export default function App() {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-80 gap-3">
             <div className="w-8 h-8 border-3 border-[#2563EB] border-t-transparent rounded-full animate-spin"></div>
-            <div className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Loading SCRB Crime Intelligence Data...</div>
+            <div className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Loading SCRB Crime Intelligence Data...</div>
           </div>
         ) : (
           <>
@@ -486,27 +486,27 @@ export default function App() {
             {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* LARGE AI INTELLIGENCE BRIEF CARD (2/3 width) */}
-              <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'} rounded-lg p-5 shadow-sm border space-y-4`}>
-                <div className="flex justify-between items-center border-b pb-3">
+              <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-4`}>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🧠</span>
-                    <h2 className="font-bold text-base text-[#1E3A5F] dark:text-blue-400 uppercase tracking-wide">
+                    <h2 className={`font-bold text-base uppercase tracking-wide ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                       AI Intelligence Brief
                     </h2>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase">
                       Priority: HIGH
                     </span>
-                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                    <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[10px] px-2.5 py-0.5 rounded">
                       AI Confidence: 94%
                     </span>
                   </div>
                 </div>
 
-                <div className="text-xs space-y-2 text-slate-700 dark:text-slate-300">
-                  <div className="font-bold text-slate-900 dark:text-slate-100 text-sm">Today's Intelligence Summary</div>
-                  <ul className="list-disc pl-5 space-y-1.5 leading-relaxed">
+                <div className="text-xs space-y-2">
+                  <div className={`font-extrabold text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Today's Intelligence Summary</div>
+                  <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-medium`}>
                     <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
                     <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
                     <li><strong>Three repeat offenders</strong> linked across multiple FIRs & station jurisdictions.</li>
@@ -514,115 +514,136 @@ export default function App() {
                   </ul>
                 </div>
 
-                <div className="p-3.5 bg-blue-50/80 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-md text-xs">
-                  <span className="font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide block mb-1">Recommended Action</span>
-                  <p className="text-slate-800 dark:text-slate-200 font-medium">
+                {/* HIGH-CONTRAST RECOMMENDED ACTION BOX */}
+                <div className={`p-4 rounded-md border text-xs ${
+                  isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
+                }`}>
+                  <span className={`font-bold uppercase tracking-wide block mb-1 text-xs ${
+                    isDark ? 'text-blue-400' : 'text-blue-900'
+                  }`}>
+                    Recommended Action
+                  </span>
+                  <p className={`font-semibold text-xs leading-normal ${
+                    isDark ? 'text-slate-100' : 'text-blue-950'
+                  }`}>
                     Increase patrol deployment in Whitefield and KR Puram between 7 PM and 11 PM.
                   </p>
                 </div>
               </div>
 
               {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'} rounded-lg p-5 shadow-sm border space-y-3`}>
-                <div className="flex justify-between items-center border-b pb-2">
-                  <h3 className="font-bold text-xs text-[#1E3A5F] dark:text-blue-400 uppercase tracking-wide flex items-center gap-1.5">
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-3`}>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <h3 className={`font-bold text-xs uppercase tracking-wide flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                     <span>📡 Recent Intelligence Feed</span>
                   </h3>
-                  <span className="text-[10px] text-slate-400 font-mono">Live</span>
+                  <span className="text-[10px] text-slate-500 font-mono font-bold">Live</span>
                 </div>
 
                 <div className="space-y-3 text-xs">
-                  <div className="p-2.5 rounded border bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between text-slate-400 font-mono text-[10px]">
-                      <span>10:45 AM</span>
-                      <span className="text-red-500 font-bold">New Hotspot</span>
+                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                    <div className="flex justify-between font-mono text-[10px] font-bold">
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>10:45 AM</span>
+                      <span className="text-red-700 dark:text-red-400">New Hotspot</span>
                     </div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">Hotspot detected in Hubballi PS-1</div>
+                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Hotspot detected in Hubballi PS-1</div>
                   </div>
 
-                  <div className="p-2.5 rounded border bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between text-slate-400 font-mono text-[10px]">
-                      <span>10:18 AM</span>
-                      <span className="text-purple-500 font-bold">Offender Linked</span>
+                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                    <div className="flex justify-between font-mono text-[10px] font-bold">
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>10:18 AM</span>
+                      <span className="text-purple-700 dark:text-purple-400">Offender Linked</span>
                     </div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">Repeat offender linked to 5 FIRs</div>
+                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Repeat offender linked to 5 FIRs</div>
                   </div>
 
-                  <div className="p-2.5 rounded border bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between text-slate-400 font-mono text-[10px]">
-                      <span>09:42 AM</span>
-                      <span className="text-blue-500 font-bold">Risk Updated</span>
+                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                    <div className="flex justify-between font-mono text-[10px] font-bold">
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>09:42 AM</span>
+                      <span className="text-blue-700 dark:text-blue-400">Risk Updated</span>
                     </div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">Risk score updated for Bengaluru East</div>
+                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Risk score updated for Bengaluru East</div>
                   </div>
 
-                  <div className="p-2.5 rounded border bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between text-slate-400 font-mono text-[10px]">
-                      <span>09:05 AM</span>
-                      <span className="text-amber-500 font-bold">Anomaly Flagged</span>
+                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                    <div className="flex justify-between font-mono text-[10px] font-bold">
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>09:05 AM</span>
+                      <span className="text-amber-700 dark:text-amber-400">Anomaly Flagged</span>
                     </div>
-                    <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">New anomaly: Vehicle theft surge wave</div>
+                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>New anomaly: Vehicle theft surge wave</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* AI RECOMMENDATIONS CARD */}
-            <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'} rounded-lg p-5 shadow-sm border space-y-4`}>
-              <div className="flex justify-between items-center border-b pb-2">
-                <h3 className="font-bold text-sm text-[#1E3A5F] dark:text-blue-400 uppercase tracking-wide flex items-center gap-2">
+            {/* HIGH-CONTRAST AI RECOMMENDATIONS CARD */}
+            <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-4`}>
+              <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                   <span>🚔 AI Police Recommendations</span>
                 </h3>
-                <span className="text-xs text-slate-400 font-mono">Actionable Patrol Dispatches</span>
+                <span className="text-xs text-slate-500 font-mono font-bold">Actionable Patrol Dispatches</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                <div className="p-3 rounded-lg border bg-red-50/50 dark:bg-red-950/30 border-red-200 dark:border-red-800 space-y-1.5">
+                {/* HIGH PRIORITY CARD 1 */}
+                <div className={`p-3.5 rounded-lg border space-y-2 ${
+                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                }`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-red-800 dark:text-red-300">Deploy Additional Patrol</span>
-                    <span className="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded">Priority High</span>
+                    <span className={`font-extrabold text-sm ${isDark ? 'text-red-300' : 'text-red-950'}`}>Deploy Additional Patrol</span>
+                    <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">Whitefield Command Limit</div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Whitefield Command Limit</div>
+                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                     <strong>Reason:</strong> 18% crime increase in past 30 days during 20:00 - 02:00 window.
                   </div>
-                  <div className="text-[10px] text-emerald-600 font-bold">Confidence: 95%</div>
+                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 95%</div>
                 </div>
 
-                <div className="p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 space-y-1.5">
+                {/* MEDIUM PRIORITY CARD 2 */}
+                <div className={`p-3.5 rounded-lg border space-y-2 ${
+                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                }`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-amber-800 dark:text-amber-300">Monitor Gang Alpha</span>
-                    <span className="bg-amber-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded">Priority Medium</span>
+                    <span className={`font-extrabold text-sm ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Monitor Gang Alpha</span>
+                    <span className="bg-amber-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Medium</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">Mysuru PS-2 Jurisdiction</div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Mysuru PS-2 Jurisdiction</div>
+                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                     <strong>Reason:</strong> Repeat offender activity linked across station borders.
                   </div>
-                  <div className="text-[10px] text-emerald-600 font-bold">Confidence: 89%</div>
+                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 89%</div>
                 </div>
 
-                <div className="p-3 rounded-lg border bg-red-50/50 dark:bg-red-950/30 border-red-200 dark:border-red-800 space-y-1.5">
+                {/* HIGH PRIORITY CARD 3 */}
+                <div className={`p-3.5 rounded-lg border space-y-2 ${
+                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                }`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-red-800 dark:text-red-300">Investigate Repeat Offender</span>
-                    <span className="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded">Priority High</span>
+                    <span className={`font-extrabold text-sm ${isDark ? 'text-red-300' : 'text-red-950'}`}>Investigate Repeat Offender</span>
+                    <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">Hubballi PS-2 Hub</div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Hubballi PS-2 Hub</div>
+                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                     <strong>Reason:</strong> 5 linked FIRs detected with identical MO.
                   </div>
-                  <div className="text-[10px] text-emerald-600 font-bold">Confidence: 92%</div>
+                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 92%</div>
                 </div>
 
-                <div className="p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 space-y-1.5">
+                {/* MEDIUM PRIORITY CARD 4 */}
+                <div className={`p-3.5 rounded-lg border space-y-2 ${
+                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                }`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-amber-800 dark:text-amber-300">Increase Surveillance</span>
-                    <span className="bg-amber-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded">Priority Medium</span>
+                    <span className={`font-extrabold text-sm ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Increase Surveillance</span>
+                    <span className="bg-amber-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Medium</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">Commercial Zone Corridors</div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Commercial Zone Corridors</div>
+                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                     <strong>Reason:</strong> Peak night-time burglary & vehicle theft risk.
                   </div>
-                  <div className="text-[10px] text-emerald-600 font-bold">Confidence: 87%</div>
+                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 87%</div>
                 </div>
               </div>
             </div>
@@ -641,18 +662,18 @@ export default function App() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-800 focus:ring-[#2563EB]'
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-[#2563EB]'
                     }`}
                   />
                 </div>
 
                 {/* District Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.districtLabel}</span>
+                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.districtLabel}</span>
                   <select
                     value={selectedDistrict}
                     onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none ${
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none ${
                       isDark ? 'bg-slate-800 border-slate-700 text-blue-400' : 'bg-white border-slate-300 text-[#1E3A5F]'
                     }`}
                   >
@@ -664,12 +685,12 @@ export default function App() {
 
                 {/* Time Window Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.timeLabel}</span>
+                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.timeLabel}</span>
                   <select
                     value={selectedTimeOfDay}
                     onChange={(e) => setSelectedTimeOfDay(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs focus:outline-none ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-800'
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
                     <option value="All Times">{t.filters.allTimes}</option>
@@ -682,12 +703,12 @@ export default function App() {
 
                 {/* Crime Type Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.crimeLabel}</span>
+                  <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.filters.crimeLabel}</span>
                   <select
                     value={selectedCrimeType}
                     onChange={(e) => setSelectedCrimeType(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs focus:outline-none ${
-                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-800'
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
                     <option value="All Types">{t.filters.allCrimes}</option>
@@ -706,8 +727,8 @@ export default function App() {
                     setSelectedTimeOfDay('All Times');
                     setSelectedCrimeType('All Types');
                   }}
-                  className={`border font-medium px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors ${
-                    isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                  className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors ${
+                    isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
                   }`}
                 >
                   <RefreshIcon />
@@ -722,14 +743,14 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
                     <h2 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px]">
                     {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => (
-                      <span key={type} className={`flex items-center gap-1.5 px-2 py-1 rounded border ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                      <span key={type} className={`flex items-center gap-1.5 px-2 py-1 rounded border ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-800'}`}>
                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                        <span className="font-medium">{type}</span>
+                        <span className="font-bold">{type}</span>
                       </span>
                     ))}
                   </div>
@@ -739,7 +760,7 @@ export default function App() {
                 <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
                   isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2">
+                  <div className="font-extrabold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2">
                     <span>📅 Timeline Analysis Window:</span>
                     <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
                   </div>
@@ -749,10 +770,10 @@ export default function App() {
                       <button
                         key={range}
                         onClick={() => setTimelineRange(range)}
-                        className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
+                        className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
                           timelineRange === range
                             ? 'bg-[#2563EB] text-white'
-                            : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border text-slate-700 hover:bg-slate-100')
+                            : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
                         }`}
                       >
                         {range}
@@ -785,8 +806,8 @@ export default function App() {
                               <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
                               <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
                               <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
-                              <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-medium">{c.status}</span></div>
-                              <div className="text-[11px] text-slate-600 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200">
+                              <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
+                              <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
                                 <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
                               </div>
                             </div>
@@ -822,7 +843,7 @@ export default function App() {
                             <strong>{t.hotspotPanel.dominant}</strong> {h.dominantCrime}<br />
                             <strong>{t.hotspotPanel.totalFirs}</strong> {h.totalIncidents} FIRs<br />
                             <strong>{t.hotspotPanel.station}</strong> {h.primaryStation}<br />
-                            <span className="text-xs text-red-600 font-semibold block mt-1">{h.surgeMetric}</span>
+                            <span className="text-xs text-red-600 font-bold block mt-1">{h.surgeMetric}</span>
                           </div>
                         </Popup>
                       </CircleMarker>
@@ -835,17 +856,17 @@ export default function App() {
                   <div className="space-y-3">
                     {filteredHotspots.map(h => (
                       <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
-                        h.isAnomaly ? (isDark ? 'bg-red-950/40 border-red-800/60' : 'bg-red-50/50 border-red-200') : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200')
+                        h.isAnomaly ? (isDark ? 'bg-red-950/40 border-red-800/60' : 'bg-red-50 border-red-200') : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200')
                       }`}>
                         <div className="flex justify-between items-start font-bold">
                           <span className={isDark ? 'text-slate-100' : 'text-slate-900'}>{h.id}</span>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
-                            h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-800'
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
+                            h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-900'
                           }`}>
                             {h.isAnomaly ? t.hotspotPanel.surge : t.hotspotPanel.cluster}
                           </span>
                         </div>
-                        <div className={`mt-2 space-y-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <div className={`mt-2 space-y-1 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                           <div>{t.hotspotPanel.station} <strong>{h.primaryStation}</strong></div>
                           <div>{t.hotspotPanel.totalFirs} <strong>{h.totalIncidents}</strong></div>
                           <div>{t.hotspotPanel.dominant} <strong>{h.dominantCrime}</strong></div>
@@ -856,20 +877,20 @@ export default function App() {
                         <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
                           <button
                             onClick={() => toggleRationale(h.id)}
-                            className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1 hover:underline"
+                            className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline"
                           >
                             <span>Why?</span>
                             <span>{showRationale[h.id] ? '▲' : '▼'}</span>
                           </button>
 
                           {showRationale[h.id] && (
-                            <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border text-[11px] space-y-1 text-slate-700 dark:text-slate-300">
-                              <div className="font-bold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
-                              <div className="text-emerald-600 dark:text-emerald-400">✔ Crime increased 18% over past 30 days</div>
-                              <div className="text-emerald-600 dark:text-emerald-400">✔ Repeat offenders detected in jurisdiction</div>
-                              <div className="text-emerald-600 dark:text-emerald-400">✔ Historical seasonal trend matched</div>
-                              <div className="text-emerald-600 dark:text-emerald-400">✔ Population density correlation</div>
-                              <div className="text-emerald-600 dark:text-emerald-400">✔ Peak crime hours (22:00 - 04:00)</div>
+                            <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700 text-[11px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
+                              <div className="font-extrabold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
+                              <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18% over past 30 days</div>
+                              <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected in jurisdiction</div>
+                              <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend matched</div>
+                              <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
+                              <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours (22:00 - 04:00)</div>
                             </div>
                           )}
                         </div>
@@ -885,39 +906,39 @@ export default function App() {
               <div className="space-y-6">
                 {/* Modus Operandi (MO) Intelligence Card */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border space-y-3`}>
-                  <div className="flex justify-between items-center border-b pb-2">
-                    <h3 className="font-bold text-sm text-[#1E3A5F] dark:text-blue-400 uppercase tracking-wide flex items-center gap-2">
+                  <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                    <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                       <span>🕵️ Modus Operandi (MO) Intelligence</span>
                     </h3>
-                    <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                    <span className="bg-purple-100 text-purple-900 text-[10px] font-extrabold px-2 py-0.5 rounded">
                       Criminological Pattern Analysis
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-xs">
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Most Common MO</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">Night Burglary</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Most Common MO</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">Night Burglary</div>
                     </div>
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Entry Method</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">Rear Window Break</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Entry Method</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">Rear Window Break</div>
                     </div>
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Preferred Time</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">02:00 AM – 04:00 AM</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Preferred Time</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">02:00 AM – 04:00 AM</div>
                     </div>
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Target Focus</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">Independent Houses</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Target Focus</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">Independent Houses</div>
                     </div>
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Primary Tool</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">Iron Rod / Cutter</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Primary Tool</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">Iron Rod / Cutter</div>
                     </div>
                     <div className="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                      <div className="text-[10px] text-slate-400 font-semibold uppercase">Affected Districts</div>
-                      <div className="font-bold text-slate-800 dark:text-slate-100 mt-1">Mysuru, Tumakuru</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">Affected Districts</div>
+                      <div className="font-extrabold text-slate-900 dark:text-slate-100 mt-1">Mysuru, Tumakuru</div>
                     </div>
                   </div>
                 </div>
@@ -927,9 +948,9 @@ export default function App() {
                   <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div>
                       <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.networkPanel.title}</h3>
-                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.networkPanel.sub}</p>
+                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.networkPanel.sub}</p>
                     </div>
-                    <div className="flex items-center gap-3 text-xs">
+                    <div className="flex items-center gap-3 text-xs font-semibold">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#5B4BB7]"></span> {t.networkPanel.legendSuspect}</span>
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> {t.networkPanel.legendCase}</span>
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]"></span> {t.networkPanel.legendStation}</span>
@@ -981,13 +1002,13 @@ export default function App() {
                     >
                       <div className={`flex justify-between items-center font-bold text-sm ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                         <span>{offender.name}</span>
-                        <span className="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">{offender.casesLinked} FIRs</span>
+                        <span className="bg-purple-100 text-purple-900 text-[10px] px-2 py-0.5 rounded font-extrabold">{offender.casesLinked} FIRs</span>
                       </div>
-                      <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.networkPanel.jurisdiction} <strong>{offender.sampleStation}</strong></div>
-                      <div className={`${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'} p-2 rounded border`}>
+                      <div className={isDark ? 'text-slate-300' : 'text-slate-800'}>{t.networkPanel.jurisdiction} <strong>{offender.sampleStation}</strong></div>
+                      <div className={`${isDark ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-300 text-slate-900'} p-2 rounded border font-semibold`}>
                         <strong>{t.networkPanel.mo}</strong> {offender.primaryMO}
                       </div>
-                      <div className="text-blue-600 font-semibold text-[11px] pt-1">🔍 View Full Investigator Profile Drawer →</div>
+                      <div className="text-blue-700 font-extrabold text-[11px] pt-1">🔍 View Full Investigator Profile Drawer →</div>
                     </div>
                   ))}
                 </div>
@@ -998,7 +1019,7 @@ export default function App() {
             {selectedOffenderDrawer && (
               <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
                 <div className={`w-full max-w-md h-full p-6 overflow-y-auto shadow-2xl space-y-4 border-l ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'
+                  isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
                 }`}>
                   <div className="flex justify-between items-center border-b pb-3">
                     <h3 className="font-bold text-base text-[#1E3A5F] dark:text-blue-400">👤 Offender Profile</h3>
@@ -1011,17 +1032,17 @@ export default function App() {
                   </div>
 
                   <div className="flex items-center gap-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <div className="w-14 h-14 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 text-lg">
+                    <div className="w-14 h-14 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-700 dark:text-slate-200 text-lg">
                       OFF
                     </div>
                     <div>
                       <div className="font-bold text-sm">{selectedOffenderDrawer.name}</div>
-                      <div className="text-xs text-slate-500">Alias: Tiger Ramesh • Age: 34</div>
-                      <div className="text-xs font-mono text-purple-600 dark:text-purple-400 font-bold mt-0.5">Linked FIRs: {selectedOffenderDrawer.casesLinked} Cases</div>
+                      <div className="text-xs text-slate-500 font-medium">Alias: Tiger Ramesh • Age: 34</div>
+                      <div className="text-xs font-mono text-purple-700 dark:text-purple-400 font-extrabold mt-0.5">Linked FIRs: {selectedOffenderDrawer.casesLinked} Cases</div>
                     </div>
                   </div>
 
-                  <div className="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+                  <div className="text-xs space-y-2 text-slate-800 dark:text-slate-200 font-medium">
                     <div><strong>Station Jurisdiction:</strong> {selectedOffenderDrawer.sampleStation}</div>
                     <div><strong>Crime Categories:</strong> Property Burglary, Night Theft</div>
                     <div><strong>Known Associates:</strong> Suresh B. (Suspect #12), V. Naidu</div>
@@ -1030,9 +1051,9 @@ export default function App() {
                   </div>
 
                   <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-md text-xs space-y-1">
-                    <div className="font-bold text-red-800 dark:text-red-300">AI Threat Assessment & Risk Score</div>
-                    <div className="text-lg font-bold text-red-600">Risk Score: 88 / 100</div>
-                    <p className="text-[11px] text-slate-700 dark:text-slate-300">
+                    <div className="font-extrabold text-red-900 dark:text-red-300">AI Threat Assessment & Risk Score</div>
+                    <div className="text-lg font-extrabold text-red-600">Risk Score: 88 / 100</div>
+                    <p className="text-[11px] text-slate-800 dark:text-slate-200 font-medium">
                       Habitual repeat offender operating across inter-district borders. High recidivism risk during midnight hours.
                     </p>
                   </div>
@@ -1046,14 +1067,14 @@ export default function App() {
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title} ({selectedDistrict})</h3>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.riskPanel.sub}</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.riskPanel.sub}</p>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className={`border-b font-semibold uppercase ${isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-500'}`}>
+                      <tr className={`border-b font-bold uppercase ${isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'}`}>
                         <th className="py-3 px-3">{t.riskPanel.colStation}</th>
                         <th className="py-3 px-3">{t.riskPanel.colFirs}</th>
                         <th className="py-3 px-3">{t.riskPanel.colCrime}</th>
@@ -1066,14 +1087,14 @@ export default function App() {
                     <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
                       {riskScores.map((r, idx) => (
                         <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
-                          <td className={`py-3 px-3 font-semibold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.totalCases}</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.topCrime}</td>
-                          <td className="py-3 px-3 font-bold text-[#2563EB]">{r.riskScore}%</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.predictedSurgeWindow}</td>
+                          <td className={`py-3 px-3 font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.totalCases}</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.topCrime}</td>
+                          <td className="py-3 px-3 font-extrabold text-[#2563EB]">{r.riskScore}%</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.predictedSurgeWindow}</td>
                           <td className="py-3 px-3">
-                            <span className={`px-2.5 py-0.5 rounded font-semibold text-[10px] uppercase ${
-                              r.level.includes('High') ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'
+                            <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
+                              r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
                             }`}>
                               {r.level}
                             </span>
@@ -1081,17 +1102,17 @@ export default function App() {
                           <td className="py-3 px-3">
                             <button
                               onClick={() => toggleRationale(`risk-${idx}`)}
-                              className="text-blue-600 dark:text-blue-400 font-semibold text-[11px] hover:underline"
+                              className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline"
                             >
                               Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
                             </button>
                             {showRationale[`risk-${idx}`] && (
-                              <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border text-[10px] space-y-1 text-slate-700 dark:text-slate-300">
-                                <div className="text-emerald-600 dark:text-emerald-400">✔ Crime increased 18%</div>
-                                <div className="text-emerald-600 dark:text-emerald-400">✔ Repeat offenders detected</div>
-                                <div className="text-emerald-600 dark:text-emerald-400">✔ Historical seasonal trend</div>
-                                <div className="text-emerald-600 dark:text-emerald-400">✔ Population density correlation</div>
-                                <div className="text-emerald-600 dark:text-emerald-400">✔ Peak crime hours</div>
+                              <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18%</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
+                                <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours</div>
                               </div>
                             )}
                           </td>
@@ -1108,7 +1129,7 @@ export default function App() {
               <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
                 <div>
                   <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
-                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.socioPanel.sub}</p>
+                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1150,11 +1171,11 @@ export default function App() {
                       <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-2 border`}>
                         <div className="flex justify-between items-center">
                           <h4 className={`font-bold text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
-                          <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'} font-medium`}>{tierKn}</span>
+                          <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
                         </div>
-                        <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
-                        <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.socioPanel.profile} {profileKn}</div>
-                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'} p-2 rounded border`}>
+                        <div className={isDark ? 'text-slate-300' : 'text-slate-800'}>{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
+                        <div className={isDark ? 'text-slate-300' : 'text-slate-800'}>{t.socioPanel.profile} {profileKn}</div>
+                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2 rounded border font-semibold`}>
                           <strong>{t.socioPanel.typology}</strong> {typologyKn}
                         </div>
                       </div>
@@ -1167,12 +1188,12 @@ export default function App() {
             {/* TAB 6: REPORTS & EXPORT PDF */}
             {activeTab === 'reports' && (
               <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-6 border`}>
-                <div className="flex justify-between items-center border-b pb-4">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
                   <div>
                     <h3 className={`text-lg font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                       Official SCRB Crime Intelligence Summary Document
                     </h3>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       State Crime Records Bureau • Document Ref: SCRB-INTEL-2026-07
                     </p>
                   </div>
@@ -1188,21 +1209,21 @@ export default function App() {
                 <div className="space-y-4 text-xs">
                   <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
                     <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">1. Executive Summary</h4>
-                    <p className="text-slate-700 dark:text-slate-300">
+                    <p className="text-slate-800 dark:text-slate-300 font-medium">
                       The State Crime Records Bureau (SCRB) analyzed 300 active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.
                     </p>
                   </div>
 
                   <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
                     <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">2. AI Spatial Hotspots & Risk Assessment</h4>
-                    <p className="text-slate-700 dark:text-slate-300">
+                    <p className="text-slate-800 dark:text-slate-300 font-medium">
                       DBSCAN machine learning algorithms identified 50 active crime hotspots statewide. Isolation Forest anomaly detection flagged a 14% property theft surge wave in June 2026.
                     </p>
                   </div>
 
                   <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
                     <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">3. Repeat Offender Network Analysis</h4>
-                    <p className="text-slate-700 dark:text-slate-300">
+                    <p className="text-slate-800 dark:text-slate-300 font-medium">
                       Graph relationship analysis discovered 7 habitual repeat offenders operating across multiple police station limits with identical burglary and theft modus operandi.
                     </p>
                   </div>

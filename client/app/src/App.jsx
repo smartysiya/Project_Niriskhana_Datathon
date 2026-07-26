@@ -877,7 +877,7 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
                     <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
+                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px]">

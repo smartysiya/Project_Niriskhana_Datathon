@@ -1,4 +1,4 @@
-# NIRIKSHANA (ನಿರೀಕ್ಷಣ) 🚨  
+# NIRIKSHANA (ನಿರೀಕ್ಷಣ)  
 ### Government of Karnataka | Karnataka State Police (KSP)
 ### State Crime Records Bureau (SCRB) — Enterprise Intelligence & Analytics Platform
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 🌐 Live Portal & Infrastructure
+##  Live Portal & Infrastructure
 
 - **Official Live Portal**: [NIRIKSHANA Enterprise App](https://project-nirikshana-60077343924.development.catalystserverless.in/app/index.html)
 - **Catalyst Serverless API Base**: `https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function`
@@ -14,7 +14,7 @@
 
 ---
 
-## 🎨 Enterprise Government UI/UX Architecture
+##  Enterprise Government UI/UX Architecture
 
 - **Primary Color Palette**: KSP Navy (`#1E3A5F`), Secondary Indigo (`#5B4BB7`), Accent Blue (`#2563EB`), Crisp Light Background (`#F5F7FA`), White Card Surfaces (`#FFFFFF`), Border Gray (`#E5E7EB`).
 - **Brand Identity**: Custom NIRIKSHANA **Eye + Map Pin** SVG Logo representing active vigilance and spatiotemporal intelligence.
@@ -25,7 +25,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 - **Frontend**: React 18, Vite, Tailwind CSS (Custom KSP Enterprise Palette), Leaflet.js, SVG Node Graph Renderer, Axios.
 - **Serverless Backend**: Node.js 18 (Express) on **Zoho Catalyst Advanced I/O Functions**.

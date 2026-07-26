@@ -724,14 +724,18 @@ export default function App() {
                       <div className={`p-4 rounded-lg border text-[13px] space-y-2.5 ${
                         isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-300 text-slate-800'
                       }`}>
-                        <div className="font-bold text-slate-900 dark:text-slate-100 text-xs border-b pb-1.5 uppercase tracking-wider">
+                        <div className={`font-extrabold text-xs border-b pb-1.5 uppercase tracking-wider ${
+                          isDark ? 'text-slate-100 border-slate-800' : 'text-[#1E3A5F] border-slate-300'
+                        }`}>
                           ⚙️ Structured AI Engine Metadata
                         </div>
                         <div>
-                          <span className="text-slate-500 font-medium block text-[11px]">AI Models Used:</span>
+                          <span className={`font-bold block text-[11px] mb-1 ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>AI Models Used:</span>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {['DBSCAN', 'Isolation Forest', 'Graph Analytics', 'Random Forest'].map(m => (
-                              <span key={m} className="bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold">
+                              <span key={m} className={`px-2 py-0.5 rounded font-mono text-[11px] font-bold ${
+                                isDark ? 'bg-blue-950 text-blue-300 border border-blue-800' : 'bg-blue-100 text-[#1E3A5F] border border-blue-200'
+                              }`}>
                                 {m}
                               </span>
                             ))}
@@ -739,26 +743,28 @@ export default function App() {
                         </div>
 
                         <div className="flex justify-between pt-1">
-                          <span className="text-slate-500 font-medium">Overall AI Confidence:</span>
+                          <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>Overall AI Confidence:</span>
                           <strong className="text-emerald-600 font-bold">94%</strong>
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-slate-500 font-medium">Current Threat Level:</span>
+                          <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>Current Threat Level:</span>
                           <strong className="text-red-600 font-bold">ELEVATED</strong>
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-slate-500 font-medium">Crime Trend:</span>
+                          <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>Crime Trend:</span>
                           <strong className="text-amber-600 font-bold">+14% Surge</strong>
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-slate-500 font-medium">Prediction Window:</span>
+                          <span className={`font-semibold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>Prediction Window:</span>
                           <strong className="text-blue-600 font-bold">Next 48 Hours</strong>
                         </div>
 
-                        <div className="flex justify-between pt-1 border-t text-[11px] text-slate-400">
+                        <div className={`flex justify-between pt-1 border-t text-[11px] font-medium ${
+                          isDark ? 'border-slate-800 text-slate-400' : 'border-slate-300 text-slate-700'
+                        }`}>
                           <span>Last AI Analysis:</span>
                           <span className="font-mono">18:25 IST</span>
                         </div>

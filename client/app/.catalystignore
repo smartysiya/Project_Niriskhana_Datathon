@@ -1,6 +1,0 @@
-node_modules
-node_modules/**node_modules/
-client/app/node_modules/
-functions/*/node_modules/
-.env
-dist/

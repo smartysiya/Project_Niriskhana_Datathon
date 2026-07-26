@@ -1,6 +1,6 @@
 {
   "client": {
-    "source": "client"
+    "source": "client/app/dist"
   },
   "functions": {
     "targets": [

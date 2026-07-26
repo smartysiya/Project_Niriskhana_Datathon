@@ -40,7 +40,8 @@ const TRANSLATIONS = {
   en: {
     govSub: 'Government of Karnataka | Karnataka State Police | State Crime Records Bureau (SCRB)',
     title: 'NIRIKSHANA',
-    subtitle: 'AI-Driven Crime Intelligence & Criminological Analytics Platform',
+    subtitle: 'Statewide AI Crime Intelligence Dashboard',
+    tagline: 'Real-time analysis of FIR records, hotspot prediction, offender networks, anomaly detection and strategic policing intelligence.',
     langToggle: 'ಕನ್ನಡ',
     tabs: {
       map: 'Crime Map',
@@ -132,7 +133,8 @@ const TRANSLATIONS = {
   kn: {
     govSub: 'ಕರ್ನಾಟಕ ಸರ್ಕಾರ | ಕರ್ನಾಟಕ ರಾಜ್ಯ ಪೊಲೀಸ್ | ರಾಜ್ಯ ಅಪರಾಧ ದಾಖಲೆಗಳ ಬ್ಯೂರೋ (SCRB)',
     title: 'ನಿರೀಕ್ಷಣ',
-    subtitle: 'ಎಐ-ಆಧಾರಿತ ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ವಿಜಿಲೆನ್ಸ್ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್',
+    subtitle: 'ರಾಜ್ಯಾದ್ಯಂತ ಎಐ ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ ದಿಕ್ಸೂಚಿ',
+    tagline: 'ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳು, ಹಾಟ್‌ಸ್ಪಾಟ್ ಮುನ್ಸೂಚನೆ, ಅಪರಾಧಿ ಜಾಲ ಮತ್ತು ಕಾರ್ಯತಂತ್ರದ ಪೊಲೀಸ್ ತನಿಖೆ.',
     langToggle: 'English',
     tabs: {
       map: 'ಅಪರಾಧ ನಕ್ಷೆ',
@@ -255,11 +257,11 @@ function RefreshIcon() {
 
 function StatCard({ label, value, subtext, trendUp, isDark }) {
   return (
-    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm hover:shadow transition-shadow border`}>
-      <div className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{label}</div>
-      <div className={`text-2xl font-extrabold mt-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
+    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm hover:shadow-md transition-all border`}>
+      <div className={`text-[13px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{label}</div>
+      <div className={`text-[32px] font-extrabold mt-1 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
       {subtext && (
-        <div className={`text-xs font-semibold mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : (isDark ? 'text-slate-400' : 'text-slate-600')}`}>
+        <div className={`text-[13px] font-semibold mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : (isDark ? 'text-slate-400' : 'text-slate-600')}`}>
           <span>{subtext}</span>
         </div>
       )}
@@ -279,7 +281,23 @@ export default function App() {
   const [socioEconomic, setSocioEconomic] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // SCRB Alerts Notification State
   const [showAlerts, setShowAlerts] = useState(false);
+  const [alertsList, setAlertsList] = useState([
+    { id: 1, type: 'hotspot', text: '🚨 New Hotspot Detected: Hubballi-Dharwad PS-1 (DBSCAN Cluster)', read: false, time: '10:45 AM', details: 'DBSCAN algorithm clustered 15 burglary cases within 600m radius.' },
+    { id: 2, type: 'risk', text: '⚠️ Risk Prediction Updated: Tumakuru PS-2 Night Shift Level 88', read: false, time: '10:18 AM', details: 'Random Forest model predicts 88% threat level between 22:00 - 06:00.' },
+    { id: 3, type: 'offender', text: '🔍 Repeat Offender Linked: Offender Ramesh Kumar (5 FIRs)', read: false, time: '09:42 AM', details: 'Graph analysis linked offender across Mysuru and Hubballi station limits.' }
+  ]);
+  const [expandedAlertId, setExpandedAlertId] = useState(null);
+
+  // Recent Intelligence Feed Items State
+  const [feedItems, setFeedItems] = useState([
+    { id: 1, time: '10:45 AM', tag: 'New Hotspot', tagColor: 'red', text: 'Hotspot detected in Hubballi PS-1' },
+    { id: 2, time: '10:18 AM', tag: 'Offender Linked', tagColor: 'purple', text: 'Repeat offender linked to 5 FIRs' },
+    { id: 3, time: '09:42 AM', tag: 'Risk Updated', tagColor: 'blue', text: 'Risk score updated for Bengaluru East' },
+    { id: 4, time: '09:05 AM', tag: 'Anomaly Flagged', tagColor: 'amber', text: 'New anomaly: Vehicle theft surge wave' }
+  ]);
 
   // Timeline Filter State
   const [timelineRange, setTimelineRange] = useState('Last Month');
@@ -343,12 +361,24 @@ export default function App() {
     setShowRationale(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const dismissFeedItem = (id) => {
+    setFeedItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const dismissAlert = (id) => {
+    setAlertsList(prev => prev.filter(item => item.id !== id));
+  };
+
+  const markAlertAsRead = (id) => {
+    setAlertsList(prev => prev.map(item => item.id === id ? { ...item, read: true } : item));
+  };
+
   return (
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
       {/* Header Area */}
       <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
         {/* Clean Government Header Top Line */}
-        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-xs flex justify-between items-center font-medium">
+        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-[13px] flex justify-between items-center font-medium">
           <div className="flex items-center gap-2">
             <span>Government of Karnataka</span>
             <span className="opacity-40">|</span>
@@ -382,52 +412,84 @@ export default function App() {
           <div className="flex items-center gap-5">
             <LogoIcon />
             <div>
-              <h1 className={`text-2xl md:text-3xl font-extrabold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+              <h1 className={`text-[32px] font-extrabold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                 {t.title}
               </h1>
-              <p className={`text-xs font-semibold mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              <div className={`text-[15px] font-semibold mt-0.5 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                 {t.subtitle}
+              </div>
+              <p className={`text-[13px] font-medium mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {t.tagline}
               </p>
             </div>
           </div>
 
-          {/* Notification Bell Icon */}
+          {/* SCRB Alerts Notification Bell Drawer Button */}
           <div className="relative">
             <button
               onClick={() => setShowAlerts(!showAlerts)}
               className={`p-2.5 rounded-lg border relative transition-colors ${
                 isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
-              title="Intelligence Alerts"
+              title="SCRB Intelligence Alerts"
             >
               <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full animate-bounce">
-                3
-              </span>
+              {alertsList.filter(a => !a.read).length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full animate-bounce">
+                  {alertsList.filter(a => !a.read).length}
+                </span>
+              )}
             </button>
 
-            {/* Notification Alerts Dropdown */}
+            {/* SCRB Alerts Dropdown Drawer */}
             {showAlerts && (
-              <div className={`absolute right-0 mt-2 w-72 rounded-lg border shadow-lg z-50 p-3 text-xs space-y-2 ${
+              <div className={`absolute right-0 mt-2 w-80 rounded-lg border shadow-xl z-50 p-4 text-xs space-y-3 ${
                 isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
               }`}>
-                <div className="font-bold border-b pb-1.5 flex justify-between items-center text-blue-700 dark:text-blue-400">
+                <div className="font-bold border-b pb-2 flex justify-between items-center text-blue-700 dark:text-blue-400">
                   <span>🔔 SCRB Intelligence Alerts</span>
                   <span className="text-[10px] text-slate-400">Live Stream</span>
                 </div>
-                <div className="space-y-1.5">
-                  <div className="p-2 rounded bg-red-50 text-red-900 border border-red-200 font-semibold">
-                    🚨 <strong>New Hotspot Detected:</strong> Hubballi-Dharwad PS-1
-                  </div>
-                  <div className="p-2 rounded bg-amber-50 text-amber-900 border border-amber-200 font-semibold">
-                    ⚠️ <strong>Risk Prediction Updated:</strong> Tumakuru PS-2 Night Shift Threat Level 88
-                  </div>
-                  <div className="p-2 rounded bg-blue-50 text-blue-900 border border-blue-200 font-semibold">
-                    🔍 <strong>Repeat Offender Linked:</strong> Habitual Offender linked to 5 FIRs
-                  </div>
+
+                <div className="space-y-2 max-h-72 overflow-y-auto">
+                  {alertsList.length === 0 ? (
+                    <div className="text-slate-400 text-center py-4">No active alerts.</div>
+                  ) : (
+                    alertsList.map(alert => (
+                      <div
+                        key={alert.id}
+                        className={`p-2.5 rounded border space-y-1 transition-all ${
+                          alert.read ? (isDark ? 'bg-slate-800/40 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500') : (isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-blue-50/60 border-blue-200 text-slate-900')
+                        }`}
+                      >
+                        <div className="flex justify-between items-start font-bold">
+                          <span>{alert.text}</span>
+                          <button onClick={() => dismissAlert(alert.id)} className="text-slate-400 hover:text-red-500 ml-1">✕</button>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+                          <span>{alert.time}</span>
+                          <div className="flex gap-2">
+                            {!alert.read && (
+                              <button onClick={() => markAlertAsRead(alert.id)} className="text-blue-600 dark:text-blue-400 hover:underline">
+                                Mark Read
+                              </button>
+                            )}
+                            <button onClick={() => setExpandedAlertId(expandedAlertId === alert.id ? null : alert.id)} className="text-slate-500 hover:underline">
+                              {expandedAlertId === alert.id ? 'Hide' : 'Details'}
+                            </button>
+                          </div>
+                        </div>
+                        {expandedAlertId === alert.id && (
+                          <div className="text-[11px] bg-white dark:bg-slate-950 p-2 rounded border border-slate-200 dark:border-slate-800 mt-1 text-slate-700 dark:text-slate-300">
+                            {alert.details}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
@@ -435,7 +497,7 @@ export default function App() {
         </div>
 
         {/* Clean Enterprise Horizontal Navigation Bar */}
-        <nav className={`px-6 flex gap-6 border-t text-sm font-semibold overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+        <nav className={`px-6 flex gap-6 border-t text-[15px] font-semibold overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           {[
             { id: 'map', label: t.tabs.map },
             { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})` },
@@ -460,7 +522,7 @@ export default function App() {
       </header>
 
       {/* Main Body Content */}
-      <main className="p-6 max-w-7xl mx-auto space-y-6">
+      <main className="p-6 max-w-7xl mx-auto space-y-7">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-xs font-semibold flex items-center gap-2">
             <span>⚠️</span> {error}
@@ -483,173 +545,8 @@ export default function App() {
               <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
             </div>
 
-            {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* LARGE AI INTELLIGENCE BRIEF CARD (2/3 width) */}
-              <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-4`}>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🧠</span>
-                    <h2 className={`font-bold text-base uppercase tracking-wide ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      AI Intelligence Brief
-                    </h2>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase">
-                      Priority: HIGH
-                    </span>
-                    <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[10px] px-2.5 py-0.5 rounded">
-                      AI Confidence: 94%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-xs space-y-2">
-                  <div className={`font-extrabold text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Today's Intelligence Summary</div>
-                  <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-medium`}>
-                    <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
-                    <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
-                    <li><strong>Three repeat offenders</strong> linked across multiple FIRs & station jurisdictions.</li>
-                    <li>Vehicle theft expected to increase tonight between <strong>10 PM and 4 AM</strong>.</li>
-                  </ul>
-                </div>
-
-                {/* HIGH-CONTRAST RECOMMENDED ACTION BOX */}
-                <div className={`p-4 rounded-md border text-xs ${
-                  isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
-                }`}>
-                  <span className={`font-bold uppercase tracking-wide block mb-1 text-xs ${
-                    isDark ? 'text-blue-400' : 'text-blue-900'
-                  }`}>
-                    Recommended Action
-                  </span>
-                  <p className={`font-semibold text-xs leading-normal ${
-                    isDark ? 'text-slate-100' : 'text-blue-950'
-                  }`}>
-                    Increase patrol deployment in Whitefield and KR Puram between 7 PM and 11 PM.
-                  </p>
-                </div>
-              </div>
-
-              {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-3`}>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                  <h3 className={`font-bold text-xs uppercase tracking-wide flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                    <span>📡 Recent Intelligence Feed</span>
-                  </h3>
-                  <span className="text-[10px] text-slate-500 font-mono font-bold">Live</span>
-                </div>
-
-                <div className="space-y-3 text-xs">
-                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                    <div className="flex justify-between font-mono text-[10px] font-bold">
-                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>10:45 AM</span>
-                      <span className="text-red-700 dark:text-red-400">New Hotspot</span>
-                    </div>
-                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Hotspot detected in Hubballi PS-1</div>
-                  </div>
-
-                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                    <div className="flex justify-between font-mono text-[10px] font-bold">
-                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>10:18 AM</span>
-                      <span className="text-purple-700 dark:text-purple-400">Offender Linked</span>
-                    </div>
-                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Repeat offender linked to 5 FIRs</div>
-                  </div>
-
-                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                    <div className="flex justify-between font-mono text-[10px] font-bold">
-                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>09:42 AM</span>
-                      <span className="text-blue-700 dark:text-blue-400">Risk Updated</span>
-                    </div>
-                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Risk score updated for Bengaluru East</div>
-                  </div>
-
-                  <div className={`p-3 rounded border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                    <div className="flex justify-between font-mono text-[10px] font-bold">
-                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>09:05 AM</span>
-                      <span className="text-amber-700 dark:text-amber-400">Anomaly Flagged</span>
-                    </div>
-                    <div className={`font-bold mt-1 text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>New anomaly: Vehicle theft surge wave</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* HIGH-CONTRAST AI RECOMMENDATIONS CARD */}
-            <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-5 shadow-sm border space-y-4`}>
-              <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                  <span>🚔 AI Police Recommendations</span>
-                </h3>
-                <span className="text-xs text-slate-500 font-mono font-bold">Actionable Patrol Dispatches</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                {/* HIGH PRIORITY CARD 1 */}
-                <div className={`p-3.5 rounded-lg border space-y-2 ${
-                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-extrabold text-sm ${isDark ? 'text-red-300' : 'text-red-950'}`}>Deploy Additional Patrol</span>
-                    <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
-                  </div>
-                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Whitefield Command Limit</div>
-                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
-                    <strong>Reason:</strong> 18% crime increase in past 30 days during 20:00 - 02:00 window.
-                  </div>
-                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 95%</div>
-                </div>
-
-                {/* MEDIUM PRIORITY CARD 2 */}
-                <div className={`p-3.5 rounded-lg border space-y-2 ${
-                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-extrabold text-sm ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Monitor Gang Alpha</span>
-                    <span className="bg-amber-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Medium</span>
-                  </div>
-                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Mysuru PS-2 Jurisdiction</div>
-                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
-                    <strong>Reason:</strong> Repeat offender activity linked across station borders.
-                  </div>
-                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 89%</div>
-                </div>
-
-                {/* HIGH PRIORITY CARD 3 */}
-                <div className={`p-3.5 rounded-lg border space-y-2 ${
-                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-extrabold text-sm ${isDark ? 'text-red-300' : 'text-red-950'}`}>Investigate Repeat Offender</span>
-                    <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
-                  </div>
-                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Hubballi PS-2 Hub</div>
-                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
-                    <strong>Reason:</strong> 5 linked FIRs detected with identical MO.
-                  </div>
-                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 92%</div>
-                </div>
-
-                {/* MEDIUM PRIORITY CARD 4 */}
-                <div className={`p-3.5 rounded-lg border space-y-2 ${
-                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-extrabold text-sm ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Increase Surveillance</span>
-                    <span className="bg-amber-600 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Medium</span>
-                  </div>
-                  <div className={`font-bold text-xs ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Commercial Zone Corridors</div>
-                  <div className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
-                    <strong>Reason:</strong> Peak night-time burglary & vehicle theft risk.
-                  </div>
-                  <div className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>Confidence: 87%</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Toolbar Filter Bar & District Controller */}
-            <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm border`}>
+            {/* SINGLE GLOBAL STICKY FILTER PANEL (Directly below KPI cards) */}
+            <div className={`sticky top-2 z-30 ${isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-200'} backdrop-blur-md rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
               <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
                 {/* Search Bar */}
                 <div className="relative flex-1 sm:flex-initial">
@@ -737,13 +634,237 @@ export default function App() {
               )}
             </div>
 
+            {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
+              <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🧠</span>
+                    <h2 className={`font-semibold text-[26px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                      AI Intelligence Brief
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                      Priority: HIGH
+                    </span>
+                    <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded">
+                      AI Confidence: 94%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Left Column: Natural Language Intelligence Summary */}
+                  <div className="md:col-span-2 space-y-3 text-[15px]">
+                    <div className="font-semibold text-slate-900 dark:text-slate-100 text-[18px]">Today's Intelligence Summary</div>
+                    <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-normal`}>
+                      <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
+                      <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
+                      <li><strong>Three repeat offenders</strong> linked across multiple FIRs & station jurisdictions.</li>
+                      <li>Vehicle theft expected to increase tonight between <strong>10 PM and 4 AM</strong>.</li>
+                    </ul>
+
+                    {/* RECOMMENDED ACTION BOX */}
+                    <div className={`p-4 rounded-md border text-[13px] mt-3 ${
+                      isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
+                    }`}>
+                      <span className={`font-bold uppercase tracking-wide block mb-1 text-[13px] ${
+                        isDark ? 'text-blue-400' : 'text-blue-900'
+                      }`}>
+                        Recommended Action
+                      </span>
+                      <p className={`font-semibold text-[15px] leading-normal ${
+                        isDark ? 'text-slate-100' : 'text-blue-950'
+                      }`}>
+                        Increase patrol deployment in Whitefield and KR Puram between 7 PM and 11 PM.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Structured AI Model Metadata Grid */}
+                  <div className={`p-4 rounded-lg border text-[13px] space-y-2.5 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-300 text-slate-800'
+                  }`}>
+                    <div className="font-bold text-slate-900 dark:text-slate-100 text-xs border-b pb-1.5 uppercase tracking-wider">
+                      ⚙️ Structured AI Engine Metadata
+                    </div>
+                    <div>
+                      <span className="text-slate-500 font-medium block text-[11px]">AI Models Used:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {['DBSCAN', 'Isolation Forest', 'Graph Analytics', 'Random Forest'].map(m => (
+                          <span key={m} className="bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold">
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between pt-1">
+                      <span className="text-slate-500 font-medium">Overall AI Confidence:</span>
+                      <strong className="text-emerald-600 font-bold">94%</strong>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500 font-medium">Current Threat Level:</span>
+                      <strong className="text-red-600 font-bold">ELEVATED</strong>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500 font-medium">Crime Trend:</span>
+                      <strong className="text-amber-600 font-bold">+14% Surge</strong>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500 font-medium">Prediction Window:</span>
+                      <strong className="text-blue-600 font-bold">Next 48 Hours</strong>
+                    </div>
+
+                    <div className="flex justify-between pt-1 border-t text-[11px] text-slate-400">
+                      <span>Last AI Analysis:</span>
+                      <span className="font-mono">18:25 IST</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-3`}>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <h3 className={`font-semibold text-[18px] flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                    <span>📡 Recent Intelligence Feed</span>
+                  </h3>
+                  <span className="text-[11px] text-slate-500 font-mono font-bold">Live</span>
+                </div>
+
+                <div className="space-y-2.5">
+                  {feedItems.map(item => (
+                    <div
+                      key={item.id}
+                      className={`p-3 rounded border transition-all hover:shadow-md ${
+                        isDark ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-slate-50 border-slate-300 hover:border-slate-400'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center font-mono text-[11px] font-bold">
+                        <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{item.time}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={
+                            item.tagColor === 'red' ? 'text-red-700 dark:text-red-400 font-bold' :
+                            item.tagColor === 'purple' ? 'text-purple-700 dark:text-purple-400 font-bold' :
+                            item.tagColor === 'blue' ? 'text-blue-700 dark:text-blue-400 font-bold' : 'text-amber-700 dark:text-amber-400 font-bold'
+                          }>
+                            {item.tag}
+                          </span>
+                          <button onClick={() => dismissFeedItem(item.id)} className="text-slate-400 hover:text-red-500 font-bold text-xs">✕</button>
+                        </div>
+                      </div>
+                      <div className={`font-semibold mt-1 text-[13px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{item.text}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* AI POLICE RECOMMENDATIONS CARD WITH COMPACT BADGES */}
+            <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
+              <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                  <span>🚔 AI Police Recommendations</span>
+                </h3>
+                <span className="text-[13px] text-slate-500 font-mono font-medium">Actionable Patrol Dispatches</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* RECOMMENDATION 1 */}
+                <div className={`p-4 rounded-lg border space-y-2.5 ${
+                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Deploy Patrol</span>
+                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
+                  </div>
+                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Whitefield Command Limit</div>
+                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                    <strong>Reason:</strong> 18% crime increase in past 30 days during 20:00 - 02:00 window.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                    <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
+                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-22% Crime Red.</span>
+                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Mobile Squads</span>
+                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 95%</span>
+                  </div>
+                </div>
+
+                {/* RECOMMENDATION 2 */}
+                <div className={`p-4 rounded-lg border space-y-2.5 ${
+                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Monitor Gang Alpha</span>
+                    <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
+                  </div>
+                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Mysuru PS-2 Jurisdiction</div>
+                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                    <strong>Reason:</strong> Repeat offender activity linked across station borders.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                    <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
+                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-15% Crime Red.</span>
+                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Surveillance Unit</span>
+                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 89%</span>
+                  </div>
+                </div>
+
+                {/* RECOMMENDATION 3 */}
+                <div className={`p-4 rounded-lg border space-y-2.5 ${
+                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Investigate Offender</span>
+                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
+                  </div>
+                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Hubballi PS-2 Hub</div>
+                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                    <strong>Reason:</strong> 5 linked FIRs detected with identical MO.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                    <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
+                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-28% Crime Red.</span>
+                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Special Taskforce</span>
+                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 92%</span>
+                  </div>
+                </div>
+
+                {/* RECOMMENDATION 4 */}
+                <div className={`p-4 rounded-lg border space-y-2.5 ${
+                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Surveillance Check</span>
+                    <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
+                  </div>
+                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Commercial Zone Corridors</div>
+                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                    <strong>Reason:</strong> Peak night-time burglary & vehicle theft risk.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                    <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
+                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-18% Crime Red.</span>
+                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Highway Patrols</span>
+                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 87%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* TAB 1: SPATIAL CRIME MAP & TIMELINE SELECTOR BAR */}
             {activeTab === 'map' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-4 space-y-4 border`}>
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <h2 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
+                    <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
+                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px]">
@@ -760,7 +881,7 @@ export default function App() {
                 <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
                   isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <div className="font-extrabold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2">
+                  <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
                     <span>📅 Timeline Analysis Window:</span>
                     <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
                   </div>
@@ -852,7 +973,7 @@ export default function App() {
                 </div>
 
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 overflow-y-auto shadow-sm border`} style={{ maxHeight: '580px' }}>
-                  <h3 className={`text-sm font-bold mb-3 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.hotspotPanel.title}</h3>
+                  <h3 className={`font-semibold text-[26px] mb-3 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.hotspotPanel.title}</h3>
                   <div className="space-y-3">
                     {filteredHotspots.map(h => (
                       <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
@@ -907,7 +1028,7 @@ export default function App() {
                 {/* Modus Operandi (MO) Intelligence Card */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border space-y-3`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                    <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                       <span>🕵️ Modus Operandi (MO) Intelligence</span>
                     </h3>
                     <span className="bg-purple-100 text-purple-900 text-[10px] font-extrabold px-2 py-0.5 rounded">
@@ -947,8 +1068,8 @@ export default function App() {
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border`}>
                   <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div>
-                      <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.networkPanel.title}</h3>
-                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.networkPanel.sub}</p>
+                      <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.networkPanel.title}</h3>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.networkPanel.sub}</p>
                     </div>
                     <div className="flex items-center gap-3 text-xs font-semibold">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#5B4BB7]"></span> {t.networkPanel.legendSuspect}</span>
@@ -1015,14 +1136,14 @@ export default function App() {
               </div>
             )}
 
-            {/* REPEAT OFFENDER INVESTIGATOR PROFILE DRAWER */}
+            {/* REPEAT OFFENDER INVESTIGATOR PROFILE DRAWER WITH EXTENDED METRICS */}
             {selectedOffenderDrawer && (
               <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
                 <div className={`w-full max-w-md h-full p-6 overflow-y-auto shadow-2xl space-y-4 border-l ${
                   isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
                 }`}>
                   <div className="flex justify-between items-center border-b pb-3">
-                    <h3 className="font-bold text-base text-[#1E3A5F] dark:text-blue-400">👤 Offender Profile</h3>
+                    <h3 className="font-semibold text-[26px] text-[#1E3A5F] dark:text-blue-400">👤 Offender Profile</h3>
                     <button
                       onClick={() => setSelectedOffenderDrawer(null)}
                       className="text-slate-400 hover:text-slate-600 text-xl font-bold"
@@ -1036,38 +1157,49 @@ export default function App() {
                       OFF
                     </div>
                     <div>
-                      <div className="font-bold text-sm">{selectedOffenderDrawer.name}</div>
+                      <div className="font-bold text-[18px]">{selectedOffenderDrawer.name}</div>
                       <div className="text-xs text-slate-500 font-medium">Alias: Tiger Ramesh • Age: 34</div>
                       <div className="text-xs font-mono text-purple-700 dark:text-purple-400 font-extrabold mt-0.5">Linked FIRs: {selectedOffenderDrawer.casesLinked} Cases</div>
                     </div>
                   </div>
 
+                  {/* EXTENDED OFFENDER INTELLIGENCE METRICS */}
+                  <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+                    <div className="p-2 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      <span className="text-[10px] text-slate-500 uppercase block">Recidivism Prob.</span>
+                      <strong className="text-red-600 text-sm">84% High</strong>
+                    </div>
+                    <div className="p-2 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      <span className="text-[10px] text-slate-500 uppercase block">Risk Trend</span>
+                      <strong className="text-amber-600 text-sm">↑ Escalating</strong>
+                    </div>
+                  </div>
+
                   <div className="text-xs space-y-2 text-slate-800 dark:text-slate-200 font-medium">
                     <div><strong>Station Jurisdiction:</strong> {selectedOffenderDrawer.sampleStation}</div>
-                    <div><strong>Crime Categories:</strong> Property Burglary, Night Theft</div>
-                    <div><strong>Known Associates:</strong> Suresh B. (Suspect #12), V. Naidu</div>
+                    <div><strong>Last Known Activity:</strong> June 2026 (Hubballi-Dharwad PS-1)</div>
+                    <div><strong>Known Associates Count:</strong> 3 Suspects (Suresh B., V. Naidu)</div>
                     <div><strong>Gang Affiliation:</strong> Inter-District Burglary Syndicate</div>
                     <div><strong>Modus Operandi:</strong> {selectedOffenderDrawer.primaryMO}</div>
                   </div>
 
-                  <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-md text-xs space-y-1">
-                    <div className="font-extrabold text-red-900 dark:text-red-300">AI Threat Assessment & Risk Score</div>
-                    <div className="text-lg font-extrabold text-red-600">Risk Score: 88 / 100</div>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-md text-xs space-y-1">
+                    <div className="font-bold text-blue-900 dark:text-blue-300">AI Generated Summary & Officer Rec.</div>
                     <p className="text-[11px] text-slate-800 dark:text-slate-200 font-medium">
-                      Habitual repeat offender operating across inter-district borders. High recidivism risk during midnight hours.
+                      Habitual repeat offender targeting locked residential properties. <strong>Officer Rec:</strong> Issue Inter-Station Look Out Circular (LOC) across neighboring districts.
                     </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 4: RISK MATRIX & EXPLAINABLE AI */}
+            {/* TAB 4: RISK MATRIX WITH COLOR-CODED INDEX */}
             {activeTab === 'risk' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title} ({selectedDistrict})</h3>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.riskPanel.sub}</p>
+                    <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title} ({selectedDistrict})</h3>
+                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.riskPanel.sub}</p>
                   </div>
                 </div>
 
@@ -1085,51 +1217,65 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
-                      {riskScores.map((r, idx) => (
-                        <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
-                          <td className={`py-3 px-3 font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.totalCases}</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.topCrime}</td>
-                          <td className="py-3 px-3 font-extrabold text-[#2563EB]">{r.riskScore}%</td>
-                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.predictedSurgeWindow}</td>
-                          <td className="py-3 px-3">
-                            <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
-                              r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
-                            }`}>
-                              {r.level}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3">
-                            <button
-                              onClick={() => toggleRationale(`risk-${idx}`)}
-                              className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline"
-                            >
-                              Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
-                            </button>
-                            {showRationale[`risk-${idx}`] && (
-                              <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18%</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours</div>
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                      {riskScores.map((r, idx) => {
+                        // COLOR-CODED RISK INDEX BAND
+                        const score = parseInt(r.riskScore);
+                        const riskBadgeStyle =
+                          score >= 90 ? 'bg-red-100 text-red-900 border-red-300 font-extrabold' :
+                          score >= 75 ? 'bg-orange-100 text-orange-900 border-orange-300 font-extrabold' :
+                          score >= 50 ? 'bg-yellow-100 text-yellow-900 border-yellow-300 font-extrabold' :
+                          'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold';
+
+                        return (
+                          <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
+                            <td className={`py-3 px-3 font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
+                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.totalCases}</td>
+                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.topCrime}</td>
+                            <td className="py-3 px-3">
+                              <span className={`px-2.5 py-1 rounded border text-xs ${riskBadgeStyle}`}>
+                                {r.riskScore}%
+                              </span>
+                            </td>
+                            <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{r.predictedSurgeWindow}</td>
+                            <td className="py-3 px-3">
+                              <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
+                                r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
+                              }`}>
+                                {r.level}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3">
+                              <button
+                                onClick={() => toggleRationale(`risk-${idx}`)}
+                                className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline"
+                              >
+                                Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
+                              </button>
+                              {showRationale[`risk-${idx}`] && (
+                                <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
+                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18%</div>
+                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected</div>
+                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend</div>
+                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
+                                  <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours</div>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
             )}
 
-            {/* TAB 5: SOCIO-ECONOMIC INSIGHTS */}
+            {/* TAB 5: SOCIO-ECONOMIC INSIGHTS WITH PROGRESS INDICATORS */}
             {activeTab === 'socio' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
                 <div>
-                  <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
-                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+                  <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
+                  <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1168,15 +1314,49 @@ export default function App() {
                     ) : s.dominantTypology;
 
                     return (
-                      <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-2 border`}>
+                      <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-3 border`}>
                         <div className="flex justify-between items-center">
-                          <h4 className={`font-bold text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
+                          <h4 className={`font-bold text-[18px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
                           <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
                         </div>
-                        <div className={isDark ? 'text-slate-300' : 'text-slate-800'}>{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
-                        <div className={isDark ? 'text-slate-300' : 'text-slate-800'}>{t.socioPanel.profile} {profileKn}</div>
-                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2 rounded border font-semibold`}>
-                          <strong>{t.socioPanel.typology}</strong> {typologyKn}
+
+                        {/* COMPACT PROGRESS INDICATORS FOR SOCIO-ECONOMIC INDEX */}
+                        <div className="space-y-2">
+                          <div>
+                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                              <span>Population Density ({s.populationDensity})</span>
+                              <span>85%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                              <div className="bg-blue-600 h-full w-[85%]"></div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                              <span>Crime Vulnerability Index</span>
+                              <span>78%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                              <div className="bg-red-600 h-full w-[78%]"></div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                              <span>Urbanization & Economic Activity</span>
+                              <span>92%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                              <div className="bg-emerald-600 h-full w-[92%]"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-slate-800 dark:text-slate-200 font-medium">Profile: {profileKn}</div>
+                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2 rounded border font-semibold flex justify-between items-center`}>
+                          <span><strong>Typology:</strong> {typologyKn}</span>
+                          <span className="text-blue-700 dark:text-blue-400 font-bold">AI Correlation: 0.88</span>
                         </div>
                       </div>
                     );
@@ -1185,22 +1365,28 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 6: REPORTS & EXPORT PDF */}
+            {/* TAB 6: REPORTS WITH DETAILED REPORT HEADER & APPROVAL */}
             {activeTab === 'reports' && (
               <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-6 border`}>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
                   <div>
-                    <h3 className={`text-lg font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                    <h3 className={`text-[26px] font-semibold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                       Official SCRB Crime Intelligence Summary Document
                     </h3>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                      State Crime Records Bureau • Document Ref: SCRB-INTEL-2026-07
-                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                      <div><span className="text-slate-400 font-medium block text-[10px]">Generated By:</span> SCRB AI Intelligence Engine</div>
+                      <div><span className="text-slate-400 font-medium block text-[10px]">Generated On:</span> 26 Jul 2026 • 18:25 IST</div>
+                      <div><span className="text-slate-400 font-medium block text-[10px]">Classification:</span> <span className="text-red-600 font-bold">Internal Use Only</span></div>
+                      <div><span className="text-slate-400 font-medium block text-[10px]">Doc Ref:</span> SCRB-INTEL-2026-07-KSP</div>
+                    </div>
+                    <div className="text-xs font-bold text-emerald-600 mt-2">
+                      ✔ Officer Approval: Approved by ADGP Crime & SCRB (Govt of Karnataka)
+                    </div>
                   </div>
 
                   <button
                     onClick={() => window.print()}
-                    className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm"
+                    className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap"
                   >
                     📄 Export Intelligence Report (PDF)
                   </button>
@@ -1241,12 +1427,15 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="font-bold text-white text-sm">Government of Karnataka | Karnataka State Police</div>
-            <div className="text-slate-400 text-xs mt-0.5">State Crime Records Bureau (SCRB) • Project NIRIKSHANA v1.0</div>
+            <div className="text-slate-400 text-xs mt-0.5">State Crime Records Bureau (SCRB) • Project NIRIKSHANA</div>
+            <div className="text-slate-500 text-[11px] mt-1 font-mono">
+              Prototype for Karnataka State Police Hackathon • Version 1.0
+            </div>
           </div>
 
           <div className="text-right text-xs font-mono text-slate-400">
             <div>Powered by <strong>Zoho Catalyst Serverless Infrastructure</strong></div>
-            <div className="text-slate-500 text-[11px] mt-0.5">© Government Internal Prototype • SCRB Intelligence Portal</div>
+            <div className="text-slate-500 text-[11px] mt-0.5">Internal Intelligence Platform • SCRB Vigilance Portal</div>
           </div>
         </div>
       </footer>

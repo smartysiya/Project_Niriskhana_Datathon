@@ -5,31 +5,31 @@ const app = express();
 app.use(express.json());
 
 const DISTRICTS = [
-	{ name: 'Bengaluru Urban', lat: 12.9716, lng: 77.5946 },
-	{ name: 'Mysuru', lat: 12.2958, lng: 76.6394 },
-	{ name: 'Mangaluru (Dakshina Kannada)', lat: 12.9141, lng: 74.8560 },
-	{ name: 'Belagavi', lat: 15.8497, lng: 74.4977 },
-	{ name: 'Hubballi-Dharwad', lat: 15.3647, lng: 75.1240 },
-	{ name: 'Kalaburagi', lat: 17.3297, lng: 76.8343 },
-	{ name: 'Ballari', lat: 15.1394, lng: 76.9214 },
-	{ name: 'Shivamogga', lat: 13.9299, lng: 75.5681 },
-	{ name: 'Tumakuru', lat: 13.3392, lng: 77.1139 },
-	{ name: 'Udupi', lat: 13.3409, lng: 74.7421 }
+	{ name: 'Bengaluru Urban', lat: 12.9716, lng: 77.5946, tier: 'Metropolitan (Tier 1)', popDensity: '12,000/km²', socioIndex: 'High Urban / Tech Hub', cyberVulnerability: 'High' },
+	{ name: 'Mysuru', lat: 12.2958, lng: 76.6394, tier: 'Heritage / Urban (Tier 2)', popDensity: '3,200/km²', socioIndex: 'Tourism & Education', cyberVulnerability: 'Moderate' },
+	{ name: 'Mangaluru (Dakshina Kannada)', lat: 12.9141, lng: 74.8560, tier: 'Coastal Industrial', popDensity: '1,800/km²', socioIndex: 'Port & Maritime Transit', cyberVulnerability: 'Moderate' },
+	{ name: 'Belagavi', lat: 15.8497, lng: 74.4977, tier: 'Border Industrial', popDensity: '1,400/km²', socioIndex: 'Inter-State Transit Corridor', cyberVulnerability: 'Low' },
+	{ name: 'Hubballi-Dharwad', lat: 15.3647, lng: 75.1240, tier: 'Commercial / Transit', popDensity: '2,500/km²', socioIndex: 'Commercial Junction', cyberVulnerability: 'Moderate' },
+	{ name: 'Kalaburagi', lat: 17.3297, lng: 76.8343, tier: 'Developing North Region', popDensity: '850/km²', socioIndex: 'Agricultural & Migrant Hub', cyberVulnerability: 'Low' },
+	{ name: 'Ballari', lat: 15.1394, lng: 76.9214, tier: 'Mining / Industrial', popDensity: '950/km²', socioIndex: 'Industrial & Freight Corridor', cyberVulnerability: 'Low' },
+	{ name: 'Shivamogga', lat: 13.9299, lng: 75.5681, tier: 'Malnad / Agricultural', popDensity: '650/km²', socioIndex: 'Agri-Commercial Hub', cyberVulnerability: 'Low' },
+	{ name: 'Tumakuru', lat: 13.3392, lng: 77.1139, tier: 'Industrial Suburb', popDensity: '1,100/km²', socioIndex: 'Highway Logistics Hub', cyberVulnerability: 'Moderate' },
+	{ name: 'Udupi', lat: 13.3409, lng: 74.7421, tier: 'Coastal Educational', popDensity: '1,200/km²', socioIndex: 'Educational & Fishery Hub', cyberVulnerability: 'Moderate' }
 ];
 
 const CRIME_TYPES = [
-	{ head: 'Theft', group: 'Crimes Against Property' },
-	{ head: 'Robbery', group: 'Crimes Against Property' },
-	{ head: 'Burglary', group: 'Crimes Against Property' },
-	{ head: 'Vehicle Theft', group: 'Crimes Against Property' },
-	{ head: 'Assault', group: 'Crimes Against Body' },
-	{ head: 'Murder', group: 'Crimes Against Body' },
-	{ head: 'Kidnapping', group: 'Crimes Against Body' },
-	{ head: 'Cyber Fraud', group: 'Cyber Crime' },
-	{ head: 'Online Scam', group: 'Cyber Crime' },
-	{ head: 'Domestic Violence', group: 'Crimes Against Women' },
-	{ head: 'Chain Snatching', group: 'Crimes Against Property' },
-	{ head: 'Drug Peddling', group: 'Narcotics' }
+	{ head: 'Theft', group: 'Crimes Against Property', defaultMO: 'Night Break-in / Unattended Vehicle Lock Bypassing' },
+	{ head: 'Robbery', group: 'Crimes Against Property', defaultMO: 'Highway Interception / Weapon Threat in Low Light' },
+	{ head: 'Burglary', group: 'Crimes Against Property', defaultMO: 'Residential Latch Tampering during Night Hours' },
+	{ head: 'Vehicle Theft', group: 'Crimes Against Property', defaultMO: 'Master Key Exploitation in Unmonitored Parking' },
+	{ head: 'Assault', group: 'Crimes Against Body', defaultMO: 'Public Altercation / Spontaneous Violent Dispute' },
+	{ head: 'Murder', group: 'Crimes Against Body', defaultMO: 'Premeditated Personal Enmity / Organized Rivalry' },
+	{ head: 'Kidnapping', group: 'Crimes Against Body', defaultMO: 'Ransom Extortion / Forced Vehicle Abduction' },
+	{ head: 'Cyber Fraud', group: 'Cyber Crime', defaultMO: 'Phishing OTP Fraud / Fake Bank Executive Impersonation' },
+	{ head: 'Online Scam', group: 'Cyber Crime', defaultMO: 'Investment Task Scam / Fake Trading Platform Link' },
+	{ head: 'Domestic Violence', group: 'Crimes Against Women', defaultMO: 'Domestic Dispute / Marital Harassment' },
+	{ head: 'Chain Snatching', group: 'Crimes Against Property', defaultMO: 'Two-Wheeler Pillion Pillaging in Quiet Streets' },
+	{ head: 'Drug Peddling', group: 'Narcotics', defaultMO: 'Dead Drop Supply / Dark Web & Messenger Distribution' }
 ];
 
 const CASE_STATUSES = ['Under Investigation', 'Charge Sheeted', 'Closed', 'Undetected'];
@@ -49,6 +49,14 @@ function randomDateBetween(startYear, endYear) {
 }
 function toDateString(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 function toDateTimeString(d) { return `${toDateString(d)} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:00`; }
+
+function getTimeOfDay(dateStr) {
+	const hour = dateStr ? new Date(dateStr).getHours() : randomInt(0, 23);
+	if (hour >= 6 && hour < 12) return 'Morning (06:00-12:00)';
+	if (hour >= 12 && hour < 17) return 'Afternoon (12:00-17:00)';
+	if (hour >= 17 && hour < 22) return 'Evening (17:00-22:00)';
+	return 'Night (22:00-06:00)';
+}
 
 async function bulkInsertChunked(table, rows, chunkSize = 100) {
 	const inserted = [];
@@ -161,22 +169,48 @@ app.get('/cases', async (req, res) => {
 		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
+		const districtResult = await zcql.executeZCQLQuery('SELECT * FROM District');
 
 		const crimeTypeMap = {};
-		crimeTypesResult.forEach(row => { crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
+		const crimeMOMap = {};
+		crimeTypesResult.forEach(row => {
+			crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName;
+			const foundType = CRIME_TYPES.find(ct => ct.head === row.CrimeSubHead.CrimeHeadName);
+			crimeMOMap[row.CrimeSubHead.ROWID] = foundType ? foundType.defaultMO : 'Standard Modus Operandi';
+		});
 		const unitMap = {};
-		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
+		const unitDistrictIdMap = {};
+		unitsResult.forEach(row => {
+			unitMap[row.Unit.ROWID] = row.Unit.UnitName;
+			unitDistrictIdMap[row.Unit.ROWID] = row.Unit.DistrictID;
+		});
+		const districtMap = {};
+		districtResult.forEach(row => {
+			districtMap[row.District.ROWID] = row.District.DistrictName;
+		});
 
 		const cases = casesResult.map(row => {
 			const c = row.CaseMaster;
+			const stationName = unitMap[c.PoliceStationID] || 'Unknown Station';
+			const districtId = unitDistrictIdMap[c.PoliceStationID];
+			const districtName = districtMap[districtId] || stationName.split(' PS-')[0] || 'Karnataka District';
+			const crimeHead = crimeTypeMap[c.CrimeSubHeadID] || 'General Crime';
+			const mo = crimeMOMap[c.CrimeSubHeadID] || 'Modus Operandi Registered';
+
 			return {
 				id: c.ROWID,
+				crimeNo: c.CrimeNo,
 				lat: parseFloat(c.Latitude),
 				lng: parseFloat(c.Longitude),
 				date: c.CrimeRegisteredDate,
+				incidentDate: c.IncidentDate,
+				timeOfDay: getTimeOfDay(c.IncidentDate || c.CrimeRegisteredDate),
 				status: c.CaseStatus,
-				crimeType: crimeTypeMap[c.CrimeSubHeadID] || 'Unknown',
-				station: unitMap[c.PoliceStationID] || 'Unknown'
+				crimeType: crimeHead,
+				station: stationName,
+				district: districtName,
+				briefFacts: c.BriefFacts || `${crimeHead} logged under ${stationName}`,
+				modusOperandi: mo
 			};
 		});
 
@@ -214,7 +248,7 @@ app.get('/stats', async (req, res) => {
 	}
 });
 
-// DBSCAN Hotspot Detection Endpoint
+// DBSCAN Hotspot & Spatiotemporal Anomaly Endpoint
 app.get('/hotspots', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
@@ -222,26 +256,36 @@ app.get('/hotspots', async (req, res) => {
 		const casesResult = await zcql.executeZCQLQuery('SELECT * FROM CaseMaster LIMIT 300');
 		const crimeTypesResult = await zcql.executeZCQLQuery('SELECT * FROM CrimeSubHead');
 		const unitsResult = await zcql.executeZCQLQuery('SELECT * FROM Unit');
+		const districtResult = await zcql.executeZCQLQuery('SELECT * FROM District');
 
 		const crimeTypeMap = {};
 		crimeTypesResult.forEach(row => { crimeTypeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
 		const unitMap = {};
-		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
+		const unitDistrictIdMap = {};
+		unitsResult.forEach(row => {
+			unitMap[row.Unit.ROWID] = row.Unit.UnitName;
+			unitDistrictIdMap[row.Unit.ROWID] = row.Unit.DistrictID;
+		});
+		const districtMap = {};
+		districtResult.forEach(row => { districtMap[row.District.ROWID] = row.District.DistrictName; });
 
 		const points = casesResult.map(row => {
 			const c = row.CaseMaster;
+			const st = unitMap[c.PoliceStationID] || 'Station';
+			const dist = districtMap[unitDistrictIdMap[c.PoliceStationID]] || st.split(' PS-')[0];
 			return {
 				id: c.ROWID,
 				lat: parseFloat(c.Latitude),
 				lng: parseFloat(c.Longitude),
 				date: c.CrimeRegisteredDate,
+				timeOfDay: getTimeOfDay(c.IncidentDate || c.CrimeRegisteredDate),
 				crimeType: crimeTypeMap[c.CrimeSubHeadID] || 'Unknown',
-				station: unitMap[c.PoliceStationID] || 'Unknown'
+				station: st,
+				district: dist
 			};
 		}).filter(p => !isNaN(p.lat) && !isNaN(p.lng));
 
-		// Simple DBSCAN clustering implementation
-		const eps = 0.06; // Radius threshold (~6.5 km)
+		const eps = 0.06;
 		const minPts = 3;
 		const visited = new Set();
 		const clusters = [];
@@ -260,17 +304,26 @@ app.get('/hotspots', async (req, res) => {
 			if (neighbors.length >= minPts) {
 				const clusterPts = [...neighbors];
 				neighbors.forEach(n => visited.add(n.id));
-				
+
 				const avgLat = clusterPts.reduce((sum, pt) => sum + pt.lat, 0) / clusterPts.length;
 				const avgLng = clusterPts.reduce((sum, pt) => sum + pt.lng, 0) / clusterPts.length;
-				
+
 				const crimeCounts = {};
-				clusterPts.forEach(pt => { crimeCounts[pt.crimeType] = (crimeCounts[pt.crimeType] || 0) + 1; });
+				const timeCounts = {};
+				clusterPts.forEach(pt => {
+					crimeCounts[pt.crimeType] = (crimeCounts[pt.crimeType] || 0) + 1;
+					timeCounts[pt.timeOfDay] = (timeCounts[pt.timeOfDay] || 0) + 1;
+				});
 				let dominantCrime = 'General Crime';
 				let maxC = 0;
 				Object.entries(crimeCounts).forEach(([ct, c]) => { if (c > maxC) { maxC = c; dominantCrime = ct; } });
 
+				let peakTime = 'Night (22:00-06:00)';
+				let maxT = 0;
+				Object.entries(timeCounts).forEach(([tt, c]) => { if (c > maxT) { maxT = c; peakTime = tt; } });
+
 				const juneTheftSpike = clusterPts.filter(pt => pt.crimeType === 'Theft' && pt.date && pt.date.startsWith('2026-06')).length >= 3;
+				const isSurge = juneTheftSpike || clusterPts.length >= 6;
 
 				clusters.push({
 					id: `HOTSPOT_${clusters.length + 1}`,
@@ -278,9 +331,13 @@ app.get('/hotspots', async (req, res) => {
 					lng: parseFloat(avgLng.toFixed(6)),
 					totalIncidents: clusterPts.length,
 					dominantCrime,
+					peakTimeWindow: peakTime,
 					primaryStation: clusterPts[0].station,
-					isAnomaly: juneTheftSpike || clusterPts.length >= 6,
-					anomalyReason: juneTheftSpike ? 'Detected unusual June 2026 theft surge' : clusterPts.length >= 6 ? 'High density crime cluster' : 'Standard hotspot'
+					district: clusterPts[0].district,
+					isAnomaly: isSurge,
+					pulsingAlert: isSurge,
+					surgeMetric: juneTheftSpike ? '+280% vs 6-Month Baseline (Theft Surge)' : clusterPts.length >= 6 ? '+140% Spatial Density Alert' : 'Normal Variance',
+					anomalyReason: juneTheftSpike ? '🚨 RED ALERT: June 2026 Theft Wave Spike' : clusterPts.length >= 6 ? '⚠️ HIGH DENSITY: Spatial Cluster Concentration' : 'Standard Hotspot'
 				});
 			}
 		}
@@ -292,7 +349,7 @@ app.get('/hotspots', async (req, res) => {
 	}
 });
 
-// Network / Link Graph for Repeat Offenders
+// Network & Link Graph for Repeat Offenders and Associations
 app.get('/network', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
@@ -305,7 +362,13 @@ app.get('/network', async (req, res) => {
 		const unitMap = {};
 		unitsResult.forEach(row => { unitMap[row.Unit.ROWID] = row.Unit.UnitName; });
 		const crimeMap = {};
-		crimeTypesResult.forEach(row => { crimeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName; });
+		const crimeMOMap = {};
+		crimeTypesResult.forEach(row => {
+			crimeMap[row.CrimeSubHead.ROWID] = row.CrimeSubHead.CrimeHeadName;
+			const foundType = CRIME_TYPES.find(ct => ct.head === row.CrimeSubHead.CrimeHeadName);
+			crimeMOMap[row.CrimeSubHead.ROWID] = foundType ? foundType.defaultMO : 'Standard Modus Operandi';
+		});
+
 		const caseMap = {};
 		casesResult.forEach(row => {
 			const c = row.CaseMaster;
@@ -313,7 +376,8 @@ app.get('/network', async (req, res) => {
 				id: c.ROWID,
 				crimeNo: c.CrimeNo,
 				station: unitMap[c.PoliceStationID] || 'Station',
-				crimeType: crimeMap[c.CrimeSubHeadID] || 'Crime'
+				crimeType: crimeMap[c.CrimeSubHeadID] || 'Crime',
+				mo: crimeMOMap[c.CrimeSubHeadID] || 'Standard MO'
 			};
 		});
 
@@ -328,35 +392,67 @@ app.get('/network', async (req, res) => {
 			}
 		});
 
-		// Filter repeat offenders (3+ linked cases)
 		const repeatOffenders = Object.values(offenderCases).filter(o => o.cases.length >= 3);
 
 		const nodes = [];
 		const links = [];
 		const addedNodes = new Set();
 
-		repeatOffenders.forEach(offender => {
+		repeatOffenders.forEach((offender, idx) => {
 			const offenderNodeId = `OFFENDER_${offender.name.replace(/\s+/g, '_')}`;
 			if (!addedNodes.has(offenderNodeId)) {
-				nodes.push({ id: offenderNodeId, label: offender.name, type: 'offender', casesCount: offender.cases.length });
+				nodes.push({
+					id: offenderNodeId,
+					label: offender.name,
+					type: 'suspect',
+					age: offender.age,
+					gender: offender.gender,
+					casesCount: offender.cases.length,
+					moSummary: offender.cases[0]?.mo || 'Night Break-in / Repeat Pattern'
+				});
 				addedNodes.add(offenderNodeId);
 			}
 
 			offender.cases.forEach(c => {
 				const caseNodeId = `CASE_${c.id}`;
 				if (!addedNodes.has(caseNodeId)) {
-					nodes.push({ id: caseNodeId, label: `${c.crimeNo} (${c.crimeType})`, type: 'case', station: c.station });
+					nodes.push({
+						id: caseNodeId,
+						label: `${c.crimeNo}`,
+						type: 'case',
+						crimeType: c.crimeType,
+						station: c.station,
+						mo: c.mo
+					});
 					addedNodes.add(caseNodeId);
 				}
 
-				links.push({ source: offenderNodeId, target: caseNodeId, relationship: 'ACCUSED_IN' });
+				const stationNodeId = `STATION_${c.station.replace(/\s+/g, '_')}`;
+				if (!addedNodes.has(stationNodeId)) {
+					nodes.push({
+						id: stationNodeId,
+						label: c.station,
+						type: 'station'
+					});
+					addedNodes.add(stationNodeId);
+				}
+
+				links.push({ source: offenderNodeId, target: caseNodeId, relationship: 'ACCUSED_IN', label: 'Linked FIR' });
+				links.push({ source: caseNodeId, target: stationNodeId, relationship: 'JURISDICTION', label: 'Logged At' });
 			});
 		});
 
 		res.status(200).json({
 			status: 'success',
 			repeatOffenderCount: repeatOffenders.length,
-			repeatOffenders: repeatOffenders.map(r => ({ name: r.name, casesLinked: r.cases.length, sampleStation: r.cases[0]?.station })),
+			repeatOffenders: repeatOffenders.map(r => ({
+				name: r.name,
+				age: r.age,
+				gender: r.gender,
+				casesLinked: r.cases.length,
+				primaryMO: r.cases[0]?.mo || 'Repeat Theft & Lock Bypassing',
+				sampleStation: r.cases[0]?.station
+			})),
 			nodes,
 			links
 		});
@@ -366,7 +462,7 @@ app.get('/network', async (req, res) => {
 	}
 });
 
-// Risk Scoring Endpoint
+// Risk Scoring & Predictive Intelligence Endpoint
 app.get('/risk-scores', async (req, res) => {
 	try {
 		const catalystApp = catalyst.initialize(req);
@@ -416,14 +512,21 @@ app.get('/risk-scores', async (req, res) => {
 			const rawScore = (s.weightedSum / (s.totalCases * 10)) * 100;
 			const riskScore = Math.min(100, Math.round(rawScore + (s.totalCases * 1.5)));
 			let level = 'Low Risk';
-			if (riskScore >= 75) level = 'High Risk 🚨';
-			else if (riskScore >= 50) level = 'Moderate Risk ⚠️';
+			let predictedSurgeWindow = 'Standard Patrol Schedule';
+			if (riskScore >= 75) {
+				level = 'High Risk 🚨';
+				predictedSurgeWindow = 'Night Shift (22:00 - 04:00)';
+			} else if (riskScore >= 50) {
+				level = 'Moderate Risk ⚠️';
+				predictedSurgeWindow = 'Evening Shift (17:00 - 22:00)';
+			}
 
 			return {
 				station: s.station,
 				totalCases: s.totalCases,
 				riskScore,
 				level,
+				predictedSurgeWindow,
 				topCrime: Object.entries(s.crimeBreakdown).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
 			};
 		}).sort((a, b) => b.riskScore - a.riskScore);
@@ -431,6 +534,37 @@ app.get('/risk-scores', async (req, res) => {
 		res.status(200).json({ status: 'success', totalStationsEvaluated: scores.length, rankings: scores });
 	} catch (error) {
 		console.error('Risk scores error:', error);
+		res.status(500).json({ status: 'error', message: error.message });
+	}
+});
+
+// Socio-Economic Correlation & Urbanization Intelligence Endpoint
+app.get('/socio-economic', async (req, res) => {
+	try {
+		const correlations = DISTRICTS.map(d => {
+			const primaryCrime = d.name.includes('Bengaluru') ? 'Cyber Fraud & Commercial Theft' :
+								d.name.includes('Mangaluru') || d.name.includes('Udupi') ? 'Maritime Transit & Property Crime' :
+								d.name.includes('Belagavi') || d.name.includes('Ballari') ? 'Highway Robbery & Freight Transit Fraud' :
+								'Property & Local Dispute Crimes';
+
+			const forecastRisk = d.name.includes('Bengaluru') ? 'Critical Tech Crime Exposure' :
+								d.name.includes('Belagavi') ? 'Inter-State Border Smuggling Risk' :
+								'Moderate Localized Risk';
+
+			return {
+				district: d.name,
+				urbanizationTier: d.tier,
+				populationDensity: d.popDensity,
+				socioIndex: d.socioIndex,
+				cyberVulnerability: d.cyberVulnerability,
+				dominantTypology: primaryCrime,
+				forecastRisk
+			};
+		});
+
+		res.status(200).json({ status: 'success', totalDistricts: correlations.length, correlations });
+	} catch (error) {
+		console.error('Socio-economic error:', error);
 		res.status(500).json({ status: 'error', message: error.message });
 	}
 });

@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Leaflet Map Stacking Context Isolation Fix */
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.leaflet-pane {
+  z-index: 10 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 20 !important;
+}
+
+.leaflet-popup {
+  z-index: 30 !important;
+}

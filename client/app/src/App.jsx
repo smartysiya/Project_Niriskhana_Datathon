@@ -556,7 +556,7 @@ export default function App() {
             </div>
 
             {/* SINGLE GLOBAL STICKY FILTER PANEL (Directly below KPI cards) */}
-            <div className={`sticky top-2 z-30 ${isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-200'} backdrop-blur-md rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
+            <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
               <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
                 {/* Search Bar */}
                 <div className="relative flex-1 sm:flex-initial">
@@ -916,7 +916,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                   <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
                     <TileLayer
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -957,7 +957,7 @@ export default function App() {
             {/* TAB 2: HOTSPOTS & EXPLAINABLE AI */}
             {activeTab === 'hotspots' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border`} style={{ height: '580px' }}>
+                <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border relative z-0 isolate`} style={{ height: '580px' }}>
                   <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {filteredHotspots.map(h => (

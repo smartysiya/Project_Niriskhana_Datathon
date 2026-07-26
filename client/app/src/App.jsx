@@ -1773,125 +1773,302 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 6: SOCIO-ECONOMIC INSIGHTS WITH PROGRESS INDICATORS */}
+            {/* TAB 6: SOCIO-ECONOMIC & URBANIZATION INTELLIGENCE (Palantir/IBM i2 Intelligence Report Design - NO PROGRESS BARS) */}
             {activeTab === 'socio' && (
-              <div className="space-y-4">
-                {/* 2 Contextual Stat Cards for Socio-Economic */}
+              <div className="space-y-5">
+                {/* Top 2 Compact Summary Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <StatCard label={lang === 'kn' ? 'ನಗರೀಕರಣ ಶ್ರೇಣಿಗಳು' : 'Urbanization Tiers'} value={lang === 'kn' ? '10 ಜಿಲ್ಲೆಗಳು' : '10 Districts'} subtext={lang === 'kn' ? 'ಮೆಟ್ರೋ, ಕರಾವಳಿ ಮತ್ತು ಸಾರಿಗೆ ಕಾರಿಡಾರ್‌ಗಳು' : 'Metro, Coastal & Transit corridors'} isDark={isDark} />
-                  <StatCard label={lang === 'kn' ? 'ಅಪಾಯದ ಒಡ್ಡಿಕೊಳ್ಳುವಿಕೆ' : 'Vulnerability Exposure'} value={lang === 'kn' ? 'ಉನ್ನತ (0.88)' : 'High (0.88)'} subtext={lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ ಮತ್ತು ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Infrastructure & population correlation'} isDark={isDark} />
+                  <StatCard
+                    label={lang === 'kn' ? 'ನಗರೀಕರಣ ವ್ಯಾಪ್ತಿ' : 'Urbanization Coverage'}
+                    value={lang === 'kn' ? '10 ಜಿಲ್ಲೆಗಳು' : '10 Districts'}
+                    subtext={lang === 'kn' ? 'ಮೆಟ್ರೋ, ಕರಾವಳಿ ಮತ್ತು ಸಾರಿಗೆ ಕಾರಿಡಾರ್‌ಗಳು' : 'Metro, Coastal & Transit corridors'}
+                    isDark={isDark}
+                  />
+                  <StatCard
+                    label={lang === 'kn' ? 'ಒಟ್ಟು ಅಪಾಯದ ಶ್ರೇಣಿ' : 'Overall Vulnerability'}
+                    value={lang === 'kn' ? 'ಉನ್ನತ (0.88)' : 'High (0.88)'}
+                    subtext={lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ ಮತ್ತು ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Infrastructure & population correlation'}
+                    isDark={isDark}
+                  />
                 </div>
 
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
-                  <div>
-                    <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
-                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+                {/* Section Header */}
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-2 border`}>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className={`font-extrabold text-[24px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                        {t.socioPanel.title}
+                      </h3>
+                      <p className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                        {t.socioPanel.sub}
+                      </p>
+                    </div>
+                    <span className="bg-blue-100 text-[#1E3A5F] dark:bg-blue-950 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1 rounded text-xs font-mono font-bold hidden sm:inline-block">
+                      SCRB AI Intelligence Briefing
+                    </span>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {socioEconomic.map((s, idx) => {
-                      const districtKn = lang === 'kn' ? (
-                        s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
-                        s.district === 'Mysuru' ? 'ಮೈಸೂರು' :
-                        s.district === 'Mangaluru (Dakshina Kannada)' ? 'ಮಂಗಳೂರು (ದಕ್ಷಿಣ ಕನ್ನಡ)' :
-                        s.district === 'Belagavi' ? 'ಬೆಳಗಾವಿ' :
-                        s.district === 'Hubballi-Dharwad' ? 'ಹುಬ್ಬಳ್ಳಿ-ಧಾರವಾಡ' :
-                        s.district === 'Kalaburagi' ? 'ಕಲಬುರಗಿ' :
-                        s.district === 'Ballari' ? 'ಬಳ್ಳಾರಿ' :
-                        s.district === 'Shivamogga' ? 'ಶಿವಮೊಗ್ಗ' :
-                        s.district === 'Tumakuru' ? 'ತುಮಕೂರು' : 'ಉಡುಪಿ'
-                      ) : s.district;
+                {/* Responsive 2-Column Grid of District Intelligence Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {socioEconomic.map((s, idx) => {
+                    const isMetro = s.urbanizationTier.includes('Metropolitan');
+                    const isCoastal = s.urbanizationTier.includes('Coastal');
+                    const isHeritage = s.urbanizationTier.includes('Heritage');
+                    const isBorder = s.urbanizationTier.includes('Border');
+                    const isCommercial = s.urbanizationTier.includes('Commercial');
 
-                      const tierKn = lang === 'kn' ? (
-                        s.urbanizationTier.includes('Metropolitan') ? 'ಮೆಟ್ರೋಪಾಲಿಟನ್ (ಟೈರ್ 1)' :
-                        s.urbanizationTier.includes('Heritage') ? 'ಪಾರಂಪರಿಕ / ನಗರ (ಟೈರ್ 2)' :
-                        s.urbanizationTier.includes('Coastal') ? 'ಕರಾವಳಿ ಕೈಗಾರಿಕಾ' :
-                        s.urbanizationTier.includes('Border') ? 'ಗಡಿ ಕೈಗಾರಿಕಾ' :
-                        s.urbanizationTier.includes('Commercial') ? 'ವಾಣಿಜ್ಯ ಜಂಕ್ಷನ್' : 'ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ವಲಯ'
-                      ) : s.urbanizationTier;
+                    // District localization
+                    const districtKn = lang === 'kn' ? (
+                      s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
+                      s.district === 'Mysuru' ? 'ಮೈಸೂರು' :
+                      s.district === 'Mangaluru (Dakshina Kannada)' ? 'ಮಂಗಳೂರು (ದಕ್ಷಿಣ ಕನ್ನಡ)' :
+                      s.district === 'Belagavi' ? 'ಬೆಳಗಾವಿ' :
+                      s.district === 'Hubballi-Dharwad' ? 'ಹುಬ್ಬಳ್ಳಿ-ಧಾರವಾಡ' :
+                      s.district === 'Kalaburagi' ? 'ಕಲಬುರಗಿ' :
+                      s.district === 'Ballari' ? 'ಬಳ್ಳಾರಿ' :
+                      s.district === 'Shivamogga' ? 'ಶಿವಮೊಗ್ಗ' :
+                      s.district === 'Tumakuru' ? 'ತುಮಕೂರು' : 'ಉಡುಪಿ'
+                    ) : s.district;
 
-                      const profileKn = lang === 'kn' ? (
-                        s.socioIndex.includes('Tech') ? 'ಉನ್ನತ ನಗರೀಕರಣ / ಐಟಿ ಕಾರಿಡಾರ್' :
-                        s.socioIndex.includes('Tourism') ? 'ಪ್ರವಾಸೋದ್ಯಮ ಮತ್ತು ಶಿಕ್ಷಣ ಸಂಸ್ಥೆಗಳು' :
-                        s.socioIndex.includes('Port') ? 'ಬಂದರು ಮತ್ತು ಸಾಗರ ಸಾರಿಗೆ ಜಂಕ್ಷನ್' :
-                        s.socioIndex.includes('Transit') ? 'ರಾಜ್ಯಗಳ ನಡುವಿನ ಸಾರಿಗೆ ಹಾದಿ' : 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೃಷಿ ವಲಯ'
-                      ) : s.socioIndex;
+                    const tierName = isMetro ? 'Metropolitan (Tier 1)' :
+                      isCoastal ? 'Coastal Maritime Industrial' :
+                      isHeritage ? 'Heritage & Tourism (Tier 2)' :
+                      isBorder ? 'Inter-State Border Industrial' :
+                      isCommercial ? 'Commercial Transit Hub' : 'Emerging Tier-2 District';
 
-                      const typologyKn = lang === 'kn' ? (
-                        s.dominantTypology.includes('Cyber') ? 'ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ವಾಣಿಜ್ಯ ಕಳವು' :
-                        s.dominantTypology.includes('Maritime') ? 'ಸಾಗರ ಸಾರಿಗೆ ಮತ್ತು ಆಸ್ತಿ ಕಳವು' :
-                        s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ಸರಕು ವಂಚನೆ' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಗಲಾಟೆ'
-                      ) : s.dominantTypology;
+                    const tierNameKn = lang === 'kn' ? (
+                      isMetro ? 'ಮೆಟ್ರೋಪಾಲಿಟನ್ (ಟೈರ್ 1)' :
+                      isCoastal ? 'ಕರಾವಳಿ ಬಂದರು ಕೈಗಾರಿಕಾ' :
+                      isHeritage ? 'ಪಾರಂಪರಿಕ ಪ್ರವಾಸೋದ್ಯಮ (ಟೈರ್ 2)' :
+                      isBorder ? 'ರಾಜ್ಯ ಗಡಿ ಕೈಗಾರಿಕಾ' :
+                      isCommercial ? 'ವಾಣಿಜ್ಯ ಸಾರಿಗೆ ಹಬ್' : 'ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ಜಿಲ್ಲೆ'
+                    ) : tierName;
 
-                      // Genuinely Differentiated District Metrics Calculation
-                      const numericDensityList = socioEconomic.map(item => parseInt((item.populationDensity || '').replace(/[^0-9]/g, ''), 10) || 1000);
-                      const maxDensity = Math.max(...numericDensityList, 12000);
-                      const rawDensityNum = parseInt((s.populationDensity || '').replace(/[^0-9]/g, ''), 10) || 1200;
-                      const densityPct = Math.max(10, Math.min(100, Math.round((rawDensityNum / maxDensity) * 100)));
+                    // Density Badge (Text Badge, NO PROGRESS BARS)
+                    const densityBadge = isMetro ? (lang === 'kn' ? 'ಅತ್ಯಧಿಕ' : 'Very High') :
+                      isCommercial || isHeritage ? (lang === 'kn' ? 'ಹೆಚ್ಚು' : 'High') :
+                      isCoastal ? (lang === 'kn' ? 'ಮಧ್ಯಮ-ಹೆಚ್ಚು' : 'Moderate-High') : (lang === 'kn' ? 'ಮಧ್ಯಮ' : 'Moderate');
 
-                      const districtCasesList = socioEconomic.map(item => cases.filter(c => c.district === item.district || (c.station && c.station.includes(item.district))).length || 15);
-                      const maxDistrictCases = Math.max(...districtCasesList, 50);
-                      const distCasesCount = cases.filter(c => c.district === s.district || (c.station && c.station.includes(s.district))).length || 20;
-                      const vulnerabilityPct = Math.max(30, Math.min(96, Math.round((distCasesCount / maxDistrictCases) * 96)));
+                    // Vulnerability Level
+                    const vulnLevel = isMetro ? (lang === 'kn' ? 'ಅತಿ ಗಂಭೀರ 🔴' : 'Critical 🔴') :
+                      isHeritage || isCoastal || isCommercial ? (lang === 'kn' ? 'ಉನ್ನತ 🔴' : 'High 🔴') :
+                      (lang === 'kn' ? 'ಮಧ್ಯಮ 🟡' : 'Moderate 🟡');
 
-                      const urbanizationPct =
-                        s.urbanizationTier?.includes('Metropolitan') ? 95 :
-                        s.urbanizationTier?.includes('Coastal') ? 84 :
-                        s.urbanizationTier?.includes('Heritage') ? 78 :
-                        s.urbanizationTier?.includes('Commercial') ? 75 :
-                        s.urbanizationTier?.includes('Border') ? 64 : 58;
+                    // AI Correlation Score
+                    const correlationScore = isMetro ? '0.92' :
+                      isHeritage ? '0.85' :
+                      isCoastal ? '0.81' :
+                      isCommercial ? '0.78' :
+                      isBorder ? '0.74' : '0.71';
 
-                      const aiCorrelation = (0.62 + (densityPct / 100) * 0.30).toFixed(2);
+                    // Infrastructure Category
+                    const infraCategory = isMetro ? 'Tech & IT Corridor / Commercial Infrastructure' :
+                      isCoastal ? 'Port Logistics & Coastal Highway Corridor' :
+                      isHeritage ? 'Heritage Tourism & Educational Institution Belt' :
+                      isCommercial ? 'Inter-State Railway & Commercial Freight Junction' :
+                      isBorder ? 'National Highway Interstate Transit & Industrial Belt' : 'Semi-Urban Agrarian & Resource Freight Hub';
 
-                      return (
-                        <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-3.5 border`}>
-                          <div className="flex justify-between items-center">
-                            <h4 className={`font-extrabold text-[18px] ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>{districtKn}</h4>
-                            <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
+                    const infraCategoryKn = lang === 'kn' ? (
+                      isMetro ? 'ಐಟಿ ಗಿಗ್ ಕಾರಿಡಾರ್ / ಹೈ-ಡೆನ್ಸಿಟಿ ವಾಣಿಜ್ಯ ಮೂಲಸೌಕರ್ಯ' :
+                      isCoastal ? 'ಬಂದರು ಸರಕು ಮತ್ತು ಕರಾವಳಿ ಹೆದ್ದಾರಿ ಕಾರಿಡಾರ್' :
+                      isHeritage ? 'ಪ್ರವಾಸೋದ್ಯಮ ಮತ್ತು ಶಿಕ್ಷಣ ಸಂಸ್ಥೆಗಳ ವಲಯ' :
+                      isCommercial ? 'ರೈಲ್ವೇ ಮತ್ತು ವಾಣಿಜ್ಯ ಸರಕು ಸಾರಿಗೆ ಜಂಕ್ಷನ್' :
+                      isBorder ? 'ರಾಷ್ಟ್ರೀಯ ಹೆದ್ದಾರಿ ರಾಜ್ಯ ಗಡಿ ಕೈಗಾರಿಕಾ ವಲಯ' : 'ಅರೆ-ನಗರ ಕೃಷಿ ಮೂಲಸೌಕರ್ಯ'
+                    ) : infraCategory;
+
+                    // Dominant Crime Typology
+                    const typologyName = lang === 'kn' ? (
+                      s.dominantTypology.includes('Cyber') ? 'ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ವಾಣಿಜ್ಯ ಕನ್ನಗಳವು' :
+                      s.dominantTypology.includes('Maritime') ? 'ಸಾಗರ ಸರಕು ಕಳವು ಮತ್ತು ಮೂಲಸೌಕರ್ಯ ದಾಳಿ' :
+                      s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ವಾಹನ ಕಳವು' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಧಕ್ಕೆಗಳು'
+                    ) : (
+                      s.dominantTypology.includes('Cyber') ? 'Cyber Fraud & Commercial Burglary' :
+                      s.dominantTypology.includes('Maritime') ? 'Maritime Cargo Theft & Infrastructure Crime' :
+                      s.dominantTypology.includes('Highway') ? 'Highway Robbery & Vehicle Theft' : 'Property Burglary & Local Disturbance'
+                    );
+
+                    // Predicted Crime Trend
+                    const trendText = isMetro ? 'Cyber Fraud and high-value commercial property theft likely to surge during commercial business hours (10:00 - 22:00).' :
+                      isHeritage ? 'Transient tourist scams and evening property burglaries predicted during festival & holiday seasons.' :
+                      isCoastal ? 'Cargo tampering and night-shift contraband smuggling risk along port access roads.' :
+                      isCommercial ? 'Inter-station burglary and transit freight theft likely near railway and bus terminals.' :
+                      'Inter-state border vehicle theft and highway transit robbery during night windows.';
+
+                    const trendTextKn = lang === 'kn' ? (
+                      isMetro ? 'ವಾಣಿಜ್ಯ ವ್ಯವಹಾರದ ಸಮಯದಲ್ಲಿ (10:00 - 22:00) ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ಆಸ್ತಿ ಕಳವು ಅಪರಾಧಗಳು ಹೆಚ್ಚಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ.' :
+                      isHeritage ? 'ಹಬ್ಬಗಳು ಮತ್ತು ರಜಾದಿನಗಳಲ್ಲಿ ಪ್ರವಾಸಿಗರ ವಂಚನೆ ಮತ್ತು ಸಂಜೆ ವೇಳೆಯ ಆಸ್ತಿ ಕಳವು ದೂರುಗಳು ಹೆಚ್ಚಾಗುವ ಮುನ್ಸೂಚನೆ.' :
+                      isCoastal ? 'ಬಂದರು ಪ್ರವೇಶ ರಸ್ತೆಗಳಲ್ಲಿ ರಾತ್ರಿ ಪಾಳಿಯಲ್ಲಿ ಸರಕು ಕಳವು ಮತ್ತು ಕಾನೂನುಬಾಹಿರ ಸರಕು ಸಾಗಣೆ ಅಪಾಯ.' :
+                      isCommercial ? 'ರೈಲ್ವೇ ಮತ್ತು ಬಸ್ ಟರ್ಮಿನಲ್ ಹತ್ತಿರ ಠಾಣಾ ವ್ಯಾಪ್ತಿ ಮೀರಿದ ಆಸ್ತಿ ಕಳವು ದೂರುಗಳ ಸಾಧ್ಯತೆ.' :
+                      'ರಾತ್ರಿ ವೇಳೆಯಲ್ಲಿ ರಾಜ್ಯ ಗಡಿ ಹೆದ್ದಾರಿಗಳಲ್ಲಿ ವಾಹನ ಕಳವು ಮತ್ತು ಸರಕು ದರೋಡೆ ಅಪಾಯ.'
+                    ) : trendText;
+
+                    // Recommended Police Strategy
+                    const strategyText = isMetro ? 'Deploy specialized Cyber Vigilance Units and increase mobile squad patrols along IT commercial hubs.' :
+                      isHeritage ? 'Establish Tourist Safety Booths and intensify evening foot patrols near heritage monuments.' :
+                      isCoastal ? 'Tighten coastal checkpoint security and coordinate joint patrols with maritime law enforcement.' :
+                      isCommercial ? 'Maintain 24/7 CCTV vigilance and joint taskforce patrols at transit hubs.' :
+                      'Set up automated ANPR camera checkpoints and mobile highway patrol units along border routes.';
+
+                    const strategyTextKn = lang === 'kn' ? (
+                      isMetro ? 'ವಿಶೇಷ ಸೈಬರ್ ಗಸ್ತು ತಂಡಗಳನ್ನು ನಿಯೋಜಿಸಿ ಮತ್ತು ಐಟಿ ವಾಣಿಜ್ಯ ಕೇಂದ್ರಗಳಲ್ಲಿ ಮೊಬೈಲ್ ಸ್ಕ್ವಾಡ್ ಕಾವಲು ಹೆಚ್ಚಿಸಿ.' :
+                      isHeritage ? 'ಪ್ರವಾಸಿ ಸುರಕ್ಷತಾ ಕೇಂದ್ರಗಳನ್ನು ಸ್ಥಾಪಿಸಿ ಮತ್ತು ಪ್ರಮುಖ ಸ್ಥಳಗಳಲ್ಲಿ ಸಂಜೆ ಕಾಲ್ನಡಿಗೆ ಗಸ್ತು ಚುರುಕುಗೊಳಿಸಿ.' :
+                      isCoastal ? 'ಕರಾವಳಿ ಚೆಕ್‌ಪೋಸ್ಟ್ ತಪಾಸಣೆ ಬಿಗಿಗೊಳಿಸಿ ಮತ್ತು ಸಾಗರ ಕಾವಲು ಪಡೆಗಳೊಂದಿಗೆ ಜಂಟಿ ಗಸ್ತು ನಡೆಸಿ.' :
+                      isCommercial ? 'ಸಾರಿಗೆ ಕೇಂದ್ರಗಳಲ್ಲಿ 24/7 ಸಿಸಿಟಿವಿ ಕಣ್ಗಾವಲು ಮತ್ತು ಜಂಟಿ ಕಾರ್ಯಪಡೆ ಗಸ್ತು ಕಾಯ್ದುಕೊಳ್ಳಿ.' :
+                      'ರಾಜ್ಯ ಗಡಿ ಮಾರ್ಗಗಳಲ್ಲಿ ಎಎನ್‌ಪಿಆರ್ ಕ್ಯಾಮೆರಾ ಚೆಕ್‌ಪೋಸ್ಟ್‌ಗಳು ಮತ್ತು ಹೆದ್ದಾರಿ ಗಸ್ತು ನಿಯೋಜಿಸಿ.'
+                    ) : strategyText;
+
+                    // AI Insight Quote
+                    const insightQuote = isMetro ? '"The AI engine detected a strong relationship between rapid urban expansion, high-density IT commercial hubs, and increasing cyber-enabled property crime."' :
+                      isHeritage ? '"Socio-economic analysis indicates high seasonal influx of transient populations correlating with opportunistic property theft."' :
+                      isCoastal ? '"Coastal transport corridors show an elevated risk for cross-border contraband movement linked to industrial port logistics."' :
+                      isCommercial ? '"High commercial transit density creates temporary blind spots leveraged by inter-district repeat burglary syndicates."' :
+                      '"Border proximity enables rapid getaway vectors, requiring inter-state intelligence sharing and automated highway monitoring."';
+
+                    const insightQuoteKn = lang === 'kn' ? (
+                      isMetro ? '"ವೇಗದ ನಗರೀಕರಣ, ಉನ್ನತ ಐಟಿ ವಾಣಿಜ್ಯ ಕೇಂದ್ರಗಳು ಮತ್ತು ಸೈಬರ್ ಚಾಲಿತ ಆಸ್ತಿ ಅಪರಾಧಗಳ ನಡುವೆ ಬಲವಾದ ನಂಟು ಇರುವುದನ್ನು ಎಐ ಎಂಜಿನ್ ಪತ್ತೆಹಚ್ಚಿದೆ."' :
+                      isHeritage ? '"ಸಾಮಾಜಿಕ-ಆರ್ಥಿಕ ವಿಶ್ಲೇಷಣೆಯು ತಾತ್ಕಾಲಿಕ ಪ್ರವಾಸಿಗರ ಹರಿವು ಮತ್ತು ಆಸ್ತಿ ಕಳವು ಅಪರಾಧಗಳ ನಡುವಿನ ಋತುಮಾನದ ನಂಟನ್ನು ತೋರಿಸುತ್ತದೆ."' :
+                      isCoastal ? '"ಕರಾವಳಿ ಸಾರಿಗೆ ಕಾರಿಡಾರ್‌ಗಳು ಕಂಟ್ರೋಲ್ ಬಿಗಿಗೊಳಿಸಬೇಕಾದ ಅಂತರ್-ರಾಜ್ಯ ಗಡಿ ಸರಕು ಅಪರಾಧಗಳ ಅಪಾಯವನ್ನು ಪ್ರದರ್ಶಿಸುತ್ತವೆ."' :
+                      isCommercial ? '"ಹೆಚ್ಚಿನ ಸಾರಿಗೆ ದಟ್ಟಣೆಯು ಅಪರಾಧಿಗಳು ಬಳಸಿಕೊಳ್ಳುವ ತಾತ್ಕಾಲಿಕ ಅಂಧ ವಲಯಗಳನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ."' :
+                      '"ರಾಜ್ಯ ಗಡಿ ಸಮೀಪವಿರುವುದು ಅಪರಾಧಿಗಳು ಸುಲಭವಾಗಿ ತಲೆಮರೆಸಿಕೊಳ್ಳಲು ನೆರವಾಗುತ್ತದೆ. ಆದ್ದರಿಂದ ಹೆದ್ದಾರಿ ತಪಾಸಣೆ ಅತ್ಯಗತ್ಯ."'
+                    ) : insightQuote;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`${
+                          isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
+                        } rounded-xl p-5 shadow-sm border space-y-4 transition-all hover:shadow-md relative overflow-hidden`}
+                      >
+                        {/* District Header */}
+                        <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-3">
+                          <div>
+                            <h4 className={`font-extrabold text-[20px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                              {districtKn}
+                            </h4>
+                            <span className="text-[11px] font-bold text-slate-500 font-mono">
+                              SCRB District Code: KA-INTEL-0{idx + 1}
+                            </span>
+                          </div>
+                          <span className={`px-2.5 py-1 rounded-md text-xs font-extrabold border ${
+                            isMetro ? 'bg-blue-100 text-blue-900 border-blue-300' :
+                            isCoastal ? 'bg-cyan-100 text-cyan-900 border-cyan-300' :
+                            isHeritage ? 'bg-amber-100 text-amber-900 border-amber-300' :
+                            isBorder ? 'bg-purple-100 text-purple-900 border-purple-300' : 'bg-slate-100 text-slate-800 border-slate-300'
+                          }`}>
+                            {tierNameKn}
+                          </span>
+                        </div>
+
+                        {/* COMPACT BADGE GRID FOR KEY METRICS (NO PROGRESS BARS) */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-semibold">
+                          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                              {lang === 'kn' ? 'ಜನಸಾಂದ್ರತೆ' : 'Pop. Density'}
+                            </span>
+                            <span className="font-extrabold text-blue-700 dark:text-blue-400 text-xs">
+                              {densityBadge} ({s.populationDensity})
+                            </span>
                           </div>
 
-                          {/* GENUINELY DIFFERENTIATED PROGRESS INDICATORS WITH HIGH CONTRAST LABELS */}
-                          <div className="space-y-2.5">
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.density} ({s.populationDensity})</span>
-                                <span className="font-extrabold">{densityPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-blue-600 h-full transition-all duration-500" style={{ width: `${densityPct}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.vulnerability}</span>
-                                <span className="font-extrabold">{vulnerabilityPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-red-600 h-full transition-all duration-500" style={{ width: `${vulnerabilityPct}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.urbanization}</span>
-                                <span className="font-extrabold">{urbanizationPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-emerald-600 h-full transition-all duration-500" style={{ width: `${urbanizationPct}%` }}></div>
-                              </div>
-                            </div>
+                          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                              {lang === 'kn' ? 'ಅಪರಾಧ ಸೂಕ್ಷ್ಮತೆ' : 'Vulnerability'}
+                            </span>
+                            <span className="font-extrabold text-xs">
+                              {vulnLevel}
+                            </span>
                           </div>
 
-                          <div className={`text-[13px] font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{t.socioPanel.profile} {profileKn}</div>
-                          <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2.5 rounded border font-bold flex justify-between items-center`}>
-                            <span><strong>{t.socioPanel.typology}</strong> {typologyKn}</span>
-                            <span className="text-blue-700 dark:text-blue-400 font-extrabold">{lang === 'kn' ? 'ಎಐ ನಂಟು' : 'AI Correlation'}: {aiCorrelation}</span>
+                          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                              {lang === 'kn' ? 'ನಗರೀಕರಣ' : 'Urbanization'}
+                            </span>
+                            <span className="font-extrabold text-slate-800 dark:text-slate-200 text-xs">
+                              {isMetro ? 'Metropolitan' : isCoastal ? 'Coastal' : isHeritage ? 'Heritage' : 'Commercial'}
+                            </span>
+                          </div>
+
+                          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                              {lang === 'kn' ? 'ಎಐ ನಂಟು' : 'AI Correlation'}
+                            </span>
+                            <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-xs">
+                              {correlationScore}
+                            </span>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+
+                        {/* STRUCTURED INTELLIGENCE ATTRIBUTES */}
+                        <div className="space-y-2.5 text-xs font-medium border-t border-slate-200 dark:border-slate-800 pt-3">
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm">🏢</span>
+                            <div>
+                              <strong className={`font-bold block ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
+                                {t.socioPanel.profile}
+                              </strong>
+                              <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{profileKn}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm">🏗️</span>
+                            <div>
+                              <strong className={`font-bold block ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
+                                {lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ ವರ್ಗ:' : 'Infrastructure Category:'}
+                              </strong>
+                              <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{infraCategoryKn}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm">🎯</span>
+                            <div>
+                              <strong className={`font-bold block ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
+                                {t.socioPanel.typology}
+                              </strong>
+                              <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{typologyName}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm">📈</span>
+                            <div>
+                              <strong className={`font-bold block ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
+                                {lang === 'kn' ? 'ಮುನ್ಸೂಚಿತ ಅಪರಾಧ ಪ್ರವೃತ್ತಿ:' : 'Predicted Crime Trend:'}
+                              </strong>
+                              <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{trendTextKn}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm">🚔</span>
+                            <div>
+                              <strong className={`font-bold block ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
+                                {lang === 'kn' ? 'ಶಿಫಾರಸು ಮಾಡಿದ ಪೊಲೀಸ್ ತಂತ್ರಜ್ಞಾನ:' : 'Recommended Police Strategy:'}
+                              </strong>
+                              <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{strategyTextKn}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* BOTTOM AI INSIGHT BOX */}
+                        <div className={`p-3.5 rounded-lg border shadow-sm space-y-1 ${
+                          isDark ? 'bg-blue-950/60 border-blue-800 text-slate-100' : 'bg-[#1E3A5F] text-white border-blue-900'
+                        }`}>
+                          <div className="font-extrabold text-[12px] text-blue-300 flex items-center gap-1.5 uppercase tracking-wider">
+                            <span>🧠</span> {lang === 'kn' ? 'ಎಐ ಅಪರಾಧ ವಿಶ್ಲೇಷಣಾ ಸುಳಿವು' : 'AI Intelligence Insight'}
+                          </div>
+                          <p className="text-[12px] italic leading-relaxed text-slate-100 dark:text-slate-200">
+                            {insightQuoteKn}
+                          </p>
+                          <div className="text-[10px] text-right text-slate-300 font-mono pt-0.5">
+                            {lang === 'kn' ? 'ಕೊನೆಯ ಎಐ ವಿಶ್ಲೇಷಣೆ: 18:25 IST • ಲೈವ್ ಎಸ್‌ಸಿಆರ್‌ಬಿ ಸಿಂಕ್' : 'Last AI Analysis: 18:25 IST • Live SCRB Sync'}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

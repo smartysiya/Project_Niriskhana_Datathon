@@ -1,0 +1,12 @@
+{
+  "client": {
+    "source": "client"
+  },
+  "functions": {
+    "targets": [
+      "project_nirikshana_function"
+    ],
+    "ignore": [],
+    "source": "functions"
+  }
+}

@@ -300,7 +300,7 @@ export default function App() {
     { id: 4, time: '09:05 AM', tag: 'Anomaly Flagged', tagColor: 'amber', text: 'New anomaly: Vehicle theft surge wave' }
   ]);
 
-  // Timeline Filter State
+  // Timeline Filter State (Bug 3: Dynamic Date Filter)
   const [timelineRange, setTimelineRange] = useState('Last Month');
 
   // Selected Offender Drawer State
@@ -350,13 +350,34 @@ export default function App() {
     fetchData();
   }, []);
 
+  // Compute maximum/most recent date in the synthetic dataset as the reference anchor point for relative timeline filtering
+  const maxDatasetTime = cases.reduce((max, c) => {
+    if (!c.date) return max;
+    const t = new Date(c.date).getTime();
+    return !isNaN(t) && t > max ? t : max;
+  }, 0) || new Date('2026-12-31').getTime();
+
+  // Filter cases array by Search, District, Time of Day, Crime Type, AND Timeline Date Window (Bug 2 & Bug 3)
   const filteredCases = cases.filter(c => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || c.crimeNo.toLowerCase().includes(q) || c.station.toLowerCase().includes(q) || c.crimeType.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
     const matchDistrict = selectedDistrict === 'All Districts' || c.district === selectedDistrict || c.station.includes(selectedDistrict);
     const matchTime = selectedTimeOfDay === 'All Times' || c.timeOfDay.includes(selectedTimeOfDay);
     const matchCrime = selectedCrimeType === 'All Types' || c.crimeType === selectedCrimeType;
-    return matchSearch && matchDistrict && matchTime && matchCrime;
+
+    // Bug 3: Relative Timeline Date Window Filter
+    const matchTimeline = (() => {
+      if (!c.date || timelineRange === 'Last Year' || timelineRange === 'All Time') return true;
+      const cTime = new Date(c.date).getTime();
+      if (isNaN(cTime)) return true;
+      const diffDays = (maxDatasetTime - cTime) / (1000 * 60 * 60 * 24);
+      if (timelineRange === 'Last 24 Hours') return diffDays <= 1;
+      if (timelineRange === 'Last 7 Days') return diffDays <= 7;
+      if (timelineRange === 'Last Month') return diffDays <= 30;
+      return true;
+    })();
+
+    return matchSearch && matchDistrict && matchTime && matchCrime && matchTimeline;
   });
 
   const filteredHotspots = hotspots.filter(h => {
@@ -379,8 +400,8 @@ export default function App() {
     setAlertsList(prev => prev.map(item => item.id === id ? { ...item, read: true } : item));
   };
 
-  // Bug 1 Fix: Dynamic Total Cases Count (Using ZCQL COUNT aggregate result from backend stats/cases API, e.g. 825)
-  const isFiltered = searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types';
+  // Dynamic Total Cases Count (Using ZCQL COUNT aggregate result from backend stats/cases API, e.g. 825)
+  const isFiltered = searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year';
   const displayTotalFIRs = isFiltered ? filteredCases.length : (dbTotalCases || stats?.totalCases || 825);
 
   return (
@@ -401,7 +422,7 @@ export default function App() {
             {/* Theme Toggle Button */}
             <button
               onClick={() => setIsDark(!isDark)}
-              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5"
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
               title="Toggle Dark / Light Theme"
             >
               {isDark ? '☀️ Light' : '🌙 Dark'}
@@ -410,7 +431,7 @@ export default function App() {
             {/* Language Toggle Button */}
             <button
               onClick={() => setLang(lang === 'en' ? 'kn' : 'en')}
-              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors"
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors cursor-pointer"
             >
               {t.langToggle}
             </button>
@@ -438,7 +459,7 @@ export default function App() {
           <div className="relative">
             <button
               onClick={() => setShowAlerts(!showAlerts)}
-              className={`p-2.5 rounded-lg border relative transition-colors ${
+              className={`p-2.5 rounded-lg border relative transition-colors cursor-pointer ${
                 isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
               title="SCRB Intelligence Alerts"
@@ -477,17 +498,17 @@ export default function App() {
                       >
                         <div className="flex justify-between items-start font-bold">
                           <span>{alert.text}</span>
-                          <button onClick={() => dismissAlert(alert.id)} className="text-slate-400 hover:text-red-500 ml-1">✕</button>
+                          <button onClick={() => dismissAlert(alert.id)} className="text-slate-400 hover:text-red-500 ml-1 cursor-pointer">✕</button>
                         </div>
                         <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1">
                           <span>{alert.time}</span>
                           <div className="flex gap-2">
                             {!alert.read && (
-                              <button onClick={() => markAlertAsRead(alert.id)} className="text-blue-600 dark:text-blue-400 hover:underline">
+                              <button onClick={() => markAlertAsRead(alert.id)} className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">
                                 Mark Read
                               </button>
                             )}
-                            <button onClick={() => setExpandedAlertId(expandedAlertId === alert.id ? null : alert.id)} className="text-slate-500 hover:underline">
+                            <button onClick={() => setExpandedAlertId(expandedAlertId === alert.id ? null : alert.id)} className="text-slate-500 hover:underline cursor-pointer">
                               {expandedAlertId === alert.id ? 'Hide' : 'Details'}
                             </button>
                           </div>
@@ -519,7 +540,7 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-3 transition-colors border-b-2 whitespace-nowrap ${
+              className={`py-3 transition-colors border-b-2 whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-[#2563EB] text-[#2563EB] font-bold'
                   : (isDark ? 'border-transparent text-slate-400 hover:text-slate-200' : 'border-transparent text-slate-600 hover:text-slate-900')
@@ -546,7 +567,7 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* KPI Cards Row (Bug 1 Fix: Displays dynamic ZCQL COUNT totalCases e.g. 825 across all tabs) */}
+            {/* KPI Cards Row (Contextual to Active Tab) */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard label={t.stats.totalCases} value={displayTotalFIRs} subtext={t.stats.totalSub} trendUp isDark={isDark} />
               <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
@@ -580,7 +601,7 @@ export default function App() {
                   <select
                     value={selectedDistrict}
                     onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none ${
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-bold focus:outline-none cursor-pointer ${
                       isDark ? 'bg-slate-800 border-slate-700 text-blue-400' : 'bg-white border-slate-300 text-[#1E3A5F]'
                     }`}
                   >
@@ -596,7 +617,7 @@ export default function App() {
                   <select
                     value={selectedTimeOfDay}
                     onChange={(e) => setSelectedTimeOfDay(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none ${
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
                       isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
@@ -614,7 +635,7 @@ export default function App() {
                   <select
                     value={selectedCrimeType}
                     onChange={(e) => setSelectedCrimeType(e.target.value)}
-                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none ${
+                    className={`border rounded-md px-2.5 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer ${
                       isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
@@ -626,15 +647,16 @@ export default function App() {
                 </div>
               </div>
 
-              {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types') && (
+              {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types' || timelineRange !== 'Last Year') && (
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedDistrict('All Districts');
                     setSelectedTimeOfDay('All Times');
                     setSelectedCrimeType('All Types');
+                    setTimelineRange('Last Year');
                   }}
-                  className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors ${
+                  className={`border font-bold px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
                     isDark ? 'bg-[#2563EB] border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
                   }`}
                 >
@@ -644,312 +666,337 @@ export default function App() {
               )}
             </div>
 
-            {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
-              <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">🧠</span>
-                    <h2 className={`font-semibold text-[26px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      AI Intelligence Brief
-                    </h2>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
-                      Priority: HIGH
-                    </span>
-                    <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded">
-                      AI Confidence: 94%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Left Column: Natural Language Intelligence Summary */}
-                  <div className="md:col-span-2 space-y-3 text-[15px]">
-                    {/* Bug 2 Fix: "Today's Intelligence Summary" heading rendered in crisp dark navy text (#1E3A5F) in light mode and bright white in dark mode */}
-                    <div className={`font-extrabold text-[18px] mb-2 ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>
-                      Today's Intelligence Summary
-                    </div>
-                    <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-normal`}>
-                      <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
-                      <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
-                      <li><strong>Three repeat offenders</strong> linked across multiple FIRs & station jurisdictions.</li>
-                      <li>Vehicle theft expected to increase tonight between <strong>10 PM and 4 AM</strong>.</li>
-                    </ul>
-
-                    {/* RECOMMENDED ACTION BOX */}
-                    <div className={`p-4 rounded-md border text-[13px] mt-3 ${
-                      isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
-                    }`}>
-                      <span className={`font-bold uppercase tracking-wide block mb-1 text-[13px] ${
-                        isDark ? 'text-blue-400' : 'text-blue-900'
-                      }`}>
-                        Recommended Action
-                      </span>
-                      <p className={`font-semibold text-[15px] leading-normal ${
-                        isDark ? 'text-slate-100' : 'text-blue-950'
-                      }`}>
-                        Increase patrol deployment in Whitefield and KR Puram between 7 PM and 11 PM.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Right Column: Structured AI Model Metadata Grid */}
-                  <div className={`p-4 rounded-lg border text-[13px] space-y-2.5 ${
-                    isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-300 text-slate-800'
-                  }`}>
-                    <div className="font-bold text-slate-900 dark:text-slate-100 text-xs border-b pb-1.5 uppercase tracking-wider">
-                      ⚙️ Structured AI Engine Metadata
-                    </div>
-                    <div>
-                      <span className="text-slate-500 font-medium block text-[11px]">AI Models Used:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {['DBSCAN', 'Isolation Forest', 'Graph Analytics', 'Random Forest'].map(m => (
-                          <span key={m} className="bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold">
-                            {m}
-                          </span>
-                        ))}
+            {/* TAB 1: SPATIAL CRIME MAP & AI INTELLIGENCE BRIEF (Bug 1 Fix: AI Intelligence Brief appears ONLY on Crime Map tab) */}
+            {activeTab === 'map' && (
+              <div className="space-y-6">
+                {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
+                  <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
+                    <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🧠</span>
+                        <h2 className={`font-semibold text-[26px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                          AI Intelligence Brief
+                        </h2>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                          Priority: HIGH
+                        </span>
+                        <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded">
+                          AI Confidence: 94%
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex justify-between pt-1">
-                      <span className="text-slate-500 font-medium">Overall AI Confidence:</span>
-                      <strong className="text-emerald-600 font-bold">94%</strong>
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Left Column: Natural Language Intelligence Summary */}
+                      <div className="md:col-span-2 space-y-3 text-[15px]">
+                        <div className={`font-extrabold text-[18px] mb-2 ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>
+                          Today's Intelligence Summary
+                        </div>
+                        <ul className={`list-disc pl-5 space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-800'} font-normal`}>
+                          <li>Theft incidents increased by <strong>14%</strong> in {selectedDistrict === 'All Districts' ? 'Bengaluru East & commercial hubs' : selectedDistrict}.</li>
+                          <li><strong>Two new crime hotspots</strong> detected in Hubballi and Belagavi police station limits.</li>
+                          <li><strong>Three repeat offenders</strong> linked across multiple FIRs & station jurisdictions.</li>
+                          <li>Vehicle theft expected to increase tonight between <strong>10 PM and 4 AM</strong>.</li>
+                        </ul>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Current Threat Level:</span>
-                      <strong className="text-red-600 font-bold">ELEVATED</strong>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Crime Trend:</span>
-                      <strong className="text-amber-600 font-bold">+14% Surge</strong>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Prediction Window:</span>
-                      <strong className="text-blue-600 font-bold">Next 48 Hours</strong>
-                    </div>
-
-                    <div className="flex justify-between pt-1 border-t text-[11px] text-slate-400">
-                      <span>Last AI Analysis:</span>
-                      <span className="font-mono">18:25 IST</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-3`}>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                  <h3 className={`font-semibold text-[18px] flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                    <span>📡 Recent Intelligence Feed</span>
-                  </h3>
-                  <span className="text-[11px] text-slate-500 font-mono font-bold">Live</span>
-                </div>
-
-                <div className="space-y-2.5">
-                  {feedItems.map(item => (
-                    <div
-                      key={item.id}
-                      className={`p-3 rounded border transition-all hover:shadow-md ${
-                        isDark ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-slate-50 border-slate-300 hover:border-slate-400'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center font-mono text-[11px] font-bold">
-                        <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{item.time}</span>
-                        <div className="flex items-center gap-2">
-                          <span className={
-                            item.tagColor === 'red' ? 'text-red-700 dark:text-red-400 font-bold' :
-                            item.tagColor === 'purple' ? 'text-purple-700 dark:text-purple-400 font-bold' :
-                            item.tagColor === 'blue' ? 'text-blue-700 dark:text-blue-400 font-bold' : 'text-amber-700 dark:text-amber-400 font-bold'
-                          }>
-                            {item.tag}
+                        {/* RECOMMENDED ACTION BOX */}
+                        <div className={`p-4 rounded-md border text-[13px] mt-3 ${
+                          isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
+                        }`}>
+                          <span className={`font-bold uppercase tracking-wide block mb-1 text-[13px] ${
+                            isDark ? 'text-blue-400' : 'text-blue-900'
+                          }`}>
+                            Recommended Action
                           </span>
-                          <button onClick={() => dismissFeedItem(item.id)} className="text-slate-400 hover:text-red-500 font-bold text-xs">✕</button>
+                          <p className={`font-semibold text-[15px] leading-normal ${
+                            isDark ? 'text-slate-100' : 'text-blue-950'
+                          }`}>
+                            Increase patrol deployment in Whitefield and KR Puram between 7 PM and 11 PM.
+                          </p>
                         </div>
                       </div>
-                      <div className={`font-semibold mt-1 text-[13px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{item.text}</div>
+
+                      {/* Right Column: Structured AI Model Metadata Grid */}
+                      <div className={`p-4 rounded-lg border text-[13px] space-y-2.5 ${
+                        isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-300 text-slate-800'
+                      }`}>
+                        <div className="font-bold text-slate-900 dark:text-slate-100 text-xs border-b pb-1.5 uppercase tracking-wider">
+                          ⚙️ Structured AI Engine Metadata
+                        </div>
+                        <div>
+                          <span className="text-slate-500 font-medium block text-[11px]">AI Models Used:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {['DBSCAN', 'Isolation Forest', 'Graph Analytics', 'Random Forest'].map(m => (
+                              <span key={m} className="bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold">
+                                {m}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between pt-1">
+                          <span className="text-slate-500 font-medium">Overall AI Confidence:</span>
+                          <strong className="text-emerald-600 font-bold">94%</strong>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <span className="text-slate-500 font-medium">Current Threat Level:</span>
+                          <strong className="text-red-600 font-bold">ELEVATED</strong>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <span className="text-slate-500 font-medium">Crime Trend:</span>
+                          <strong className="text-amber-600 font-bold">+14% Surge</strong>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <span className="text-slate-500 font-medium">Prediction Window:</span>
+                          <strong className="text-blue-600 font-bold">Next 48 Hours</strong>
+                        </div>
+
+                        <div className="flex justify-between pt-1 border-t text-[11px] text-slate-400">
+                          <span>Last AI Analysis:</span>
+                          <span className="font-mono">18:25 IST</span>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* AI POLICE RECOMMENDATIONS CARD WITH COMPACT BADGES */}
-            <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
-              <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                  <span>🚔 AI Police Recommendations</span>
-                </h3>
-                <span className="text-[13px] text-slate-500 font-mono font-medium">Actionable Patrol Dispatches</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* RECOMMENDATION 1 */}
-                <div className={`p-4 rounded-lg border space-y-2.5 ${
-                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Deploy Patrol</span>
-                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
                   </div>
-                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Whitefield Command Limit</div>
-                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
-                    <strong>Reason:</strong> 18% crime increase in past 30 days during 20:00 - 02:00 window.
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
-                    <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
-                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-22% Crime Red.</span>
-                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Mobile Squads</span>
-                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 95%</span>
-                  </div>
-                </div>
 
-                {/* RECOMMENDATION 2 */}
-                <div className={`p-4 rounded-lg border space-y-2.5 ${
-                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Monitor Gang Alpha</span>
-                    <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
-                  </div>
-                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Mysuru PS-2 Jurisdiction</div>
-                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
-                    <strong>Reason:</strong> Repeat offender activity linked across station borders.
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
-                    <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
-                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-15% Crime Red.</span>
-                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Surveillance Unit</span>
-                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 89%</span>
+                  {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
+                  <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-3`}>
+                    <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <h3 className={`font-semibold text-[18px] flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                        <span>📡 Recent Intelligence Feed</span>
+                      </h3>
+                      <span className="text-[11px] text-slate-500 font-mono font-bold">Live</span>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {feedItems.map(item => (
+                        <div
+                          key={item.id}
+                          className={`p-3 rounded border transition-all hover:shadow-md ${
+                            isDark ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-slate-50 border-slate-300 hover:border-slate-400'
+                          }`}
+                        >
+                          <div className="flex justify-between items-center font-mono text-[11px] font-bold">
+                            <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{item.time}</span>
+                            <div className="flex items-center gap-2">
+                              <span className={
+                                item.tagColor === 'red' ? 'text-red-700 dark:text-red-400 font-bold' :
+                                item.tagColor === 'purple' ? 'text-purple-700 dark:text-purple-400 font-bold' :
+                                item.tagColor === 'blue' ? 'text-blue-700 dark:text-blue-400 font-bold' : 'text-amber-700 dark:text-amber-400 font-bold'
+                              }>
+                                {item.tag}
+                              </span>
+                              <button onClick={() => dismissFeedItem(item.id)} className="text-slate-400 hover:text-red-500 font-bold text-xs cursor-pointer">✕</button>
+                            </div>
+                          </div>
+                          <div className={`font-semibold mt-1 text-[13px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{item.text}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* RECOMMENDATION 3 */}
-                <div className={`p-4 rounded-lg border space-y-2.5 ${
-                  isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Investigate Offender</span>
-                    <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
+                {/* AI POLICE RECOMMENDATIONS CARD WITH COMPACT BADGES */}
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
+                  <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                    <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                      <span>🚔 AI Police Recommendations</span>
+                    </h3>
+                    <span className="text-[13px] text-slate-500 font-mono font-medium">Actionable Patrol Dispatches</span>
                   </div>
-                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Hubballi PS-2 Hub</div>
-                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
-                    <strong>Reason:</strong> 5 linked FIRs detected with identical MO.
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
-                    <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
-                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-28% Crime Red.</span>
-                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Special Taskforce</span>
-                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 92%</span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* RECOMMENDATION 1 */}
+                    <div className={`p-4 rounded-lg border space-y-2.5 ${
+                      isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Deploy Patrol</span>
+                        <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
+                      </div>
+                      <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Whitefield Command Limit</div>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                        <strong>Reason:</strong> 18% crime increase in past 30 days during 20:00 - 02:00 window.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                        <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
+                        <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-22% Crime Red.</span>
+                        <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Mobile Squads</span>
+                        <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 95%</span>
+                      </div>
+                    </div>
+
+                    {/* RECOMMENDATION 2 */}
+                    <div className={`p-4 rounded-lg border space-y-2.5 ${
+                      isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Monitor Gang Alpha</span>
+                        <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
+                      </div>
+                      <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Mysuru PS-2 Jurisdiction</div>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                        <strong>Reason:</strong> Repeat offender activity linked across station borders.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                        <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
+                        <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-15% Crime Red.</span>
+                        <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Surveillance Unit</span>
+                        <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 89%</span>
+                      </div>
+                    </div>
+
+                    {/* RECOMMENDATION 3 */}
+                    <div className={`p-4 rounded-lg border space-y-2.5 ${
+                      isDark ? 'bg-slate-950 border-red-900/60' : 'bg-red-50 border-red-300'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className={`font-semibold text-[18px] ${isDark ? 'text-red-300' : 'text-red-950'}`}>Investigate Offender</span>
+                        <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority High</span>
+                      </div>
+                      <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Hubballi PS-2 Hub</div>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                        <strong>Reason:</strong> 5 linked FIRs detected with identical MO.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                        <span className="bg-red-100 text-red-900 px-1.5 py-0.5 rounded">Impact: High</span>
+                        <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-28% Crime Red.</span>
+                        <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">1 Special Taskforce</span>
+                        <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 92%</span>
+                      </div>
+                    </div>
+
+                    {/* RECOMMENDATION 4 */}
+                    <div className={`p-4 rounded-lg border space-y-2.5 ${
+                      isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Surveillance Check</span>
+                        <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
+                      </div>
+                      <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Commercial Zone Corridors</div>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
+                        <strong>Reason:</strong> Peak night-time burglary & vehicle theft risk.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
+                        <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
+                        <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-18% Crime Red.</span>
+                        <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Highway Patrols</span>
+                        <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 87%</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* RECOMMENDATION 4 */}
-                <div className={`p-4 rounded-lg border space-y-2.5 ${
-                  isDark ? 'bg-slate-950 border-amber-900/60' : 'bg-amber-50 border-amber-300'
-                }`}>
-                  <div className="flex justify-between items-center">
-                    <span className={`font-semibold text-[18px] ${isDark ? 'text-amber-300' : 'text-amber-950'}`}>Surveillance Check</span>
-                    <span className="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded uppercase">Priority Med</span>
-                  </div>
-                  <div className={`font-semibold text-[15px] ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>Commercial Zone Corridors</div>
-                  <p className={`text-[13px] ${isDark ? 'text-slate-300' : 'text-slate-800'} font-normal`}>
-                    <strong>Reason:</strong> Peak night-time burglary & vehicle theft risk.
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 pt-1 text-[11px] font-bold">
-                    <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">Impact: Med</span>
-                    <span className="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">-18% Crime Red.</span>
-                    <span className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded">2 Highway Patrols</span>
-                    <span className="bg-emerald-700 text-white px-1.5 py-0.5 rounded">Conf: 87%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                {/* SPATIAL CRIME MAP CARD */}
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
+                    </div>
 
-            {/* TAB 1: SPATIAL CRIME MAP & TIMELINE SELECTOR BAR */}
-            {activeTab === 'map' && (
-              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-5 space-y-4 border`}>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div>
-                    <h2 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title} ({selectedDistrict})</h2>
-                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{displayTotalFIRs} {t.mapPanel.sub}</p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 text-[11px]">
-                    {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => (
-                      <span key={type} className={`flex items-center gap-1.5 px-2 py-1 rounded border ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-800'}`}>
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                        <span className="font-bold">{type}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* TIMELINE SELECTOR BAR (Above Crime Map) */}
-                <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
-                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                }`}>
-                  <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
-                    <span>📅 Timeline Analysis Window:</span>
-                    <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
+                    {/* Bug 2 Fix: Interactive Crime Type Filter Legend Buttons */}
+                    <div className="flex flex-wrap gap-1.5 text-[11px] items-center">
                       <button
-                        key={range}
-                        onClick={() => setTimelineRange(range)}
-                        className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                          timelineRange === range
-                            ? 'bg-[#2563EB] text-white'
-                            : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
+                        onClick={() => setSelectedCrimeType('All Types')}
+                        className={`px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                          selectedCrimeType === 'All Types'
+                            ? 'bg-[#1E3A5F] text-white border-[#1E3A5F] shadow-sm ring-2 ring-blue-400'
+                            : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200')
                         }`}
                       >
-                        {range}
+                        All Categories
                       </button>
-                    ))}
+                      {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => {
+                        const isSelected = selectedCrimeType === type;
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedCrimeType(isSelected ? 'All Types' : type)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400 shadow-sm'
+                                : (isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100')
+                            }`}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
+                            <span>{type}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
 
-                <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                  <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; OpenStreetMap contributors'
-                    />
-                    {filteredCases.map(c => (
-                      c.lat && c.lng ? (
-                        <CircleMarker
-                          key={c.id}
-                          center={[c.lat, c.lng]}
-                          radius={6}
-                          pathOptions={{
-                            color: CRIME_COLORS[c.crimeType] || '#2563eb',
-                            fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
-                            fillOpacity: 0.8
-                          }}
+                  {/* Bug 3 Fix: Functional Timeline Analysis Window Selector Bar */}
+                  <div className={`p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-3 ${
+                    isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
+                      <span>📅 Timeline Analysis Window:</span>
+                      <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
+                      <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {['Last 24 Hours', 'Last 7 Days', 'Last Month', 'Last Year'].map(range => (
+                        <button
+                          key={range}
+                          onClick={() => setTimelineRange(range)}
+                          className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+                            timelineRange === range
+                              ? 'bg-[#2563EB] text-white shadow-sm ring-2 ring-blue-400'
+                              : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100')
+                          }`}
                         >
-                          <Popup>
-                            <div className="text-slate-800 p-1 min-w-[190px]">
-                              <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
-                              <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
-                              <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
-                              <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
-                              <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
-                              <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
-                                <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
+                          {range}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border relative z-0 isolate ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                    <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; OpenStreetMap contributors'
+                      />
+                      {filteredCases.map(c => (
+                        c.lat && c.lng ? (
+                          <CircleMarker
+                            key={c.id}
+                            center={[c.lat, c.lng]}
+                            radius={6}
+                            pathOptions={{
+                              color: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillColor: CRIME_COLORS[c.crimeType] || '#2563eb',
+                              fillOpacity: 0.8
+                            }}
+                          >
+                            <Popup>
+                              <div className="text-slate-800 p-1 min-w-[190px]">
+                                <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
+                                <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-bold">{c.status}</span></div>
+                                <div className="text-[11px] text-slate-700 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200 font-medium">
+                                  <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
+                                </div>
                               </div>
-                            </div>
-                          </Popup>
-                        </CircleMarker>
-                      ) : null
-                    ))}
-                  </MapContainer>
+                            </Popup>
+                          </CircleMarker>
+                        ) : null
+                      ))}
+                    </MapContainer>
+                  </div>
                 </div>
               </div>
             )}
@@ -1011,7 +1058,7 @@ export default function App() {
                         <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
                           <button
                             onClick={() => toggleRationale(h.id)}
-                            className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline"
+                            className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
                           >
                             <span>Why?</span>
                             <span>{showRationale[h.id] ? '▲' : '▼'}</span>
@@ -1159,7 +1206,7 @@ export default function App() {
                     <h3 className="font-semibold text-[26px] text-[#1E3A5F] dark:text-blue-400">👤 Offender Profile</h3>
                     <button
                       onClick={() => setSelectedOffenderDrawer(null)}
-                      className="text-slate-400 hover:text-slate-600 text-xl font-bold"
+                      className="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer"
                     >
                       ✕
                     </button>
@@ -1231,7 +1278,6 @@ export default function App() {
                     </thead>
                     <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
                       {riskScores.map((r, idx) => {
-                        // COLOR-CODED RISK INDEX BAND
                         const score = parseInt(r.riskScore);
                         const riskBadgeStyle =
                           score >= 90 ? 'bg-red-100 text-red-900 border-red-300 font-extrabold' :
@@ -1260,7 +1306,7 @@ export default function App() {
                             <td className="py-3 px-3">
                               <button
                                 onClick={() => toggleRationale(`risk-${idx}`)}
-                                className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline"
+                                className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline cursor-pointer"
                               >
                                 Why? {showRationale[`risk-${idx}`] ? '▲' : '▼'}
                               </button>
@@ -1399,7 +1445,7 @@ export default function App() {
 
                   <button
                     onClick={() => window.print()}
-                    className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap"
+                    className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap cursor-pointer"
                   >
                     📄 Export Intelligence Report (PDF)
                   </button>

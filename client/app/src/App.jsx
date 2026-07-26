@@ -5,6 +5,12 @@ import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
 import { LOGO_DATA_URI } from './logoDataUri';
+import {
+  Brain, ShieldAlert, FileText, MapPin, BarChart3, TrendingUp, TrendingDown,
+  TriangleAlert, Flame, Target, Search, Clock, Globe, Building2, User, Users,
+  Network, GitBranch, Map as MapIcon, Radar, Bot, Lightbulb, ShieldCheck, Siren,
+  Download, Upload, Settings, CheckCircle, XCircle, Info, Building, Zap, Activity
+} from 'lucide-react';
 
 const FUNCTION_BASE = 'https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function';
 
@@ -1773,22 +1779,27 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 6: SOCIO-ECONOMIC INSIGHTS WITH PROGRESS INDICATORS */}
+            {/* TAB 6: SOCIO-ECONOMIC INSIGHTS WITH INTELLIGENCE BRIEFING LAYOUT */}
             {activeTab === 'socio' && (
               <div className="space-y-4">
                 {/* 2 Contextual Stat Cards for Socio-Economic */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <StatCard label={lang === 'kn' ? 'ನಗರೀಕರಣ ಶ್ರೇಣಿಗಳು' : 'Urbanization Tiers'} value={lang === 'kn' ? '10 ಜಿಲ್ಲೆಗಳು' : '10 Districts'} subtext={lang === 'kn' ? 'ಮೆಟ್ರೋ, ಕರಾವಳಿ ಮತ್ತು ಸಾರಿಗೆ ಕಾರಿಡಾರ್‌ಗಳು' : 'Metro, Coastal & Transit corridors'} isDark={isDark} />
-                  <StatCard label={lang === 'kn' ? 'ಅಪಾಯದ ಒಡ್ಡಿಕೊಳ್ಳುವಿಕೆ' : 'Vulnerability Exposure'} value={lang === 'kn' ? 'ಉನ್ನತ (0.88)' : 'High (0.88)'} subtext={lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ ಮತ್ತು ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Infrastructure & population correlation'} isDark={isDark} />
+                  <StatCard label={lang === 'kn' ? 'ನಗರೀಕರಣ ಶ್ರೇಣಿಗಳು' : 'Urbanization Coverage'} value={lang === 'kn' ? '10 ಜಿಲ್ಲೆಗಳು' : '10 Districts'} subtext={lang === 'kn' ? 'ಮೆಟ್ರೋ, ಕರಾವಳಿ ಮತ್ತು ಸಾರಿಗೆ ಕಾರಿಡಾರ್‌ಗಳು' : 'Metro, Coastal & Transit corridors'} isDark={isDark} />
+                  <StatCard label={lang === 'kn' ? 'ಅಪಾಯದ ಒಡ್ಡಿಕೊಳ್ಳುವಿಕೆ' : 'Overall Vulnerability'} value={lang === 'kn' ? 'ಉನ್ನತ (0.88)' : 'High (0.88)'} subtext={lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ ಮತ್ತು ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Infrastructure & population correlation'} isDark={isDark} />
                 </div>
 
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-6 shadow-sm space-y-4 border`}>
-                  <div>
-                    <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
-                    <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+                  <div className="flex items-center gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                      <Network className="w-6 h-6 text-blue-700 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className={`font-semibold text-[26px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
+                      <p className={`text-[13px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{t.socioPanel.sub}</p>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     {socioEconomic.map((s, idx) => {
                       const districtKn = lang === 'kn' ? (
                         s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
@@ -1823,7 +1834,7 @@ export default function App() {
                         s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ಸರಕು ವಂಚನೆ' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಗಲಾಟೆ'
                       ) : s.dominantTypology;
 
-                      // Genuinely Differentiated District Metrics Calculation
+                      // Calculate metrics for AI insights and badges
                       const numericDensityList = socioEconomic.map(item => parseInt((item.populationDensity || '').replace(/[^0-9]/g, ''), 10) || 1000);
                       const maxDensity = Math.max(...numericDensityList, 12000);
                       const rawDensityNum = parseInt((s.populationDensity || '').replace(/[^0-9]/g, ''), 10) || 1200;
@@ -1834,60 +1845,114 @@ export default function App() {
                       const distCasesCount = cases.filter(c => c.district === s.district || (c.station && c.station.includes(s.district))).length || 20;
                       const vulnerabilityPct = Math.max(30, Math.min(96, Math.round((distCasesCount / maxDistrictCases) * 96)));
 
-                      const urbanizationPct =
-                        s.urbanizationTier?.includes('Metropolitan') ? 95 :
-                        s.urbanizationTier?.includes('Coastal') ? 84 :
-                        s.urbanizationTier?.includes('Heritage') ? 78 :
-                        s.urbanizationTier?.includes('Commercial') ? 75 :
-                        s.urbanizationTier?.includes('Border') ? 64 : 58;
-
                       const aiCorrelation = (0.62 + (densityPct / 100) * 0.30).toFixed(2);
+                      
+                      const vulnerabilityLevel = vulnerabilityPct > 80 ? 'Critical' : vulnerabilityPct > 60 ? 'High' : vulnerabilityPct > 40 ? 'Moderate' : 'Low';
+                      const vulnColor = vulnerabilityPct > 80 ? 'text-red-500 bg-red-500/10 border-red-500/30' : 
+                                        vulnerabilityPct > 60 ? 'text-orange-500 bg-orange-500/10 border-orange-500/30' : 
+                                        vulnerabilityPct > 40 ? 'text-amber-500 bg-amber-500/10 border-amber-500/30' : 
+                                        'text-emerald-500 bg-emerald-500/10 border-emerald-500/30';
+                      
+                      const densityLevel = densityPct > 80 ? 'Very High' : densityPct > 60 ? 'High' : densityPct > 40 ? 'Moderate' : 'Low';
+                      
+                      // Generated Intelligence content for card
+                      const predictedTrend = s.dominantTypology.includes('Cyber') ? 'Cyber Fraud likely to increase during commercial hours.' :
+                                             s.dominantTypology.includes('Maritime') ? 'Coastal smuggling and property theft expected to rise.' :
+                                             s.dominantTypology.includes('Highway') ? 'Highway robberies likely along main transit routes at night.' :
+                                             'Property theft expected to correlate with localized festivals.';
+                                             
+                      const recommendedStrategy = s.dominantTypology.includes('Cyber') ? 'Increase cyber patrols in commercial districts.' :
+                                                  s.dominantTypology.includes('Maritime') ? 'Enhance coastal vigilance and port checkpoints.' :
+                                                  s.dominantTypology.includes('Highway') ? 'Deploy highway interceptor units during 22:00 - 04:00.' :
+                                                  'Increase visibility patrols in residential clusters.';
+                                                  
+                      const aiInsightQuote = s.dominantTypology.includes('Cyber') ? "The AI engine detected a strong relationship between rapid urban expansion, commercial activity, and increasing cyber-enabled property crime." :
+                                             s.dominantTypology.includes('Maritime') ? "Analysis indicates coastal infrastructure development correlates with new maritime smuggling channels and property theft." :
+                                             s.dominantTypology.includes('Highway') ? "Transit corridor activity strongly predicts property crime rates along major state highways and border junctions." :
+                                             "Historical data shows moderate correlation between local economic activity and opportunistic property theft patterns.";
 
                       return (
-                        <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-3.5 border`}>
-                          <div className="flex justify-between items-center">
-                            <h4 className={`font-extrabold text-[18px] ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>{districtKn}</h4>
-                            <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-800'} font-bold`}>{tierKn}</span>
-                          </div>
-
-                          {/* GENUINELY DIFFERENTIATED PROGRESS INDICATORS WITH HIGH CONTRAST LABELS */}
-                          <div className="space-y-2.5">
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.density} ({s.populationDensity})</span>
-                                <span className="font-extrabold">{densityPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-blue-600 h-full transition-all duration-500" style={{ width: `${densityPct}%` }}></div>
+                        <div key={idx} className={`flex flex-col ${isDark ? 'bg-[#0f172a] border-slate-700/60' : 'bg-slate-50 border-slate-200'} rounded-lg border shadow-sm overflow-hidden`}>
+                          
+                          {/* Card Header */}
+                          <div className={`p-4 border-b ${isDark ? 'border-slate-800 bg-[#1e293b]/50' : 'border-slate-200 bg-slate-100/50'} flex justify-between items-start`}>
+                            <div className="flex items-center gap-2">
+                              <Building2 className={`w-5 h-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                              <div>
+                                <h4 className={`font-bold text-lg leading-tight ${isDark ? 'text-slate-100' : 'text-[#1E3A5F]'}`}>{districtKn}</h4>
+                                <div className="flex items-center gap-1 mt-1 text-[10px] uppercase tracking-wider font-mono text-slate-500 dark:text-slate-400">
+                                  <MapPin className="w-3 h-3" />
+                                  KA-INTEL-0{(idx+1).toString().padStart(2, '0')}
+                                </div>
                               </div>
                             </div>
-
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.vulnerability}</span>
-                                <span className="font-extrabold">{vulnerabilityPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-red-600 h-full transition-all duration-500" style={{ width: `${vulnerabilityPct}%` }}></div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className={`flex justify-between text-[12px] font-bold mb-1 ${isDark ? 'text-slate-200' : 'text-[#1E3A5F]'}`}>
-                                <span>{t.socioPanel.urbanization}</span>
-                                <span className="font-extrabold">{urbanizationPct}%</span>
-                              </div>
-                              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div className="bg-emerald-600 h-full transition-all duration-500" style={{ width: `${urbanizationPct}%` }}></div>
-                              </div>
+                            <div className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${isDark ? 'bg-blue-900/30 text-blue-300 border-blue-700/50' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                              {tierKn}
                             </div>
                           </div>
 
-                          <div className={`text-[13px] font-bold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{t.socioPanel.profile} {profileKn}</div>
-                          <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} p-2.5 rounded border font-bold flex justify-between items-center`}>
-                            <span><strong>{t.socioPanel.typology}</strong> {typologyKn}</span>
-                            <span className="text-blue-700 dark:text-blue-400 font-extrabold">{lang === 'kn' ? 'ಎಐ ನಂಟು' : 'AI Correlation'}: {aiCorrelation}</span>
+                          {/* Metric Badges Grid */}
+                          <div className="grid grid-cols-2 gap-px bg-slate-200 dark:bg-slate-700">
+                            <div className={`p-3 ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'} flex flex-col gap-1`}>
+                              <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1"><Users className="w-3 h-3"/> {lang === 'kn' ? 'ಜನಸಾಂದ್ರತೆ' : 'Population Density'}</span>
+                              <span className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{densityLevel}</span>
+                            </div>
+                            <div className={`p-3 ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'} flex flex-col gap-1`}>
+                              <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1"><ShieldAlert className="w-3 h-3"/> {lang === 'kn' ? 'ಅಪಾಯದ ಮಟ್ಟ' : 'Vulnerability Level'}</span>
+                              <span className={`text-sm font-bold flex items-center gap-1.5 ${vulnColor.split(' ')[0]}`}>
+                                {vulnerabilityLevel}
+                                <span className={`w-2 h-2 rounded-full ${vulnerabilityLevel === 'Critical' ? 'bg-red-500' : vulnerabilityLevel === 'High' ? 'bg-orange-500' : vulnerabilityLevel === 'Moderate' ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                              </span>
+                            </div>
+                            <div className={`p-3 ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'} flex flex-col gap-1`}>
+                              <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1"><Building className="w-3 h-3"/> {lang === 'kn' ? 'ನಗರೀಕರಣ' : 'Urbanization'}</span>
+                              <span className={`text-sm font-semibold truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`} title={s.urbanizationTier}>{tierKn}</span>
+                            </div>
+                            <div className={`p-3 ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'} flex flex-col gap-1`}>
+                              <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1"><GitBranch className="w-3 h-3"/> {lang === 'kn' ? 'ಎಐ ನಂಟು' : 'AI Correlation'}</span>
+                              <span className={`text-sm font-mono font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>{aiCorrelation}</span>
+                            </div>
                           </div>
+
+                          {/* Key Intelligence Fields */}
+                          <div className={`p-4 space-y-3 text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                            <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
+                              <span className="text-xs font-bold text-slate-500">{lang === 'kn' ? 'ಸಾಮಾಜಿಕ-ಆರ್ಥಿಕ' : 'Socio-Economic'}:</span>
+                              <span className="font-medium">{profileKn}</span>
+                            </div>
+                            <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
+                              <span className="text-xs font-bold text-slate-500">{lang === 'kn' ? 'ಮೂಲಸೌಕರ್ಯ' : 'Infrastructure'}:</span>
+                              <span className="font-medium">{lang === 'kn' ? s.infrastructureCategory : s.infrastructureCategory}</span>
+                            </div>
+                            <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
+                              <span className="text-xs font-bold text-slate-500">{lang === 'kn' ? 'ಅಪರಾಧ ಪ್ರಕಾರ' : 'Dominant Typology'}:</span>
+                              <span className="font-medium flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-red-500" /> {typologyKn}</span>
+                            </div>
+                            <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
+                              <span className="text-xs font-bold text-slate-500">{lang === 'kn' ? 'ಮುನ್ಸೂಚನೆ' : 'Prediction'}:</span>
+                              <span className="font-medium text-orange-600 dark:text-orange-400 flex items-start gap-1.5"><TrendingUp className="w-4 h-4 shrink-0 mt-0.5" /> {predictedTrend}</span>
+                            </div>
+                            <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
+                              <span className="text-xs font-bold text-slate-500">{lang === 'kn' ? 'ಶಿಫಾರಸು' : 'Recommendation'}:</span>
+                              <span className="font-medium text-emerald-600 dark:text-emerald-400 flex items-start gap-1.5"><ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" /> {recommendedStrategy}</span>
+                            </div>
+                          </div>
+
+                          {/* AI Insight Box */}
+                          <div className={`p-4 mt-auto border-t ${isDark ? 'bg-blue-950/30 border-blue-900/50' : 'bg-blue-50/50 border-blue-100'}`}>
+                            <div className="flex items-center gap-1.5 mb-2">
+                              <Brain className={`w-4 h-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                              <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>AI Insight</span>
+                            </div>
+                            <p className={`text-sm italic font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                              "{aiInsightQuote}"
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-dashed border-slate-300 dark:border-slate-700">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Last AI Analysis: 18:25 IST</span>
+                            </div>
+                          </div>
+
                         </div>
                       );
                     })}

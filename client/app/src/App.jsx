@@ -115,11 +115,11 @@ const TRANSLATIONS = {
 // SVG Icons
 function LogoIcon() {
   return (
-    <svg className="w-10 h-10 text-[#1E3A5F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#1E3A5F" fillOpacity="0.1" />
-      <path d="M2 12s3-6 10-6 10 6 10 6-3 6-10 6-10-6-10-6z" stroke="#1E3A5F" strokeWidth="2" />
-      <circle cx="12" cy="12" r="3.5" fill="#2563EB" stroke="#ffffff" strokeWidth="1" />
-    </svg>
+    <img
+      src="nirikshana_logo.png"
+      alt="NIRIKSHANA Logo"
+      className="w-12 h-12 object-contain drop-shadow-sm"
+    />
   );
 }
 

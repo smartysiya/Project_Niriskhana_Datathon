@@ -596,7 +596,7 @@ export default function App() {
             {/* TAB 2: HOTSPOTS */}
             {activeTab === 'hotspots' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border`} style={{ height: '580px' }}>
+                <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border`} style={{ height: '580px' }}>
                   <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {filteredHotspots.map(h => (

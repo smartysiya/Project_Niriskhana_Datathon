@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
+import { LOGO_DATA_URI } from './logoDataUri';
 
 const FUNCTION_BASE = 'https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function';
 
@@ -252,7 +253,7 @@ const TRANSLATIONS = {
 function LogoIcon() {
   return (
     <img
-      src="nirikshana_logo.png"
+      src={LOGO_DATA_URI}
       alt="NIRIKSHANA Logo"
       className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-md transition-transform hover:scale-105"
     />

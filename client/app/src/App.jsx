@@ -711,7 +711,7 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* TAB 1: EXECUTIVE DASHBOARD LANDING PAGE (Includes Stat Cards, AI Brief, Feed, Dispatches & Spatial Crime Map) */}
+            {/* TAB 1: EXECUTIVE DASHBOARD LANDING PAGE */}
             {activeTab === 'dashboard' && (
               <div className="space-y-6">
                 {/* 5 Top Executive KPI Stat Cards */}
@@ -812,6 +812,9 @@ export default function App() {
                     </button>
                   )}
                 </div>
+
+                {/* SPATIAL CRIME MAP CARD (Positioned right below KPI cards & filter bar for instant accessibility) */}
+                {renderSpatialMapCard()}
 
                 {/* AI INTELLIGENCE BRIEF CARD & RECENT INTELLIGENCE FEED */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1044,9 +1047,6 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
-                {/* SPATIAL CRIME MAP ON DASHBOARD TAB */}
-                {renderSpatialMapCard()}
               </div>
             )}
 

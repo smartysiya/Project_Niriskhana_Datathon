@@ -248,13 +248,13 @@ const TRANSLATIONS = {
   }
 };
 
-// SVG Icons
+// Prominent Custom NIRIKSHANA Logo
 function LogoIcon() {
   return (
     <img
       src="nirikshana_logo.png"
       alt="NIRIKSHANA Logo"
-      className="w-12 h-12 object-contain drop-shadow-sm"
+      className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-md transition-transform hover:scale-105"
     />
   );
 }
@@ -278,13 +278,13 @@ function RefreshIcon() {
   );
 }
 
-function StatCard({ label, value, subtext, trendUp }) {
+function StatCard({ label, value, subtext, trendUp, isDark }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm hover:shadow transition-shadow">
-      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</div>
-      <div className="text-2xl font-bold text-[#1E3A5F] mt-1.5">{value}</div>
+    <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-800'} rounded-lg p-5 shadow-sm hover:shadow transition-shadow border`}>
+      <div className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</div>
+      <div className={`text-2xl font-bold mt-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{value}</div>
       {subtext && (
-        <div className={`text-xs font-medium mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : 'text-slate-500'}`}>
+        <div className={`text-xs font-medium mt-1 flex items-center gap-1 ${trendUp ? 'text-red-500' : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
           <span>{subtext}</span>
         </div>
       )}
@@ -294,6 +294,7 @@ function StatCard({ label, value, subtext, trendUp }) {
 
 export default function App() {
   const [lang, setLang] = useState('en');
+  const [isDark, setIsDark] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [cases, setCases] = useState([]);
   const [stats, setStats] = useState(null);
@@ -354,29 +355,41 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] text-slate-800 font-sans antialiased">
+    <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-800'}`}>
       {/* Header Area */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
         {/* Top Government Subtitle Line */}
         <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-xs flex justify-between items-center font-medium">
           <div>{t.govSub}</div>
-          <button
-            onClick={() => setLang(lang === 'en' ? 'kn' : 'en')}
-            className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors"
-          >
-            {t.langToggle}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5"
+              title="Toggle Dark / Light Theme"
+            >
+              {isDark ? '☀️ Light' : '🌙 Dark'}
+            </button>
+
+            {/* Language Toggle Button */}
+            <button
+              onClick={() => setLang(lang === 'en' ? 'kn' : 'en')}
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors"
+            >
+              {t.langToggle}
+            </button>
+          </div>
         </div>
 
-        {/* Main Logo & Title Branding */}
+        {/* Main Logo & Title Branding Area */}
         <div className="px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <LogoIcon />
             <div>
-              <h1 className="text-2xl font-bold text-[#1E3A5F] tracking-tight">
+              <h1 className={`text-2xl md:text-3xl font-bold tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                 {t.title}
               </h1>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className={`text-xs font-medium mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 {t.subtitle}
               </p>
             </div>
@@ -384,7 +397,7 @@ export default function App() {
         </div>
 
         {/* Clean Enterprise Horizontal Navigation Bar */}
-        <nav className="px-6 flex gap-6 border-t border-slate-100 text-sm font-medium overflow-x-auto">
+        <nav className={`px-6 flex gap-6 border-t text-sm font-medium overflow-x-auto ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
           {[
             { id: 'dashboard', label: t.tabs.dashboard },
             { id: 'map', label: t.tabs.map },
@@ -401,7 +414,7 @@ export default function App() {
               className={`py-3 transition-colors border-b-2 whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'border-[#2563EB] text-[#2563EB] font-semibold'
-                  : 'border-transparent text-slate-600 hover:text-slate-900'
+                  : (isDark ? 'border-transparent text-slate-400 hover:text-slate-200' : 'border-transparent text-slate-600 hover:text-slate-900')
               }`}
             >
               {tab.label}
@@ -421,21 +434,21 @@ export default function App() {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-80 gap-3">
             <div className="w-8 h-8 border-3 border-[#2563EB] border-t-transparent rounded-full animate-spin"></div>
-            <div className="text-xs font-medium text-slate-500">Loading SCRB Intelligence Data...</div>
+            <div className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Loading SCRB Intelligence Data...</div>
           </div>
         ) : (
           <>
             {/* KPI Cards Row */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <StatCard label={t.stats.totalCases} value={stats?.totalCases ?? '300'} subtext={t.stats.totalSub} trendUp />
-              <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} />
-              <StatCard label={t.stats.districts} value={stats?.totalDistricts ?? '10'} subtext={t.stats.districtsSub} />
-              <StatCard label={t.stats.hotspots} value={hotspots.length} subtext={t.stats.hotspotsSub} />
-              <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp />
+              <StatCard label={t.stats.totalCases} value={stats?.totalCases ?? '300'} subtext={t.stats.totalSub} trendUp isDark={isDark} />
+              <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} isDark={isDark} />
+              <StatCard label={t.stats.districts} value={stats?.totalDistricts ?? '10'} subtext={t.stats.districtsSub} isDark={isDark} />
+              <StatCard label={t.stats.hotspots} value={hotspots.length} subtext={t.stats.hotspotsSub} isDark={isDark} />
+              <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp isDark={isDark} />
             </div>
 
             {/* Toolbar Filter Bar */}
-            <div className="bg-white border border-slate-200 rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+            <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm border`}>
               <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
                 {/* Search Bar */}
                 <div className="relative flex-1 sm:flex-initial">
@@ -447,17 +460,21 @@ export default function App() {
                     placeholder={t.filters.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 border border-slate-300 rounded-md text-slate-800 text-xs focus:outline-none focus:ring-1 focus:ring-[#2563EB] w-full sm:w-56"
+                    className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-800 focus:ring-[#2563EB]'
+                    }`}
                   />
                 </div>
 
                 {/* District Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className="text-slate-500 font-medium">{t.filters.districtLabel}</span>
+                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.districtLabel}</span>
                   <select
                     value={selectedDistrict}
                     onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                    className={`border rounded-md px-2.5 py-1.5 text-xs focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-800'
+                    }`}
                   >
                     {DISTRICT_LIST.map(d => (
                       <option key={d} value={d}>{d === 'All Districts' ? t.filters.allDistricts : d}</option>
@@ -467,11 +484,13 @@ export default function App() {
 
                 {/* Time Window Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className="text-slate-500 font-medium">{t.filters.timeLabel}</span>
+                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.timeLabel}</span>
                   <select
                     value={selectedTimeOfDay}
                     onChange={(e) => setSelectedTimeOfDay(e.target.value)}
-                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                    className={`border rounded-md px-2.5 py-1.5 text-xs focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-800'
+                    }`}
                   >
                     <option value="All Times">{t.filters.allTimes}</option>
                     <option value="Night">{t.timeOptions.night}</option>
@@ -483,11 +502,13 @@ export default function App() {
 
                 {/* Crime Type Dropdown */}
                 <div className="flex items-center gap-1">
-                  <span className="text-slate-500 font-medium">{t.filters.crimeLabel}</span>
+                  <span className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.filters.crimeLabel}</span>
                   <select
                     value={selectedCrimeType}
                     onChange={(e) => setSelectedCrimeType(e.target.value)}
-                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                    className={`border rounded-md px-2.5 py-1.5 text-xs focus:outline-none ${
+                      isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-800'
+                    }`}
                   >
                     <option value="All Types">{t.filters.allCrimes}</option>
                     {Object.keys(CRIME_COLORS).map(type => (
@@ -505,7 +526,9 @@ export default function App() {
                     setSelectedTimeOfDay('All Times');
                     setSelectedCrimeType('All Types');
                   }}
-                  className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors"
+                  className={`border font-medium px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 transition-colors ${
+                    isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                  }`}
                 >
                   <RefreshIcon />
                   {t.filters.reset}
@@ -515,24 +538,24 @@ export default function App() {
 
             {/* TAB 1 & DASHBOARD: SPATIAL MAP */}
             {(activeTab === 'dashboard' || activeTab === 'map') && (
-              <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm p-4 space-y-4">
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden shadow-sm p-4 space-y-4 border`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <h2 className="text-base font-bold text-[#1E3A5F]">{t.mapPanel.title}</h2>
-                    <p className="text-xs text-slate-500">{filteredCases.length} {t.mapPanel.sub}</p>
+                    <h2 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.mapPanel.title}</h2>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{filteredCases.length} {t.mapPanel.sub}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px]">
                     {Object.entries(CRIME_COLORS).slice(0, 6).map(([type, color]) => (
-                      <span key={type} className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+                      <span key={type} className={`flex items-center gap-1.5 px-2 py-1 rounded border ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }}></span>
-                        <span className="text-slate-700 font-medium">{type}</span>
+                        <span className="font-medium">{type}</span>
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div style={{ height: '580px' }} className="rounded-lg overflow-hidden border border-slate-200">
+                <div style={{ height: '580px' }} className={`rounded-lg overflow-hidden border ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                   <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
                     <TileLayer
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -573,7 +596,7 @@ export default function App() {
             {/* TAB 2: HOTSPOTS */}
             {activeTab === 'hotspots' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg overflow-hidden p-4 shadow-sm" style={{ height: '580px' }}>
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg overflow-hidden p-4 shadow-sm border`} style={{ height: '580px' }}>
                   <MapContainer center={[15.3, 75.7]} zoom={7} style={{ height: '100%', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {filteredHotspots.map(h => (
@@ -601,22 +624,22 @@ export default function App() {
                   </MapContainer>
                 </div>
 
-                <div className="bg-white border border-slate-200 rounded-lg p-5 overflow-y-auto shadow-sm" style={{ maxHeight: '580px' }}>
-                  <h3 className="text-sm font-bold text-[#1E3A5F] mb-3">{t.hotspotPanel.title}</h3>
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 overflow-y-auto shadow-sm border`} style={{ maxHeight: '580px' }}>
+                  <h3 className={`text-sm font-bold mb-3 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.hotspotPanel.title}</h3>
                   <div className="space-y-3">
                     {filteredHotspots.map(h => (
                       <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
-                        h.isAnomaly ? 'bg-red-50/50 border-red-200' : 'bg-slate-50 border-slate-200'
+                        h.isAnomaly ? (isDark ? 'bg-red-950/40 border-red-800/60' : 'bg-red-50/50 border-red-200') : (isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200')
                       }`}>
                         <div className="flex justify-between items-start font-bold">
-                          <span className="text-slate-900">{h.id}</span>
+                          <span className={isDark ? 'text-slate-100' : 'text-slate-900'}>{h.id}</span>
                           <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
                             h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-800'
                           }`}>
                             {h.isAnomaly ? t.hotspotPanel.surge : t.hotspotPanel.cluster}
                           </span>
                         </div>
-                        <div className="text-slate-600 mt-2 space-y-1">
+                        <div className={`mt-2 space-y-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                           <div>{t.hotspotPanel.station} <strong>{h.primaryStation}</strong></div>
                           <div>{t.hotspotPanel.totalFirs} <strong>{h.totalIncidents}</strong></div>
                           <div>{t.hotspotPanel.dominant} <strong>{h.dominantCrime}</strong></div>
@@ -632,11 +655,11 @@ export default function App() {
             {/* TAB 3: NETWORK ANALYSIS */}
             {activeTab === 'network' && (
               <div className="space-y-6">
-                <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border`}>
                   <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div>
-                      <h3 className="text-base font-bold text-[#1E3A5F]">{t.networkPanel.title}</h3>
-                      <p className="text-xs text-slate-500">{t.networkPanel.sub}</p>
+                      <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.networkPanel.title}</h3>
+                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.networkPanel.sub}</p>
                     </div>
                     <div className="flex items-center gap-3 text-xs">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#5B4BB7]"></span> {t.networkPanel.legendSuspect}</span>
@@ -645,15 +668,15 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 relative overflow-hidden" style={{ height: '400px' }}>
+                  <div className={`${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'} rounded-lg border p-4 relative overflow-hidden`} style={{ height: '400px' }}>
                     <svg className="w-full h-full">
                       {network?.repeatOffenders?.map((offender, oIdx) => {
                         const startX = 110 + (oIdx % 4) * 230;
                         const startY = 80 + Math.floor(oIdx / 4) * 170;
                         return offender.sampleStation ? (
                           <g key={`links-${oIdx}`}>
-                            <line x1={startX} y1={startY} x2={startX + 70} y2={startY + 60} stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3,3" />
-                            <line x1={startX + 70} y1={startY + 60} x2={startX + 140} y2={startY} stroke="#64748b" strokeWidth="1.5" />
+                            <line x1={startX} y1={startY} x2={startX + 70} y2={startY + 60} stroke={isDark ? '#475569' : '#94a3b8'} strokeWidth="1.5" strokeDasharray="3,3" />
+                            <line x1={startX + 70} y1={startY + 60} x2={startX + 140} y2={startY} stroke={isDark ? '#64748b' : '#64748b'} strokeWidth="1.5" />
                           </g>
                         ) : null;
                       })}
@@ -667,7 +690,7 @@ export default function App() {
                           <g key={`node-${oIdx}`} className="cursor-pointer" onClick={() => setSelectedNode(offender.name)}>
                             <circle cx={x} cy={y} r={isSelected ? 24 : 20} fill="#5B4BB7" stroke="#ffffff" strokeWidth="2" />
                             <text x={x} y={y + 4} textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">OFF</text>
-                            <text x={x} y={y + 34} textAnchor="middle" fill="#1E3A5F" fontSize="11" fontWeight="bold">{offender.name}</text>
+                            <text x={x} y={y + 34} textAnchor="middle" fill={isDark ? '#cbd5e1' : '#1E3A5F'} fontSize="11" fontWeight="bold">{offender.name}</text>
 
                             <circle cx={x + 70} cy={y + 60} r={15} fill="#2563EB" stroke="#ffffff" strokeWidth="1.5" />
                             <text x={x + 70} y={y + 64} textAnchor="middle" fill="#ffffff" fontSize="9">FIR</text>
@@ -683,13 +706,13 @@ export default function App() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {network?.repeatOffenders?.map((offender, idx) => (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-xs space-y-2">
-                      <div className="flex justify-between items-center font-bold text-sm text-[#1E3A5F]">
+                    <div key={idx} className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-4 shadow-sm text-xs space-y-2 border`}>
+                      <div className={`flex justify-between items-center font-bold text-sm ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                         <span>{offender.name}</span>
                         <span className="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">{offender.casesLinked} FIRs</span>
                       </div>
-                      <div className="text-slate-600">{t.networkPanel.jurisdiction} <strong>{offender.sampleStation}</strong></div>
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200 text-slate-700">
+                      <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.networkPanel.jurisdiction} <strong>{offender.sampleStation}</strong></div>
+                      <div className={`${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'} p-2 rounded border`}>
                         <strong>{t.networkPanel.mo}</strong> {offender.primaryMO}
                       </div>
                     </div>
@@ -700,16 +723,16 @@ export default function App() {
 
             {/* TAB 4: RISK MATRIX */}
             {activeTab === 'risk' && (
-              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
                 <div>
-                  <h3 className="text-base font-bold text-[#1E3A5F]">{t.riskPanel.title}</h3>
-                  <p className="text-xs text-slate-500">{t.riskPanel.sub}</p>
+                  <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.riskPanel.title}</h3>
+                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.riskPanel.sub}</p>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                      <tr className={`border-b font-semibold uppercase ${isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-500'}`}>
                         <th className="py-3 px-3">{t.riskPanel.colStation}</th>
                         <th className="py-3 px-3">{t.riskPanel.colFirs}</th>
                         <th className="py-3 px-3">{t.riskPanel.colCrime}</th>
@@ -718,14 +741,14 @@ export default function App() {
                         <th className="py-3 px-3">{t.riskPanel.colStatus}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className={`divide-y ${isDark ? 'divide-slate-800' : 'divide-slate-100'}`}>
                       {riskScores.map((r, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50">
-                          <td className="py-3 px-3 font-semibold text-slate-900">{r.station}</td>
-                          <td className="py-3 px-3 text-slate-600">{r.totalCases}</td>
-                          <td className="py-3 px-3 text-slate-600">{r.topCrime}</td>
+                        <tr key={idx} className={isDark ? 'hover:bg-slate-800/60' : 'hover:bg-slate-50'}>
+                          <td className={`py-3 px-3 font-semibold ${isDark ? 'text-slate-200' : 'text-slate-900'}`}>{r.station}</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.totalCases}</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.topCrime}</td>
                           <td className="py-3 px-3 font-bold text-[#2563EB]">{r.riskScore}</td>
-                          <td className="py-3 px-3 text-slate-600">{r.predictedSurgeWindow}</td>
+                          <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{r.predictedSurgeWindow}</td>
                           <td className="py-3 px-3">
                             <span className={`px-2.5 py-0.5 rounded font-semibold text-[10px] uppercase ${
                               r.level.includes('High') ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'
@@ -743,10 +766,10 @@ export default function App() {
 
             {/* TAB 5: SOCIO-ECONOMIC INSIGHTS */}
             {activeTab === 'socio' && (
-              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
                 <div>
-                  <h3 className="text-base font-bold text-[#1E3A5F]">{t.socioPanel.title}</h3>
-                  <p className="text-xs text-slate-500">{t.socioPanel.sub}</p>
+                  <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.socioPanel.title}</h3>
+                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.socioPanel.sub}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -785,14 +808,14 @@ export default function App() {
                     ) : s.dominantTypology;
 
                     return (
-                      <div key={idx} className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs space-y-2">
+                      <div key={idx} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'} rounded-lg p-4 text-xs space-y-2 border`}>
                         <div className="flex justify-between items-center">
-                          <h4 className="font-bold text-slate-900 text-sm">{districtKn}</h4>
-                          <span className="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-600 font-medium">{tierKn}</span>
+                          <h4 className={`font-bold text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{districtKn}</h4>
+                          <span className={`px-2 py-0.5 rounded border ${isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'} font-medium`}>{tierKn}</span>
                         </div>
-                        <div className="text-slate-600">{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
-                        <div className="text-slate-600">{t.socioPanel.profile} {profileKn}</div>
-                        <div className="bg-white p-2 rounded border border-slate-200 text-slate-700">
+                        <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
+                        <div className={isDark ? 'text-slate-300' : 'text-slate-600'}>{t.socioPanel.profile} {profileKn}</div>
+                        <div className={`${isDark ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'} p-2 rounded border`}>
                           <strong>{t.socioPanel.typology}</strong> {typologyKn}
                         </div>
                       </div>
@@ -804,13 +827,13 @@ export default function App() {
 
             {/* TAB 6: REPORTS */}
             {activeTab === 'reports' && (
-              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-                <h3 className="text-base font-bold text-[#1E3A5F]">{t.reportsPanel.title}</h3>
-                <p className="text-xs text-slate-500">{t.reportsPanel.sub}</p>
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
+                <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.reportsPanel.title}</h3>
+                <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.reportsPanel.sub}</p>
 
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-3">
-                  <div className="font-bold text-slate-900">{t.reportsPanel.cardTitle}</div>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                <div className={`${isDark ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-700'} p-4 rounded-lg border text-xs space-y-3`}>
+                  <div className={`font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{t.reportsPanel.cardTitle}</div>
+                  <ul className="list-disc pl-5 space-y-1">
                     <li>{t.reportsPanel.bullet1}</li>
                     <li>{t.reportsPanel.bullet2}</li>
                     <li>{t.reportsPanel.bullet3}</li>
@@ -822,9 +845,9 @@ export default function App() {
 
             {/* TAB 7: SETTINGS */}
             {activeTab === 'settings' && (
-              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-                <h3 className="text-base font-bold text-[#1E3A5F]">{t.settingsPanel.title}</h3>
-                <div className="text-xs space-y-2 text-slate-600">
+              <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm space-y-4 border`}>
+                <h3 className={`text-base font-bold ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>{t.settingsPanel.title}</h3>
+                <div className={`text-xs space-y-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                   <div>{t.settingsPanel.backend}</div>
                   <div>{t.settingsPanel.db}</div>
                   <div>{t.settingsPanel.status}</div>

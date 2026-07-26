@@ -811,14 +811,10 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Live Operations Header Status (Requirement 1) */}
+            {/* Live Operations Header Status */}
             <div className="hidden lg:flex items-center gap-3 border-r border-blue-800/80 pr-4 font-mono text-[11px] text-blue-200">
               <span>{currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
               <span className="font-bold text-white">{currentTime.toLocaleTimeString('en-GB')} IST</span>
-              <span className="text-blue-300">Sync: 2m ago</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-950/80 text-emerald-300 border border-emerald-600/60 inline-flex items-center gap-1.5 shadow-inner">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SYSTEM: ONLINE
-              </span>
             </div>
 
             {/* Theme Toggle Button */}

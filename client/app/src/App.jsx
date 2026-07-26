@@ -9,7 +9,9 @@ import {
   Brain, ShieldAlert, FileText, MapPin, BarChart3, TrendingUp, TrendingDown,
   TriangleAlert, Flame, Target, Search, Clock, Globe, Building2, User, Users,
   Network, GitBranch, Map as MapIcon, Radar, Bot, Lightbulb, ShieldCheck, Siren,
-  Download, Upload, Settings, CheckCircle, XCircle, Info, Building, Zap, Activity
+  Download, Upload, Settings, CheckCircle, XCircle, Info, Building, Zap, Activity,
+  Sun, Moon, Bell, Radio, ChevronUp, ChevronDown, Calendar, LayoutDashboard, X,
+  FileCheck
 } from 'lucide-react';
 
 const FUNCTION_BASE = 'https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function';
@@ -221,7 +223,7 @@ const TRANSLATIONS = {
       classification: "Classification:",
       internalOnly: "Internal Use Only",
       docRef: "Doc Ref:",
-      approvalNote: "✔ Officer Approval: Approved by ADGP Crime & SCRB (Govt of Karnataka)",
+      approvalNote: "Officer Approval: Approved by ADGP Crime & SCRB (Govt of Karnataka)",
       sec1Title: "1. Executive Summary",
       sec1Text: "The State Crime Records Bureau (SCRB) analyzed active Case FIR records across 10 Districts and 30 Police Stations using AI-driven spatiotemporal clustering and machine learning predictive models.",
       sec2Title: "2. AI Spatial Hotspots & Risk Assessment",
@@ -407,7 +409,7 @@ const TRANSLATIONS = {
       classification: "ವರ್ಗೀಕರಣ:",
       internalOnly: "ಆಂತರಿಕ ಬಳಕೆಗೆ ಮಾತ್ರ",
       docRef: "ದಾಖಲೆ ಸಂಖ್ಯಾ ಉಲ್ಲೇಖ:",
-      approvalNote: "✔ ಅಧಿಕಾರಿಯ ಅನುಮೋದನೆ: ಎಡಿಜಿಪಿ ಅಪರಾಧ ಮತ್ತು ಎಸ್‌ಸಿಆರ್‌ಬಿ (ಕರ್ನಾಟಕ ಸರ್ಕಾರ) ಅವರಿಂದ ಅನುಮೋದಿತ",
+      approvalNote: "ಅಧಿಕಾರಿಯ ಅನುಮೋದನೆ: ಎಡಿಜಿಪಿ ಅಪರಾಧ ಮತ್ತು ಎಸ್‌ಸಿಆರ್‌ಬಿ (ಕರ್ನಾಟಕ ಸರ್ಕಾರ) ಅವರಿಂದ ಅನುಮೋದಿತ",
       sec1Title: "1. ಕಾರ್ಯಾಚರಣೆ ಸಾರಾಂಶ",
       sec1Text: "ರಾಜ್ಯ ಅಪರಾಧ ದಾಖಲೆಗಳ ಬ್ಯೂರೋ (SCRB) ಎಐ-ಚಾಲಿತ ಕ್ಲಸ್ಟರಿಂಗ್ ಮತ್ತು ಭವಿಷ್ಯಸೂಚಕ ಮಾದರಿಗಳನ್ನು ಬಳಸಿ 10 ಜಿಲ್ಲೆಗಳು ಮತ್ತು 30 ಪೊಲೀಸ್ ಠಾಣೆಗಳಾದ್ಯಂತ ಸಕ್ರಿಯ ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿದೆ.",
       sec2Title: "2. ಎಐ ಅಪರಾಧ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು ಮತ್ತು ಅಪಾಯದ ಮೌಲ್ಯಮಾಪನ",
@@ -511,9 +513,9 @@ export default function App() {
   // SCRB Alerts Notification State
   const [showAlerts, setShowAlerts] = useState(false);
   const [alertsList, setAlertsList] = useState([
-    { id: 1, type: 'hotspot', text: '🚨 New Hotspot Detected: Hubballi-Dharwad PS-1 (DBSCAN Cluster)', read: false, time: '10:45 AM', details: 'DBSCAN algorithm clustered 15 burglary cases within 600m radius.' },
-    { id: 2, type: 'risk', text: '⚠️ Risk Prediction Updated: Tumakuru PS-2 Night Shift Level 88', read: false, time: '10:18 AM', details: 'Random Forest model predicts 88% threat level between 22:00 - 06:00.' },
-    { id: 3, type: 'offender', text: '🔍 Repeat Offender Linked: Offender Ramesh Kumar (5 FIRs)', read: false, time: '09:42 AM', details: 'Graph analysis linked offender across Mysuru and Hubballi station limits.' }
+    { id: 1, type: 'hotspot', text: 'New Hotspot Detected: Hubballi-Dharwad PS-1 (DBSCAN Cluster)', read: false, time: '10:45 AM', details: 'DBSCAN algorithm clustered 15 burglary cases within 600m radius.' },
+    { id: 2, type: 'risk', text: 'Risk Prediction Updated: Tumakuru PS-2 Night Shift Level 88', read: false, time: '10:18 AM', details: 'Random Forest model predicts 88% threat level between 22:00 - 06:00.' },
+    { id: 3, type: 'offender', text: 'Repeat Offender Linked: Offender Ramesh Kumar (5 FIRs)', read: false, time: '09:42 AM', details: 'Graph analysis linked offender across Mysuru and Hubballi station limits.' }
   ]);
   const [expandedAlertId, setExpandedAlertId] = useState(null);
 
@@ -675,7 +677,7 @@ export default function App() {
         isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
       }`}>
         <div className="font-bold text-[#1E3A5F] dark:text-blue-400 flex items-center gap-2 text-[13px]">
-          <span>📅 Timeline Analysis Window:</span>
+          <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> Timeline Analysis Window:</span>
           <span className="bg-blue-600 text-white px-2 py-0.5 rounded font-mono">{timelineRange}</span>
           <span className="text-[10px] text-slate-400 font-normal ml-1">(Relative to 2025-2026 dataset timeline)</span>
         </div>
@@ -758,7 +760,7 @@ export default function App() {
               className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
               title="Toggle Dark / Light Theme"
             >
-              {isDark ? '☀️ Light' : '🌙 Dark'}
+              {isDark ? <><Sun className="w-3.5 h-3.5 text-amber-400" /> Light</> : <><Moon className="w-3.5 h-3.5 text-slate-300" /> Dark</>}
             </button>
 
             {/* Language Toggle Button */}
@@ -814,7 +816,7 @@ export default function App() {
                 isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
               }`}>
                 <div className="font-bold border-b pb-2 flex justify-between items-center text-blue-700 dark:text-blue-400">
-                  <span>🔔 SCRB Intelligence Alerts</span>
+                  <span className="flex items-center gap-1.5"><Bell className="w-4 h-4 text-blue-600 dark:text-blue-400" /> SCRB Intelligence Alerts</span>
                   <span className="text-[10px] text-slate-400">Live Stream</span>
                 </div>
 
@@ -830,8 +832,15 @@ export default function App() {
                         }`}
                       >
                         <div className="flex justify-between items-start font-bold">
-                          <span>{alert.text}</span>
-                          <button onClick={() => dismissAlert(alert.id)} className="text-slate-400 hover:text-red-500 ml-1 cursor-pointer">✕</button>
+                          <span className="flex items-center gap-1.5">
+                            {alert.type === 'hotspot' && <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+                            {alert.type === 'risk' && <ShieldAlert className="w-3.5 h-3.5 text-red-500 shrink-0" />}
+                            {alert.type === 'offender' && <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />}
+                            <span>{alert.text}</span>
+                          </span>
+                          <button onClick={() => dismissAlert(alert.id)} className="text-slate-400 hover:text-red-500 ml-1 cursor-pointer">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                         <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1">
                           <span>{alert.time}</span>
@@ -866,26 +875,30 @@ export default function App() {
             isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-300'
           }`}>
             {[
-              { id: 'dashboard', label: t.tabs.dashboard },
-              { id: 'map', label: t.tabs.map },
-              { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})` },
-              { id: 'network', label: `${t.tabs.network} (${network?.repeatOffenderCount ?? 0})` },
-              { id: 'risk', label: t.tabs.risk },
-              { id: 'socio', label: t.tabs.socio },
-              { id: 'reports', label: t.tabs.reports }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-4 rounded-lg font-bold text-xs md:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === tab.id
-                    ? 'bg-[#2563EB] text-white shadow-md border border-blue-600 scale-[1.02]'
-                    : (isDark ? 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60' : 'bg-white text-[#1E3A5F] hover:bg-blue-50 hover:text-blue-700 border border-slate-200 shadow-sm')
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+              { id: 'dashboard', label: t.tabs.dashboard, icon: LayoutDashboard },
+              { id: 'map', label: t.tabs.map, icon: MapIcon },
+              { id: 'hotspots', label: `${t.tabs.hotspots} (${hotspots.length})`, icon: Flame },
+              { id: 'network', label: `${t.tabs.network} (${network?.repeatOffenderCount ?? 0})`, icon: Network },
+              { id: 'risk', label: t.tabs.risk, icon: ShieldAlert },
+              { id: 'socio', label: t.tabs.socio, icon: Building2 },
+              { id: 'reports', label: t.tabs.reports, icon: FileText }
+            ].map(tab => {
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-2 px-4 rounded-lg font-bold text-xs md:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'bg-[#2563EB] text-white shadow-md border border-blue-600 scale-[1.02]'
+                      : (isDark ? 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60' : 'bg-white text-[#1E3A5F] hover:bg-blue-50 hover:text-blue-700 border border-slate-200 shadow-sm')
+                  }`}
+                >
+                  <TabIcon className="w-4 h-4 shrink-0" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
       </header>
@@ -894,7 +907,8 @@ export default function App() {
       <main className="p-5 max-w-7xl mx-auto space-y-5">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-xs font-semibold flex items-center gap-2">
-            <span>⚠️</span> {error}
+            <TriangleAlert className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -1017,8 +1031,10 @@ export default function App() {
                   {/* LARGE AI INTELLIGENCE BRIEF CARD WITH STRUCTURED AI METADATA PANEL (2/3 width) */}
                   <div className={`lg:col-span-2 ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
                     <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">🧠</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                          <Brain className="w-6 h-6 text-blue-700 dark:text-blue-400" />
+                        </div>
                         <h2 className={`font-semibold text-[26px] tracking-tight ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
                           {t.dashboardBrief.title}
                         </h2>
@@ -1027,7 +1043,8 @@ export default function App() {
                         <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
                           {t.dashboardBrief.priorityHigh}
                         </span>
-                        <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded">
+                        <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded flex items-center gap-1">
+                          <Brain className="w-3.5 h-3.5 text-emerald-700" />
                           {t.dashboardBrief.aiConfidence} 94%
                         </span>
                       </div>
@@ -1050,9 +1067,10 @@ export default function App() {
                         <div className={`p-4 rounded-md border text-[13px] mt-3 ${
                           isDark ? 'bg-slate-950 border-blue-900 text-slate-100' : 'bg-blue-50 border-blue-300 text-slate-900'
                         }`}>
-                          <span className={`font-bold uppercase tracking-wide block mb-1 text-[13px] ${
+                          <span className={`font-bold uppercase tracking-wide flex items-center gap-1.5 mb-1 text-[13px] ${
                             isDark ? 'text-blue-400' : 'text-blue-900'
                           }`}>
+                            <ShieldCheck className="w-4 h-4" />
                             {t.dashboardBrief.recommendedAction}
                           </span>
                           <p className={`font-semibold text-[15px] leading-normal ${
@@ -1067,10 +1085,11 @@ export default function App() {
                       <div className={`p-4 rounded-lg border text-[13px] space-y-2.5 ${
                         isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-300 text-slate-800'
                       }`}>
-                        <div className={`font-extrabold text-xs border-b pb-1.5 uppercase tracking-wider ${
+                        <div className={`font-extrabold text-xs border-b pb-1.5 uppercase tracking-wider flex items-center gap-1.5 ${
                           isDark ? 'text-slate-100 border-slate-800' : 'text-[#1E3A5F] border-slate-300'
                         }`}>
-                          ⚙️ {t.dashboardBrief.aiMetadataTitle}
+                          <Settings className="w-3.5 h-3.5 text-slate-500" />
+                          {t.dashboardBrief.aiMetadataTitle}
                         </div>
                         <div>
                           <span className={`font-bold block text-[11px] mb-1 ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>{t.dashboardBrief.aiModelsUsed}</span>
@@ -1118,8 +1137,9 @@ export default function App() {
                   {/* RECENT INTELLIGENCE FEED CARD (1/3 width) */}
                   <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-3`}>
                     <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                      <h3 className={`font-semibold text-[18px] flex items-center gap-1.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                        <span>📡 {t.recentFeed.title}</span>
+                      <h3 className={`font-semibold text-[18px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                        <Radio className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <span>{t.recentFeed.title}</span>
                       </h3>
                       <span className="text-[11px] text-slate-500 font-mono font-bold">{t.recentFeed.live}</span>
                     </div>
@@ -1155,7 +1175,9 @@ export default function App() {
                                 }>
                                   {translatedFeedTag}
                                 </span>
-                                <button onClick={() => dismissFeedItem(item.id)} className="text-slate-400 hover:text-red-500 font-bold text-xs cursor-pointer">✕</button>
+                                <button onClick={() => dismissFeedItem(item.id)} className="text-slate-400 hover:text-red-500 cursor-pointer">
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
                               </div>
                             </div>
                             <div className={`font-semibold mt-1 text-[13px] ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{translatedFeedText}</div>
@@ -1169,8 +1191,9 @@ export default function App() {
                 {/* AI POLICE RECOMMENDATIONS CARD */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-lg p-6 shadow-sm border space-y-4`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      <span>🚔 {t.policeRecs.title}</span>
+                    <h3 className={`font-semibold text-[26px] flex items-center gap-2.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                      <Siren className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <span>{t.policeRecs.title}</span>
                     </h3>
                     <span className="text-[13px] text-slate-500 font-mono font-medium">{t.policeRecs.sub}</span>
                   </div>
@@ -1425,17 +1448,17 @@ export default function App() {
                               className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
                             >
                               <span>Why?</span>
-                              <span>{showRationale[h.id] ? '▲' : '▼'}</span>
+                              {showRationale[h.id] ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                             </button>
 
                             {showRationale[h.id] && (
                               <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700 text-[11px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
                                 <div className="font-extrabold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Crime increased 18% over past 30 days</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Repeat offenders detected in jurisdiction</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Historical seasonal trend matched</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Population density correlation</div>
-                                <div className="text-emerald-700 dark:text-emerald-400">✔ Peak crime hours (22:00 - 04:00)</div>
+                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Crime increased 18% over past 30 days</div>
+                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Repeat offenders detected in jurisdiction</div>
+                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Historical seasonal trend matched</div>
+                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Population density correlation</div>
+                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Peak crime hours (22:00 - 04:00)</div>
                               </div>
                             )}
                           </div>
@@ -1459,8 +1482,9 @@ export default function App() {
                 {/* Modus Operandi (MO) Intelligence Card */}
                 <div className={`${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-5 shadow-sm border space-y-3`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <h3 className={`font-semibold text-[26px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      <span>🕵️ Modus Operandi (MO) Intelligence</span>
+                    <h3 className={`font-semibold text-[26px] flex items-center gap-2.5 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                      <Search className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <span>Modus Operandi (MO) Intelligence</span>
                     </h3>
                     <span className="bg-purple-100 text-purple-900 text-[10px] font-extrabold px-2 py-0.5 rounded">
                       Criminological Pattern Analysis
@@ -1560,7 +1584,9 @@ export default function App() {
                       <div className={`${isDark ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-300 text-slate-900'} p-2 rounded border font-semibold`}>
                         <strong>{t.networkPanel.mo}</strong> {offender.primaryMO}
                       </div>
-                      <div className="text-blue-700 font-extrabold text-[11px] pt-1">🔍 View Full Investigator Profile Drawer →</div>
+                      <div className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] pt-1 flex items-center gap-1">
+                        <User className="w-3.5 h-3.5" /> View Full Investigator Profile Drawer →
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1574,14 +1600,15 @@ export default function App() {
                   isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
                 }`}>
                   <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-                    <h3 className={`font-extrabold text-[24px] ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
-                      👤 {t.offenderDrawer.title}
+                    <h3 className={`font-extrabold text-[24px] flex items-center gap-2 ${isDark ? 'text-blue-400' : 'text-[#1E3A5F]'}`}>
+                      <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <span>{t.offenderDrawer.title}</span>
                     </h3>
                     <button
                       onClick={() => setSelectedOffenderDrawer(null)}
-                      className="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer"
+                      className="text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
-                      ✕
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
 
@@ -1663,7 +1690,8 @@ export default function App() {
                     isDark ? 'bg-blue-950 border-blue-800 text-slate-100' : 'bg-[#1E3A5F] text-white border-blue-900'
                   }`}>
                     <div className="font-extrabold text-[13px] text-blue-300 flex items-center gap-1.5">
-                      <span>🧠</span> {t.offenderDrawer.aiSummaryTitle}
+                      <Brain className="w-4 h-4 text-blue-300" />
+                      <span>{t.offenderDrawer.aiSummaryTitle}</span>
                     </div>
                     <p className="text-[12px] leading-relaxed font-semibold">
                       {t.offenderDrawer.aiSummaryText}{' '}
@@ -1755,17 +1783,18 @@ export default function App() {
                               <td className="py-3 px-3">
                                 <button
                                   onClick={() => toggleRationale(`risk-${idx}`)}
-                                  className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] hover:underline cursor-pointer"
+                                  className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] flex items-center gap-1 hover:underline cursor-pointer"
                                 >
-                                  {lang === 'kn' ? 'ಏಕೆ?' : 'Why?'} {showRationale[`risk-${idx}`] ? '▲' : '▼'}
+                                  <span>{lang === 'kn' ? 'ಏಕೆ?' : 'Why?'}</span>
+                                  {showRationale[`risk-${idx}`] ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                 </button>
                                 {showRationale[`risk-${idx}`] && (
                                   <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                                    <div className="text-emerald-700 dark:text-emerald-400">✔ {lang === 'kn' ? 'ಅಪರಾಧ 18% ಹೆಚ್ಚಾಗಿದೆ' : 'Crime increased 18%'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400">✔ {lang === 'kn' ? 'ಮರು-ಅಪರಾಧಿಗಳು ಪತ್ತೆಯಾಗಿದ್ದಾರೆ' : 'Repeat offenders detected'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400">✔ {lang === 'kn' ? 'ಋತುಮಾನದ ಅಪರಾಧ ಮಾದರಿ' : 'Historical seasonal trend'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400">✔ {lang === 'kn' ? 'ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Population density correlation'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400">✔ {lang === 'kn' ? 'ಹೆಚ್ಚಿನ ಅಪರಾಧ ಅವಧಿ' : 'Peak crime hours'}</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಅಪರಾಧ 18% ಹೆಚ್ಚಾಗಿದೆ' : 'Crime increased 18%'}</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಮರು-ಅಪರಾಧಿಗಳು ಪತ್ತೆಯಾಗಿದ್ದಾರೆ' : 'Repeat offenders detected'}</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಋತುಮಾನದ ಅಪರಾಧ ಮಾದರಿ' : 'Historical seasonal trend'}</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Population density correlation'}</div>
+                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಹೆಚ್ಚಿನ ಅಪರಾಧ ಅವಧಿ' : 'Peak crime hours'}</div>
                                   </div>
                                 )}
                               </td>
@@ -1982,8 +2011,9 @@ export default function App() {
                         <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.classification}</span> <span className="text-red-600 font-bold">{t.reportsPage.internalOnly}</span></div>
                         <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.docRef}</span> SCRB-INTEL-2026-07-KSP</div>
                       </div>
-                      <div className="text-xs font-bold text-emerald-600 mt-2">
-                        {t.reportsPage.approvalNote}
+                      <div className="text-xs font-bold text-emerald-600 mt-2 flex items-center gap-1.5">
+                        <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>{t.reportsPage.approvalNote}</span>
                       </div>
                     </div>
 
@@ -1991,7 +2021,8 @@ export default function App() {
                       onClick={() => window.print()}
                       className="bg-[#1E3A5F] hover:bg-blue-900 text-white px-4 py-2 rounded text-xs font-bold transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap cursor-pointer"
                     >
-                      📄 {t.reportsPage.exportBtn}
+                      <Download className="w-4 h-4" />
+                      <span>{t.reportsPage.exportBtn}</span>
                     </button>
                   </div>
 

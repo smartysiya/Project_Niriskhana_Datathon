@@ -8,7 +8,7 @@
 
 ##  Live Portal & Infrastructure
 
-- **Official Live Portal**: [NIRIKSHANA Enterprise App](https://project-nirikshana-60077343924.development.catalystserverless.in/app/index.html)
+- **Official Live Portal**: [NIRIKSHANA-Statewide AI Crime Intelligence Dashboard](https://project-nirikshana-60077343924.development.catalystserverless.in/app/index.html)
 - **Catalyst Serverless API Base**: `https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function`
 - **GitHub Repository**: [smartysiya/Project_Niriskhana_Datathon](https://github.com/smartysiya/Project_Niriskhana_Datathon)
 

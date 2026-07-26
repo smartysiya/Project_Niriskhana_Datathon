@@ -45,6 +45,56 @@ const DISTRICT_LIST = [
   'Udupi'
 ];
 
+const InfoTooltip = ({ text }) => (
+  <span className="group relative inline-block ml-1.5 align-middle">
+    <Info className="w-3.5 h-3.5 text-slate-400 hover:text-blue-500 cursor-help transition-colors" />
+    <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block w-60 p-2.5 bg-slate-900 text-white text-[11px] font-normal leading-tight rounded-md shadow-xl border border-slate-700 z-50 text-center font-sans">
+      {text}
+      <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></span>
+    </span>
+  </span>
+);
+
+const ExplainableAiPanel = () => (
+  <div className="mt-3 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-300 dark:border-slate-700 text-xs space-y-3 shadow-md transition-all">
+    <div className="flex items-center justify-between border-b pb-2 border-slate-200 dark:border-slate-800">
+      <span className="font-extrabold text-blue-900 dark:text-blue-300 text-sm flex items-center gap-1.5">
+        <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        AI Prediction Details
+      </span>
+      <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 px-2 py-0.5 rounded text-[10px] font-extrabold border border-emerald-300 dark:border-emerald-700">
+        Confidence: 94%
+      </span>
+    </div>
+
+    <div className="grid grid-cols-2 gap-3 text-[11px]">
+      <div>
+        <span className="text-slate-500 font-bold block text-[10px] uppercase">Primary Model Used</span>
+        <span className="font-mono font-bold text-slate-800 dark:text-slate-200">Random Forest</span>
+      </div>
+      <div>
+        <span className="text-slate-500 font-bold block text-[10px] uppercase">Supporting Models</span>
+        <span className="font-mono text-slate-800 dark:text-slate-200">DBSCAN, Isolation Forest, Graph Analytics</span>
+      </div>
+    </div>
+
+    <div>
+      <span className="text-slate-500 font-bold block text-[10px] uppercase mb-1.5">Top Contributing Factors</span>
+      <ul className="space-y-1 text-slate-700 dark:text-slate-300 text-[11px]">
+        <li className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Previous FIR Count</li>
+        <li className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Repeat Offender Activity</li>
+        <li className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Population Density</li>
+        <li className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Time of Day</li>
+        <li className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Historical Crime Pattern</li>
+      </ul>
+    </div>
+
+    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+      <span>Prediction Generated: 26 Jul 2026 • 17:45 IST</span>
+    </div>
+  </div>
+);
+
 const TRANSLATIONS = {
   en: {
     govSub: 'Government of Karnataka | Karnataka State Police | State Crime Records Bureau (SCRB)',
@@ -536,12 +586,19 @@ export default function App() {
   // Explainable AI Rationale Collapsible State
   const [showRationale, setShowRationale] = useState({});
 
-  // Filters State
+  // Filters & Search Autocomplete State
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDistrict, setSelectedDistrict] = useState('All Districts');
   const [selectedTimeOfDay, setSelectedTimeOfDay] = useState('All Times');
   const [selectedCrimeType, setSelectedCrimeType] = useState('All Types');
   const [selectedNode, setSelectedNode] = useState(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const t = TRANSLATIONS[lang];
 
@@ -743,8 +800,8 @@ export default function App() {
     <div className={`min-h-screen font-sans antialiased transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#F5F7FA] text-slate-900'}`}>
       {/* Header Area */}
       <header className={`border-b shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-        {/* Clean Government Header Top Line */}
-        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-[13px] flex justify-between items-center font-medium">
+        {/* Clean Government Header Top Line with Live Operations Header */}
+        <div className="px-6 py-2 bg-[#1E3A5F] text-slate-200 text-[13px] flex flex-wrap justify-between items-center font-medium gap-2">
           <div className="flex items-center gap-2">
             <span>Government of Karnataka</span>
             <span className="opacity-40">|</span>
@@ -753,7 +810,17 @@ export default function App() {
             <span className="text-blue-300 font-semibold">State Crime Records Bureau (SCRB)</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            {/* Live Operations Header Status (Requirement 1) */}
+            <div className="hidden lg:flex items-center gap-3 border-r border-blue-800/80 pr-4 font-mono text-[11px] text-blue-200">
+              <span>{currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              <span className="font-bold text-white">{currentTime.toLocaleTimeString('en-GB')} IST</span>
+              <span className="text-blue-300">Sync: 2m ago</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-950/80 text-emerald-300 border border-emerald-600/60 inline-flex items-center gap-1.5 shadow-inner">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SYSTEM: ONLINE
+              </span>
+            </div>
+
             {/* Theme Toggle Button */}
             <button
               onClick={() => setIsDark(!isDark)}
@@ -1040,12 +1107,14 @@ export default function App() {
                         </h2>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
-                          {t.dashboardBrief.priorityHigh}
+                        <span className="bg-red-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
+                          <ShieldAlert className="w-3 h-3" />
+                          High Risk
                         </span>
-                        <span className="bg-emerald-100 text-emerald-900 font-extrabold text-[11px] px-2.5 py-0.5 rounded flex items-center gap-1">
-                          <Brain className="w-3.5 h-3.5 text-emerald-700" />
+                        <span className="bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                          <Brain className="w-3.5 h-3.5 text-emerald-600" />
                           {t.dashboardBrief.aiConfidence} 94%
+                          <InfoTooltip text="Confidence generated using ensemble AI models including Random Forest, Isolation Forest and Graph Analytics." />
                         </span>
                       </div>
                     </div>
@@ -1289,20 +1358,63 @@ export default function App() {
                 {/* STICKY GLOBAL FILTER PANEL FOR CRIME MAP */}
                 <div className={`sticky top-2 z-40 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-md border`}>
                   <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
-                    {/* Search Bar */}
-                    <div className="relative flex-1 sm:flex-initial">
-                      <span className="absolute left-2.5 top-2">
-                        <SearchIcon />
+                    {/* Search Bar with Smart Autocomplete (Requirement 2) */}
+                    <div className="relative flex-1 sm:flex-initial z-50">
+                      <span className="absolute left-2.5 top-2.5">
+                        <Search className="w-4 h-4 text-slate-400" />
                       </span>
                       <input
                         type="text"
                         placeholder={t.filters.searchPlaceholder}
                         value={searchQuery}
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-56 focus:outline-none ${
-                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-[#2563EB]'
+                        className={`pl-8 pr-3 py-1.5 border rounded-md text-xs w-full sm:w-64 focus:outline-none ${
+                          isDark ? 'bg-slate-800 border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:ring-2 focus:ring-[#2563EB]'
                         }`}
                       />
+
+                      {/* Smart Search Autocomplete Dropdown */}
+                      {isSearchFocused && searchQuery.trim().length > 0 && (
+                        <div className={`absolute left-0 right-0 top-full mt-1.5 rounded-lg border shadow-xl z-50 overflow-hidden text-xs ${
+                          isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
+                        }`}>
+                          {Array.from(new Set([
+                            'Hubballi PS-1', 'Hubballi PS-2', 'Hubballi Rural PS', 'Hubballi Cyber Cell', 'Bengaluru East PS', 'Kalaburagi PS-3', 'Belagavi Central', 'Mysuru City PS', 'Mangaluru Port PS', 'Shivamogga Town PS', 'Tumakuru PS-2', 'Ballari Rural', 'Udupi Coastal PS',
+                            ...DISTRICT_LIST.filter(d => d !== 'All Districts'),
+                            ...cases.map(c => c.station).filter(Boolean)
+                          ]))
+                          .filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
+                          .slice(0, 6)
+                          .map((suggestion, sIdx) => {
+                            const matchIndex = suggestion.toLowerCase().indexOf(searchQuery.toLowerCase());
+                            const beforeMatch = suggestion.substring(0, matchIndex);
+                            const matchText = suggestion.substring(matchIndex, matchIndex + searchQuery.length);
+                            const afterMatch = suggestion.substring(matchIndex + searchQuery.length);
+
+                            return (
+                              <div
+                                key={sIdx}
+                                onMouseDown={() => {
+                                  setSearchQuery(suggestion);
+                                  setIsSearchFocused(false);
+                                }}
+                                className={`px-3 py-2 cursor-pointer flex items-center justify-between border-b last:border-0 ${
+                                  isDark ? 'hover:bg-slate-800 border-slate-800' : 'hover:bg-blue-50 border-slate-100'
+                                }`}
+                              >
+                                <span className="font-medium">
+                                  {beforeMatch}
+                                  <mark className="bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-bold px-0.5 rounded">{matchText}</mark>
+                                  {afterMatch}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-mono">Location</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     {/* District Dropdown */}
@@ -1441,26 +1553,17 @@ export default function App() {
                             <div>{t.hotspotPanel.peakTime} <strong>{h.peakTimeWindow}</strong></div>
                           </div>
 
-                          {/* EXPLAINABLE AI "WHY?" SECTION */}
+                          {/* EXPLAINABLE AI SECTION (Requirement 4) */}
                           <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
                             <button
                               onClick={() => toggleRationale(h.id)}
-                              className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
+                              className="text-[11px] text-blue-700 dark:text-blue-400 font-extrabold flex items-center gap-1.5 hover:underline cursor-pointer"
                             >
-                              <span>Why?</span>
+                              <span>View AI Reasoning</span>
                               {showRationale[h.id] ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                             </button>
 
-                            {showRationale[h.id] && (
-                              <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-700 text-[11px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                                <div className="font-extrabold text-slate-900 dark:text-slate-100">Risk Score: 91%</div>
-                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Crime increased 18% over past 30 days</div>
-                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Repeat offenders detected in jurisdiction</div>
-                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Historical seasonal trend matched</div>
-                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Population density correlation</div>
-                                <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> Peak crime hours (22:00 - 04:00)</div>
-                              </div>
-                            )}
+                            {showRationale[h.id] && <ExplainableAiPanel />}
                           </div>
                         </div>
                       ))}
@@ -1783,20 +1886,12 @@ export default function App() {
                               <td className="py-3 px-3">
                                 <button
                                   onClick={() => toggleRationale(`risk-${idx}`)}
-                                  className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] flex items-center gap-1 hover:underline cursor-pointer"
+                                  className="text-blue-700 dark:text-blue-400 font-extrabold text-[11px] flex items-center gap-1.5 hover:underline cursor-pointer"
                                 >
-                                  <span>{lang === 'kn' ? 'ಏಕೆ?' : 'Why?'}</span>
+                                  <span>{lang === 'kn' ? 'ಎಐ ವಿವರಣೆ' : 'Explain Prediction'}</span>
                                   {showRationale[`risk-${idx}`] ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                 </button>
-                                {showRationale[`risk-${idx}`] && (
-                                  <div className="mt-1 p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-300 text-[10px] space-y-1 font-semibold text-slate-900 dark:text-slate-100">
-                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಅಪರಾಧ 18% ಹೆಚ್ಚಾಗಿದೆ' : 'Crime increased 18%'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಮರು-ಅಪರಾಧಿಗಳು ಪತ್ತೆಯಾಗಿದ್ದಾರೆ' : 'Repeat offenders detected'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಋತುಮಾನದ ಅಪರಾಧ ಮಾದರಿ' : 'Historical seasonal trend'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಜನಸಾಂದ್ರತೆಯ ನಂಟು' : 'Population density correlation'}</div>
-                                    <div className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 shrink-0" /> {lang === 'kn' ? 'ಹೆಚ್ಚಿನ ಅಪರಾಧ ಅವಧಿ' : 'Peak crime hours'}</div>
-                                  </div>
-                                )}
+                                {showRationale[`risk-${idx}`] && <ExplainableAiPanel />}
                               </td>
                             </tr>
                           );
@@ -2008,7 +2103,7 @@ export default function App() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300">
                         <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.genBy}</span> SCRB AI Intelligence Engine</div>
                         <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.genOn}</span> 26 Jul 2026 • 18:25 IST</div>
-                        <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.classification}</span> <span className="text-red-600 font-bold">{t.reportsPage.internalOnly}</span></div>
+                        <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.classification}</span> <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 inline-flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-slate-500" /> {t.reportsPage.internalOnly}</span></div>
                         <div><span className="text-slate-400 font-medium block text-[10px]">{t.reportsPage.docRef}</span> SCRB-INTEL-2026-07-KSP</div>
                       </div>
                       <div className="text-xs font-bold text-emerald-600 mt-2 flex items-center gap-1.5">

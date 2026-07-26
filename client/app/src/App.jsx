@@ -53,24 +53,92 @@ const TRANSLATIONS = {
     },
     stats: {
       totalCases: 'Total FIR Records',
+      totalSub: '↑ 12% vs last month',
       topCrime: 'Top Crime Category',
+      topSub: 'Property & Cyber dominant',
       districts: 'Districts Covered',
+      districtsSub: 'Statewide active jurisdiction',
       hotspots: 'Active Hotspots',
-      anomalies: 'Emerging Anomalies'
+      hotspotsSub: 'DBSCAN clusters detected',
+      anomalies: 'Emerging Anomalies',
+      anomaliesSub: 'June 2026 theft surge wave'
     },
     filters: {
       searchPlaceholder: 'Search FIR, station, or crime...',
-      district: 'District',
-      timeWindow: 'Time Window',
-      crimeType: 'Crime Type',
+      districtLabel: 'District:',
+      allDistricts: 'All Districts',
+      timeLabel: 'Time Window:',
+      allTimes: 'All Times (24 Hours)',
+      crimeLabel: 'Crime Type:',
+      allCrimes: 'All Categories',
       reset: 'Reset Filters'
     },
     timeOptions: {
-      all: 'All Times (24 Hours)',
       night: 'Night Shift (22:00-06:00)',
       morning: 'Morning Shift (06:00-12:00)',
       afternoon: 'Afternoon Shift (12:00-17:00)',
       evening: 'Evening Shift (17:00-22:00)'
+    },
+    mapPanel: {
+      title: 'Karnataka Crime Map & Jurisdiction Overview',
+      sub: 'incident records mapped across police station limits',
+      popupStation: 'Station:',
+      popupDistrict: 'District:',
+      popupDate: 'Date:',
+      popupStatus: 'Status:',
+      popupMo: 'Modus Operandi:'
+    },
+    hotspotPanel: {
+      title: 'DBSCAN Spatial Hotspot Summary',
+      surge: 'Surge Anomaly',
+      cluster: 'Cluster',
+      station: 'Station:',
+      totalFirs: 'Total FIRs:',
+      dominant: 'Dominant Category:',
+      peakTime: 'Peak Time Window:'
+    },
+    networkPanel: {
+      title: 'Repeat Offender Link Network Graph',
+      sub: 'Visual mapping of habitual offenders linked across multiple police station jurisdictions',
+      legendSuspect: 'Suspect / Offender',
+      legendCase: 'Case FIR',
+      legendStation: 'Police Station',
+      jurisdiction: 'Station Jurisdiction:',
+      mo: 'Modus Operandi:'
+    },
+    riskPanel: {
+      title: 'Police Station Risk & Patrol Window Matrix',
+      sub: 'Evaluated station limits based on weighted crime severity index',
+      colStation: 'Police Station Jurisdiction',
+      colFirs: 'Logged FIRs',
+      colCrime: 'Dominant Category',
+      colRisk: 'Risk Index (0-100)',
+      colPatrol: 'Predicted Patrol Window',
+      colStatus: 'Threat Status'
+    },
+    socioPanel: {
+      title: 'Socio-Economic & Urbanization Intelligence',
+      sub: 'Correlating urbanization tiers and infrastructure vulnerability with crime patterns',
+      density: 'Population Density:',
+      profile: 'Socio-Economic Profile:',
+      cyber: 'Cyber Infrastructure Exposure:',
+      typology: 'Dominant Crime Typology:',
+      forecast: 'AI Forecast Risk:'
+    },
+    reportsPanel: {
+      title: 'SCRB Intelligence Summary Reports',
+      sub: 'Statewide compiled FIR and vigilance summaries',
+      cardTitle: 'Annual SCRB Crime Intelligence Summary (2026 MVP)',
+      bullet1: '300 Active Case FIR Records analyzed across 10 Districts and 30 Police Stations.',
+      bullet2: 'Identified 50 Spatial Hotspots using DBSCAN machine learning clustering.',
+      bullet3: 'Tracked Habitual Repeat Offenders linked to inter-station burglary and cyber crimes.',
+      bullet4: 'Calculated Risk Indices across all station limits for optimized patrol shift allocation.'
+    },
+    settingsPanel: {
+      title: 'System Configuration & Status',
+      backend: 'Backend Engine: Zoho Catalyst Advanced I/O Serverless Function',
+      db: 'Data Store Engine: Relational ZCQL Database Layer',
+      status: 'Deployment Status: Live Production Environment'
     }
   },
   kn: {
@@ -90,24 +158,92 @@ const TRANSLATIONS = {
     },
     stats: {
       totalCases: 'ಒಟ್ಟು ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳು',
+      totalSub: '↑ ಕಳೆದ ತಿಂಗಳಿಗಿಂತ 12% ಹೆಚ್ಚು',
       topCrime: 'ಪ್ರಮುಖ ಅಪರಾಧ ಮಾದರಿ',
+      topSub: 'ಆಸ್ತಿ ಮತ್ತು ಸೈಬರ್ ಅಪರಾಧ ಪ್ರಮುಖ',
       districts: 'ಆವರಿಸಿದ ಜಿಲ್ಲೆಗಳು',
+      districtsSub: 'ರಾಜ್ಯಾದ್ಯಂತ ಸಕ್ರಿಯ ವ್ಯಾಪ್ತಿ',
       hotspots: 'ಸಕ್ರಿಯ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು',
-      anomalies: 'ಹಠಾತ್ ಅಪರಾಧ ದೂರುಗಳು'
+      hotspotsSub: 'DBSCAN ಕ್ಲಸ್ಟರ್‌ಗಳು ಗುರುತಿಸಲಾಗಿದೆ',
+      anomalies: 'ಹಠಾತ್ ಅಪರಾಧ ದೂರುಗಳು',
+      anomaliesSub: 'ಜೂನ್ 2026 ಕಳವು ಹೆಚ್ಚಳ ದೂರು'
     },
     filters: {
-      searchPlaceholder: 'ಎಫ್‌ಐಆರ್ ಅಥವಾ ಠಾಣೆ ಹುಡುಕಿ...',
-      district: 'ಜಿಲ್ಲೆ',
-      timeWindow: 'ಸಮಯದ ಅವಧಿ',
-      crimeType: 'ಅಪರಾಧ ಪ್ರಕಾರ',
+      searchPlaceholder: 'ಎಫ್‌ಐಆರ್, ಠಾಣೆ ಅಥವಾ ಅಪರಾಧ ಹುಡುಕಿ...',
+      districtLabel: 'ಜಿಲ್ಲೆ:',
+      allDistricts: 'ಎಲ್ಲಾ ಜಿಲ್ಲೆಗಳು',
+      timeLabel: 'ಸಮಯದ ಅವಧಿ:',
+      allTimes: 'ಎಲ್ಲಾ ಸಮಯಗಳು (24 ಗಂಟೆಗಳು)',
+      crimeLabel: 'ಅಪರಾಧ ಪ್ರಕಾರ:',
+      allCrimes: 'ಎಲ್ಲಾ ಅಪರಾಧಗಳು',
       reset: 'ಫಿಲ್ಟರ್ ರದ್ದುಮಾಡಿ'
     },
     timeOptions: {
-      all: 'ಎಲ್ಲಾ ಸಮಯಗಳು (24 ಗಂಟೆಗಳು)',
       night: 'ರಾತ್ರಿ ಪಾಳಿ (22:00-06:00)',
       morning: 'ಬೆಳಗಿನ ಪಾಳಿ (06:00-12:00)',
       afternoon: 'ಮಧ್ಯಾಹ್ನದ ಪಾಳಿ (12:00-17:00)',
       evening: 'ಸಂಜೆಯ ಪಾಳಿ (17:00-22:00)'
+    },
+    mapPanel: {
+      title: 'ಕರ್ನಾಟಕ ಅಪರಾಧ ನಕ್ಷೆ ಮತ್ತು ಠಾಣಾ ವ್ಯಾಪ್ತಿ',
+      sub: 'ಪೊಲೀಸ್ ಠಾಣಾ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ದಾಖಲಾದ ಅಪರಾಧ ಪ್ರಕರಣಗಳ ನಕ್ಷೆ',
+      popupStation: 'ಠಾಣೆ:',
+      popupDistrict: 'ಜಿಲ್ಲೆ:',
+      popupDate: 'ದಿನಾಂಕ:',
+      popupStatus: 'ಸ್ಥಿತಿ:',
+      popupMo: 'ದಾಳಿ ಶೈಲಿ (MO):'
+    },
+    hotspotPanel: {
+      title: 'DBSCAN ಹಾಟ್‌ಸ್ಪಾಟ್ ವಿವರಣೆ',
+      surge: 'ಹಠಾತ್ ದೂರು',
+      cluster: 'ಕ್ಲಸ್ಟರ್',
+      station: 'ಠಾಣೆ:',
+      totalFirs: 'ಒಟ್ಟು ಎಫ್‌ಐಆರ್‌ಗಳು:',
+      dominant: 'ಪ್ರಮುಖ ಅಪರಾಧ:',
+      peakTime: 'ಹೆಚ್ಚಿನ ಅಪರಾಧ ಸಮಯ:'
+    },
+    networkPanel: {
+      title: 'ಅಪರಾಧಿ ಜಾಲ ಮತ್ತು ಮೋಡಸ್ ಅಪರಾಂಡಿ ನಕ್ಷೆ',
+      sub: 'ವಿವಿಧ ಪೊಲೀಸ್ ಠಾಣೆಗಳ ನಡುವಿನ ಅಪರಾಧಿ ಸಂಬಂಧ ಮತ್ತು ದಾಳಿ ಶೈಲಿ',
+      legendSuspect: 'ಶಂಕಿತ ಅಪರಾಧಿ',
+      legendCase: 'ಎಫ್‌ಐಆರ್ ಪ್ರಕರಣ',
+      legendStation: 'ಪೋಲಿಸ್ ಠಾಣೆ',
+      jurisdiction: 'ಠಾಣಾ ವ್ಯಾಪ್ತಿ:',
+      mo: 'ದಾಳಿ ಶೈಲಿ (MO):'
+    },
+    riskPanel: {
+      title: 'ಪೊಲೀಸ್ ಠಾಣೆ ಅಪಾಯದ ಶ್ರೇಣಿ ಮತ್ತು ಕಾವಲು ಸಮಯ',
+      sub: 'ಅಪರಾಧ ಗಂಭೀರತೆ ಆಧಾರಿತ ಠಾಣಾ ಶ್ರೇಣಿ ಮತ್ತು ಭವಿಷ್ಯದ ಕಾವಲು ಸಮಯ',
+      colStation: 'ಪೋಲಿಸ್ ಠಾಣೆ ವ್ಯಾಪ್ತಿ',
+      colFirs: 'ದಾಖಲಾದ ಎಫ್‌ಐಆರ್‌ಗಳು',
+      colCrime: 'ಪ್ರಮುಖ ಅಪರಾಧ',
+      colRisk: 'ಅಪಾಯದ ಶ್ರೇಣಿ (0-100)',
+      colPatrol: 'ಸೂಚಿಸಿದ ಕಾವಲು ಸಮಯ',
+      colStatus: 'ಸ್ಥಿತಿ'
+    },
+    socioPanel: {
+      title: 'ಸಾಮಾಜಿಕ-ಆರ್ಥಿಕ ಮತ್ತು ನಗರೀಕರಣ ವಿಶ್ಲೇಷಣೆ',
+      sub: 'ನಗರೀಕರಣ, ಜನಸಾಂದ್ರತೆ ಮತ್ತು ಮೂಲಸೌಕರ್ಯದ ಆಧಾರದಲ್ಲಿ ಅಪರಾಧ ಶೈಲಿಯ ನಂಟು',
+      density: 'ಜನಸಾಂದ್ರತೆ:',
+      profile: 'ಸಾಮಾಜಿಕ-ಆರ್ಥಿಕ ವಿವರ:',
+      cyber: 'ಸೈಬರ್ ಸೌಲಭ್ಯ ವ್ಯಾಪ್ತಿ:',
+      typology: 'ಪ್ರಮುಖ ಅಪರಾಧ ಶೈಲಿ:',
+      forecast: 'ಎಐ ಭವಿಷ್ಯದ ಅಪಾಯ:'
+    },
+    reportsPanel: {
+      title: 'SCRB ಅಪರಾಧ ವಿಶ್ಲೇಷಣಾ ವರದಿಗಳು',
+      sub: 'ರಾಜ್ಯಾದ್ಯಂತ ಸಂಕಲಿಸಿದ ಎಫ್‌ಐಆರ್ ಮತ್ತು ವಿಜಿಲೆನ್ಸ್ ಸಾರಾಂಶಗಳು',
+      cardTitle: 'ವಾರ್ಷಿಕ SCRB ಅಪರಾಧ ವಿಶ್ಲೇಷಣಾ ಸಾರಾಂಶ (2026 MVP)',
+      bullet1: '10 ಜಿಲ್ಲೆಗಳು ಮತ್ತು 30 ಪೊಲೀಸ್ ಠಾಣೆಗಳ 300 ಸಕ್ರಿಯ ಎಫ್‌ಐಆರ್ ದಾಖಲೆಗಳ ವಿಶ್ಲೇಷಣೆ.',
+      bullet2: 'DBSCAN ಯಂತ್ರ ಕಲಿಕೆಯ ಮೂಲಕ 50 ಸ್ಥಳೀಯ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳನ್ನು ಗುರುತಿಸಲಾಗಿದೆ.',
+      bullet3: 'ವಿವಿಧ ಠಾಣೆಗಳ ನಡುವಿನ ಕಳವು ಮತ್ತು ಸೈಬರ್ ಅಪರಾಧಿಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಲಾಗಿದೆ.',
+      bullet4: 'ಪೊಲೀಸ್ ಕಾವಲು ಸಮಯದ ಸೂಕ್ತ ಹಂಚಿಕೆಗಾಗಿ ಅಪಾಯದ ಶ್ರೇಣಿಯನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ.'
+    },
+    settingsPanel: {
+      title: 'ಸಂರಚನೆ ಮತ್ತು ಸಿಸ್ಟಮ್ ಸ್ಥಿತಿ',
+      backend: 'ಬ್ಯಾಕೆಂಡ್ ಇಂಜಿನ್: ಜೊಹೊ ಕ್ಯಾಟಲಿಸ್ಟ್ ಸರ್ವರ್‌ಲೆಸ್ ಫಂಕ್ಷನ್',
+      db: 'ಡೇಟಾಬೇಸ್ ಇಂಜಿನ್: ರಿಲೇಶನಲ್ ZCQL ಡೇಟಾಬೇಸ್',
+      status: 'ನಿಯೋಜನೆ ಸ್ಥಿತಿ: ಸಕ್ರಿಯ ಪ್ರೊಡಕ್ಷನ್ ಸಿಸ್ಟಮ್'
     }
   }
 };
@@ -142,14 +278,14 @@ function RefreshIcon() {
   );
 }
 
-function StatCard({ label, value, trend, trendUp }) {
+function StatCard({ label, value, subtext, trendUp }) {
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm hover:shadow transition-shadow">
       <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</div>
       <div className="text-2xl font-bold text-[#1E3A5F] mt-1.5">{value}</div>
-      {trend && (
+      {subtext && (
         <div className={`text-xs font-medium mt-1 flex items-center gap-1 ${trendUp ? 'text-red-600' : 'text-slate-500'}`}>
-          <span>{trend}</span>
+          <span>{subtext}</span>
         </div>
       )}
     </div>
@@ -204,7 +340,6 @@ export default function App() {
     fetchData();
   }, []);
 
-  // Filtered cases
   const filteredCases = cases.filter(c => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || c.crimeNo.toLowerCase().includes(q) || c.station.toLowerCase().includes(q) || c.crimeType.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
@@ -292,11 +427,11 @@ export default function App() {
           <>
             {/* KPI Cards Row */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <StatCard label={t.stats.totalCases} value={stats?.totalCases ?? '300'} trend="↑ 12% vs last month" trendUp />
-              <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} trend="Property dominant" />
-              <StatCard label={t.stats.districts} value={stats?.totalDistricts ?? '10'} trend="Statewide active" />
-              <StatCard label={t.stats.hotspots} value={hotspots.length} trend="DBSCAN clusters" />
-              <StatCard label={t.stats.anomalies} value="Theft Wave" trend="June 2026 anomaly" trendUp />
+              <StatCard label={t.stats.totalCases} value={stats?.totalCases ?? '300'} subtext={t.stats.totalSub} trendUp />
+              <StatCard label={t.stats.topCrime} value={stats?.topCrimeType ?? 'Theft'} subtext={t.stats.topSub} />
+              <StatCard label={t.stats.districts} value={stats?.totalDistricts ?? '10'} subtext={t.stats.districtsSub} />
+              <StatCard label={t.stats.hotspots} value={hotspots.length} subtext={t.stats.hotspotsSub} />
+              <StatCard label={t.stats.anomalies} value="Theft Wave" subtext={t.stats.anomaliesSub} trendUp />
             </div>
 
             {/* Toolbar Filter Bar */}
@@ -317,40 +452,49 @@ export default function App() {
                 </div>
 
                 {/* District Dropdown */}
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => setSelectedDistrict(e.target.value)}
-                  className="border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
-                >
-                  {DISTRICT_LIST.map(d => (
-                    <option key={d} value={d}>{d === 'All Districts' ? t.filters.district + ': All' : d}</option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-1">
+                  <span className="text-slate-500 font-medium">{t.filters.districtLabel}</span>
+                  <select
+                    value={selectedDistrict}
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                  >
+                    {DISTRICT_LIST.map(d => (
+                      <option key={d} value={d}>{d === 'All Districts' ? t.filters.allDistricts : d}</option>
+                    ))}
+                  </select>
+                </div>
 
                 {/* Time Window Dropdown */}
-                <select
-                  value={selectedTimeOfDay}
-                  onChange={(e) => setSelectedTimeOfDay(e.target.value)}
-                  className="border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
-                >
-                  <option value="All Times">{t.filters.timeWindow}: All</option>
-                  <option value="Night">{t.timeOptions.night}</option>
-                  <option value="Morning">{t.timeOptions.morning}</option>
-                  <option value="Afternoon">{t.timeOptions.afternoon}</option>
-                  <option value="Evening">{t.timeOptions.evening}</option>
-                </select>
+                <div className="flex items-center gap-1">
+                  <span className="text-slate-500 font-medium">{t.filters.timeLabel}</span>
+                  <select
+                    value={selectedTimeOfDay}
+                    onChange={(e) => setSelectedTimeOfDay(e.target.value)}
+                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                  >
+                    <option value="All Times">{t.filters.allTimes}</option>
+                    <option value="Night">{t.timeOptions.night}</option>
+                    <option value="Morning">{t.timeOptions.morning}</option>
+                    <option value="Afternoon">{t.timeOptions.afternoon}</option>
+                    <option value="Evening">{t.timeOptions.evening}</option>
+                  </select>
+                </div>
 
                 {/* Crime Type Dropdown */}
-                <select
-                  value={selectedCrimeType}
-                  onChange={(e) => setSelectedCrimeType(e.target.value)}
-                  className="border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
-                >
-                  <option value="All Types">{t.filters.crimeType}: All</option>
-                  {Object.keys(CRIME_COLORS).map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-1">
+                  <span className="text-slate-500 font-medium">{t.filters.crimeLabel}</span>
+                  <select
+                    value={selectedCrimeType}
+                    onChange={(e) => setSelectedCrimeType(e.target.value)}
+                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+                  >
+                    <option value="All Types">{t.filters.allCrimes}</option>
+                    {Object.keys(CRIME_COLORS).map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {(searchQuery || selectedDistrict !== 'All Districts' || selectedTimeOfDay !== 'All Times' || selectedCrimeType !== 'All Types') && (
@@ -374,8 +518,8 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm p-4 space-y-4">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <h2 className="text-base font-bold text-[#1E3A5F]">Karnataka Crime Map & Jurisdiction Overview</h2>
-                    <p className="text-xs text-slate-500">{filteredCases.length} incident records mapped</p>
+                    <h2 className="text-base font-bold text-[#1E3A5F]">{t.mapPanel.title}</h2>
+                    <p className="text-xs text-slate-500">{filteredCases.length} {t.mapPanel.sub}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-[11px]">
@@ -409,12 +553,12 @@ export default function App() {
                           <Popup>
                             <div className="text-slate-800 p-1 min-w-[190px]">
                               <div className="font-bold text-sm text-[#1E3A5F] border-b pb-1 mb-1">{c.crimeType} ({c.crimeNo})</div>
-                              <div className="text-xs"><strong>Station:</strong> {c.station}</div>
-                              <div className="text-xs"><strong>District:</strong> {c.district}</div>
-                              <div className="text-xs"><strong>Date:</strong> {c.date}</div>
-                              <div className="text-xs"><strong>Status:</strong> <span className="text-blue-700 font-medium">{c.status}</span></div>
+                              <div className="text-xs"><strong>{t.mapPanel.popupStation}</strong> {c.station}</div>
+                              <div className="text-xs"><strong>{t.mapPanel.popupDistrict}</strong> {c.district}</div>
+                              <div className="text-xs"><strong>{t.mapPanel.popupDate}</strong> {c.date}</div>
+                              <div className="text-xs"><strong>{t.mapPanel.popupStatus}</strong> <span className="text-blue-700 font-medium">{c.status}</span></div>
                               <div className="text-[11px] text-slate-600 mt-1 bg-slate-50 p-1.5 rounded border border-slate-200">
-                                <strong>MO:</strong> {c.modusOperandi}
+                                <strong>{t.mapPanel.popupMo}</strong> {c.modusOperandi}
                               </div>
                             </div>
                           </Popup>
@@ -446,9 +590,9 @@ export default function App() {
                         <Popup>
                           <div className="text-slate-800 p-1">
                             <strong className="text-red-700 font-bold">{h.id}</strong><br />
-                            <strong>Dominant Crime:</strong> {h.dominantCrime}<br />
-                            <strong>Incidents:</strong> {h.totalIncidents} FIRs<br />
-                            <strong>Station:</strong> {h.primaryStation}<br />
+                            <strong>{t.hotspotPanel.dominant}</strong> {h.dominantCrime}<br />
+                            <strong>{t.hotspotPanel.totalFirs}</strong> {h.totalIncidents} FIRs<br />
+                            <strong>{t.hotspotPanel.station}</strong> {h.primaryStation}<br />
                             <span className="text-xs text-red-600 font-semibold block mt-1">{h.surgeMetric}</span>
                           </div>
                         </Popup>
@@ -458,7 +602,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-white border border-slate-200 rounded-lg p-5 overflow-y-auto shadow-sm" style={{ maxHeight: '580px' }}>
-                  <h3 className="text-sm font-bold text-[#1E3A5F] mb-3">DBSCAN Spatial Hotspot Summary</h3>
+                  <h3 className="text-sm font-bold text-[#1E3A5F] mb-3">{t.hotspotPanel.title}</h3>
                   <div className="space-y-3">
                     {filteredHotspots.map(h => (
                       <div key={h.id} className={`p-3.5 rounded-lg border text-xs ${
@@ -469,14 +613,14 @@ export default function App() {
                           <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
                             h.isAnomaly ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-800'
                           }`}>
-                            {h.isAnomaly ? 'Surge Anomaly' : 'Cluster'}
+                            {h.isAnomaly ? t.hotspotPanel.surge : t.hotspotPanel.cluster}
                           </span>
                         </div>
                         <div className="text-slate-600 mt-2 space-y-1">
-                          <div>Station: <strong>{h.primaryStation}</strong></div>
-                          <div>Total FIRs: <strong>{h.totalIncidents}</strong></div>
-                          <div>Dominant Category: <strong>{h.dominantCrime}</strong></div>
-                          <div>Peak Time: <strong>{h.peakTimeWindow}</strong></div>
+                          <div>{t.hotspotPanel.station} <strong>{h.primaryStation}</strong></div>
+                          <div>{t.hotspotPanel.totalFirs} <strong>{h.totalIncidents}</strong></div>
+                          <div>{t.hotspotPanel.dominant} <strong>{h.dominantCrime}</strong></div>
+                          <div>{t.hotspotPanel.peakTime} <strong>{h.peakTimeWindow}</strong></div>
                         </div>
                       </div>
                     ))}
@@ -489,10 +633,15 @@ export default function App() {
             {activeTab === 'network' && (
               <div className="space-y-6">
                 <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-                  <div className="mb-4 flex justify-between items-center">
+                  <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div>
-                      <h3 className="text-base font-bold text-[#1E3A5F]">Repeat Offender Link Network Graph</h3>
-                      <p className="text-xs text-slate-500">Visual mapping of habitual offenders linked across multiple police station jurisdictions</p>
+                      <h3 className="text-base font-bold text-[#1E3A5F]">{t.networkPanel.title}</h3>
+                      <p className="text-xs text-slate-500">{t.networkPanel.sub}</p>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#5B4BB7]"></span> {t.networkPanel.legendSuspect}</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> {t.networkPanel.legendCase}</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]"></span> {t.networkPanel.legendStation}</span>
                     </div>
                   </div>
 
@@ -537,11 +686,11 @@ export default function App() {
                     <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-xs space-y-2">
                       <div className="flex justify-between items-center font-bold text-sm text-[#1E3A5F]">
                         <span>{offender.name}</span>
-                        <span className="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded">{offender.casesLinked} FIRs</span>
+                        <span className="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">{offender.casesLinked} FIRs</span>
                       </div>
-                      <div className="text-slate-600">Station Jurisdiction: <strong>{offender.sampleStation}</strong></div>
+                      <div className="text-slate-600">{t.networkPanel.jurisdiction} <strong>{offender.sampleStation}</strong></div>
                       <div className="bg-slate-50 p-2 rounded border border-slate-200 text-slate-700">
-                        <strong>Modus Operandi:</strong> {offender.primaryMO}
+                        <strong>{t.networkPanel.mo}</strong> {offender.primaryMO}
                       </div>
                     </div>
                   ))}
@@ -553,20 +702,20 @@ export default function App() {
             {activeTab === 'risk' && (
               <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
                 <div>
-                  <h3 className="text-base font-bold text-[#1E3A5F]">Police Station Risk & Patrol Window Matrix</h3>
-                  <p className="text-xs text-slate-500">Evaluated station limits based on weighted severity index</p>
+                  <h3 className="text-base font-bold text-[#1E3A5F]">{t.riskPanel.title}</h3>
+                  <p className="text-xs text-slate-500">{t.riskPanel.sub}</p>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-500 font-semibold uppercase">
-                        <th className="py-3 px-3">Police Station</th>
-                        <th className="py-3 px-3">Logged FIRs</th>
-                        <th className="py-3 px-3">Dominant Category</th>
-                        <th className="py-3 px-3">Risk Index (0-100)</th>
-                        <th className="py-3 px-3">Predicted Patrol Window</th>
-                        <th className="py-3 px-3">Threat Status</th>
+                        <th className="py-3 px-3">{t.riskPanel.colStation}</th>
+                        <th className="py-3 px-3">{t.riskPanel.colFirs}</th>
+                        <th className="py-3 px-3">{t.riskPanel.colCrime}</th>
+                        <th className="py-3 px-3">{t.riskPanel.colRisk}</th>
+                        <th className="py-3 px-3">{t.riskPanel.colPatrol}</th>
+                        <th className="py-3 px-3">{t.riskPanel.colStatus}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -596,24 +745,59 @@ export default function App() {
             {activeTab === 'socio' && (
               <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
                 <div>
-                  <h3 className="text-base font-bold text-[#1E3A5F]">Socio-Economic & Urbanization Intelligence</h3>
-                  <p className="text-xs text-slate-500">Correlating urbanization tiers and infrastructure vulnerability with crime patterns</p>
+                  <h3 className="text-base font-bold text-[#1E3A5F]">{t.socioPanel.title}</h3>
+                  <p className="text-xs text-slate-500">{t.socioPanel.sub}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {socioEconomic.map((s, idx) => (
-                    <div key={idx} className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-bold text-slate-900 text-sm">{s.district}</h4>
-                        <span className="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-600 font-medium">{s.urbanizationTier}</span>
+                  {socioEconomic.map((s, idx) => {
+                    const districtKn = lang === 'kn' ? (
+                      s.district === 'Bengaluru Urban' ? 'ಬೆಂಗಳೂರು ನಗರ' :
+                      s.district === 'Mysuru' ? 'ಮೈಸೂರು' :
+                      s.district === 'Mangaluru (Dakshina Kannada)' ? 'ಮಂಗಳೂರು (ದಕ್ಷಿಣ ಕನ್ನಡ)' :
+                      s.district === 'Belagavi' ? 'ಬೆಳಗಾವಿ' :
+                      s.district === 'Hubballi-Dharwad' ? 'ಹುಬ್ಬಳ್ಳಿ-ಧಾರವಾಡ' :
+                      s.district === 'Kalaburagi' ? 'ಕಲಬುರಗಿ' :
+                      s.district === 'Ballari' ? 'ಬಳ್ಳಾರಿ' :
+                      s.district === 'Shivamogga' ? 'ಶಿವಮೊಗ್ಗ' :
+                      s.district === 'Tumakuru' ? 'ತುಮಕೂರು' : 'ಉಡುಪಿ'
+                    ) : s.district;
+
+                    const tierKn = lang === 'kn' ? (
+                      s.urbanizationTier.includes('Metropolitan') ? 'ಮೆಟ್ರೋಪಾಲಿಟನ್ (ಟೈರ್ 1)' :
+                      s.urbanizationTier.includes('Heritage') ? 'ಪಾರಂಪರಿಕ / ನಗರ (ಟೈರ್ 2)' :
+                      s.urbanizationTier.includes('Coastal') ? 'ಕರಾವಳಿ ಕೈಗಾರಿಕಾ' :
+                      s.urbanizationTier.includes('Border') ? 'ಗಡಿ ಕೈಗಾರಿಕಾ' :
+                      s.urbanizationTier.includes('Commercial') ? 'ವಾಣಿಜ್ಯ ಜಂಕ್ಷನ್' : 'ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ವಲಯ'
+                    ) : s.urbanizationTier;
+
+                    const profileKn = lang === 'kn' ? (
+                      s.socioIndex.includes('Tech') ? 'ಉನ್ನತ ನಗರೀಕರಣ / ಐಟಿ ಕಾರಿಡಾರ್' :
+                      s.socioIndex.includes('Tourism') ? 'ಪ್ರವಾಸೋದ್ಯಮ ಮತ್ತು ಶಿಕ್ಷಣ ಸಂಸ್ಥೆಗಳು' :
+                      s.socioIndex.includes('Port') ? 'ಬಂದರು ಮತ್ತು ಸಾಗರ ಸಾರಿಗೆ ಜಂಕ್ಷನ್' :
+                      s.socioIndex.includes('Transit') ? 'ರಾಜ್ಯಗಳ ನಡುವಿನ ಸಾರಿಗೆ ಹಾದಿ' : 'ವಾಣಿಜ್ಯ ಮತ್ತು ಕೃಷಿ ವಲಯ'
+                    ) : s.socioIndex;
+
+                    const typologyKn = lang === 'kn' ? (
+                      s.dominantTypology.includes('Cyber') ? 'ಸೈಬರ್ ವಂಚನೆ ಮತ್ತು ವಾಣಿಜ್ಯ ಕಳವು' :
+                      s.dominantTypology.includes('Maritime') ? 'ಸಾಗರ ಸಾರಿಗೆ ಮತ್ತು ಆಸ್ತಿ ಕಳವು' :
+                      s.dominantTypology.includes('Highway') ? 'ಹೆದ್ದಾರಿ ದರೋಡೆ ಮತ್ತು ಸರಕು ವಂಚನೆ' : 'ಆಸ್ತಿ ಕಳವು ಮತ್ತು ಸ್ಥಳೀಯ ಗಲಾಟೆ'
+                    ) : s.dominantTypology;
+
+                    return (
+                      <div key={idx} className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold text-slate-900 text-sm">{districtKn}</h4>
+                          <span className="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-600 font-medium">{tierKn}</span>
+                        </div>
+                        <div className="text-slate-600">{t.socioPanel.density} <strong>{s.populationDensity}</strong></div>
+                        <div className="text-slate-600">{t.socioPanel.profile} {profileKn}</div>
+                        <div className="bg-white p-2 rounded border border-slate-200 text-slate-700">
+                          <strong>{t.socioPanel.typology}</strong> {typologyKn}
+                        </div>
                       </div>
-                      <div className="text-slate-600">Density: <strong>{s.populationDensity}</strong></div>
-                      <div className="text-slate-600">Profile: {s.socioIndex}</div>
-                      <div className="bg-white p-2 rounded border border-slate-200 text-slate-700">
-                        <strong>Dominant Crime Typology:</strong> {s.dominantTypology}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -621,16 +805,16 @@ export default function App() {
             {/* TAB 6: REPORTS */}
             {activeTab === 'reports' && (
               <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-                <h3 className="text-base font-bold text-[#1E3A5F]">SCRB Intelligence Summary Reports</h3>
-                <p className="text-xs text-slate-500">Statewide compiled FIR and vigilance summaries</p>
+                <h3 className="text-base font-bold text-[#1E3A5F]">{t.reportsPanel.title}</h3>
+                <p className="text-xs text-slate-500">{t.reportsPanel.sub}</p>
 
                 <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-3">
-                  <div className="font-bold text-slate-900">Annual SCRB Crime Intelligence Summary (2026 MVP)</div>
+                  <div className="font-bold text-slate-900">{t.reportsPanel.cardTitle}</div>
                   <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                    <li>300 Active Case FIR Records analyzed across 10 Districts and 30 Police Stations.</li>
-                    <li>Identified 50 Spatial Hotspots using DBSCAN machine learning clustering.</li>
-                    <li>Tracked Habitual Repeat Offenders linked to inter-station burglary and cyber crimes.</li>
-                    <li>Calculated Risk Indices across all station limits for optimized patrol shift allocation.</li>
+                    <li>{t.reportsPanel.bullet1}</li>
+                    <li>{t.reportsPanel.bullet2}</li>
+                    <li>{t.reportsPanel.bullet3}</li>
+                    <li>{t.reportsPanel.bullet4}</li>
                   </ul>
                 </div>
               </div>
@@ -639,11 +823,11 @@ export default function App() {
             {/* TAB 7: SETTINGS */}
             {activeTab === 'settings' && (
               <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-                <h3 className="text-base font-bold text-[#1E3A5F]">System Configuration & Status</h3>
+                <h3 className="text-base font-bold text-[#1E3A5F]">{t.settingsPanel.title}</h3>
                 <div className="text-xs space-y-2 text-slate-600">
-                  <div><strong>Backend Function:</strong> Zoho Catalyst Advanced I/O Function (`project_nirikshana_function`)</div>
-                  <div><strong>Data Store Engine:</strong> Relational Database (ZCQL Query Layer)</div>
-                  <div><strong>Deployment Status:</strong> Live Production Environment</div>
+                  <div>{t.settingsPanel.backend}</div>
+                  <div>{t.settingsPanel.db}</div>
+                  <div>{t.settingsPanel.status}</div>
                 </div>
               </div>
             )}

@@ -44,7 +44,7 @@ import {
   Network, GitBranch, Map as MapIcon, Radar, Bot, Lightbulb, ShieldCheck, Siren,
   Download, Upload, Settings, CheckCircle, XCircle, Info, Building, Zap, Activity,
   Sun, Moon, Bell, Radio, ChevronUp, ChevronDown, Calendar, LayoutDashboard, X,
-  FileCheck
+  FileCheck, Layers, Play, Eye, BarChart2, Send, Navigation, Maximize, Minimize
 } from 'lucide-react';
 
 const FUNCTION_BASE = 'https://project-nirikshana-60077343924.development.catalystserverless.in/server/project_nirikshana_function';
@@ -313,6 +313,31 @@ const TRANSLATIONS = {
       sec2Text: "DBSCAN machine learning algorithms identified 50 active crime hotspots statewide. Isolation Forest anomaly detection flagged a 14% property theft surge wave in June 2026.",
       sec3Title: "3. Repeat Offender Network Analysis",
       sec3Text: "Graph relationship analysis discovered 7 habitual repeat offenders operating across multiple police station limits with identical burglary and theft modus operandi."
+    },
+    aiModal: {
+      title: "Explainable AI Reasoning",
+      target: "Target Entity:",
+      primaryStation: "Primary Station:",
+      anomalyStatus: "Anomaly Status:",
+      detectedSurge: "Detected Surge",
+      baseline: "Baseline Activity",
+      spatialTitle: "Spatial Clustering (DBSCAN)",
+      spatialText1: "This hotspot was mathematically generated using the DBSCAN algorithm over",
+      spatialText2: "geographically proximate incidents.",
+      epsilon: "Epsilon (Radius):",
+      minPoints: "MinPoints:",
+      densityConf: "Density Confidence:",
+      temporalTitle: "Temporal Anomaly Detection",
+      temporalText1: "A temporal surge was detected. The incident rate (",
+      temporalText2: ") exceeds the historical baseline by more than 2 standard deviations, triggering an active alert.",
+      riskScore: "Risk Score:",
+      threatStatus: "Threat Status:",
+      severityTitle: "Severity-Weighted Risk Scoring",
+      severityText: "The risk score is a deterministic calculation based on the severity of linked incidents within this jurisdiction.",
+      highSev: "High Severity",
+      medSev: "Medium Severity",
+      lowSev: "Low Severity",
+      aggScoreText: "The aggregated station score is normalized on a 0-100 scale relative to the state maximum."
     }
   },
   kn: {
@@ -499,6 +524,31 @@ const TRANSLATIONS = {
       sec2Text: "DBSCAN ಯಂತ್ರ ಕಲಿಕೆಯು ರಾಜ್ಯಾದ್ಯಂತ 50 ಸಕ್ರಿಯ ಅಪರಾಧ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳನ್ನು ಗುರುತಿಸಿದೆ. ಐಸೊಲೇಷನ್ ಫಾರೆಸ್ಟ್ ಅಸಂಗತತೆ ಪತ್ತೆಯು ಜೂನ್ 2026 ರಲ್ಲಿ ಆಸ್ತಿ ಕಳವು ಅಪರಾಧಗಳ 14% ಹೆಚ್ಚಳವನ್ನು ಧ್ವಜಾಂಕಿತಗೊಳಿಸಿದೆ.",
       sec3Title: "3. ಮರು-ಅಪರಾಧಿಗಳ ಜಾಲ ವಿಶ್ಲೇಷಣೆ",
       sec3Text: "ಗ್ರಾಫ್ ನಂಟು ವಿಶ್ಲೇಷಣೆಯು ಹಲವು ಪೊಲೀಸ್ ಠಾಣಾ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಒಂದೇ ರೀತಿಯ ದಾಳಿ ಶೈಲಿಯೊಂದಿಗೆ ಸಕ್ರಿಯವಾಗಿರುವ 7 ಅಭ್ಯಾಸಗತ ಮರು-ಅಪರಾಧಿಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಿದೆ."
+    },
+    aiModal: {
+      title: "ಎಐ ತಾರ್ಕಿಕ ವಿವರಣೆ (Explainable AI)",
+      target: "ಗುರಿ ಘಟಕ:",
+      primaryStation: "ಪ್ರಾಥಮಿಕ ಪೊಲೀಸ್ ಠಾಣೆ:",
+      anomalyStatus: "ಅಸಂಗತತೆ ಸ್ಥಿತಿ:",
+      detectedSurge: "ಹೆಚ್ಚಳ ಪತ್ತೆಯಾಗಿದೆ",
+      baseline: "ಸಾಮಾನ್ಯ ಚಟುವಟಿಕೆ",
+      spatialTitle: "ಸ್ಪೇಶಿಯಲ್ ಕ್ಲಸ್ಟರಿಂಗ್ (DBSCAN)",
+      spatialText1: "ಈ ಹಾಟ್‌ಸ್ಪಾಟ್ ಅನ್ನು DBSCAN ಅಲ್ಗಾರಿದಮ್ ಬಳಸಿ, ಭೌಗೋಳಿಕವಾಗಿ ಹತ್ತಿರವಿರುವ",
+      spatialText2: "ಘಟನೆಗಳ ಆಧಾರದ ಮೇಲೆ ಗಣಿತಶಾಸ್ತ್ರೀಯವಾಗಿ ರಚಿಸಲಾಗಿದೆ.",
+      epsilon: "ವ್ಯಾಪ್ತಿ (Epsilon):",
+      minPoints: "ಕನಿಷ್ಠ ಘಟನೆಗಳು (MinPoints):",
+      densityConf: "ಸಾಂದ್ರತೆಯ ನಿಖರತೆ:",
+      temporalTitle: "ಟೆಂಪೊರಲ್ ಅಸಂಗತತೆ ಪತ್ತೆ",
+      temporalText1: "ತಾತ್ಕಾಲಿಕ ಹೆಚ್ಚಳವನ್ನು ಪತ್ತೆಹಚ್ಚಲಾಗಿದೆ. ಘಟನೆಯ ಪ್ರಮಾಣವು (",
+      temporalText2: ") ಐತಿಹಾಸಿಕ ಸರಾಸರಿಗಿಂತ 2 ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಡೀವಿಯೇಷನ್‌ಗಳಷ್ಟು ಹೆಚ್ಚಾಗಿದೆ, ಹೀಗಾಗಿ ಸಕ್ರಿಯ ಎಚ್ಚರಿಕೆಯನ್ನು ಪ್ರಚೋದಿಸಲಾಗಿದೆ.",
+      riskScore: "ಅಪಾಯದ ಅಂಕ:",
+      threatStatus: "ಬೆದರಿಕೆ ಸ್ಥಿತಿ:",
+      severityTitle: "ತೀವ್ರತೆ ಆಧಾರಿತ ಅಪಾಯದ ಸ್ಕೋರಿಂಗ್",
+      severityText: "ಈ ಠಾಣಾ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ದಾಖಲಾದ ಅಪರಾಧಗಳ ತೀವ್ರತೆಯ ಆಧಾರದ ಮೇಲೆ ಅಪಾಯದ ಅಂಕವನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ.",
+      highSev: "ಅತಿ ತೀವ್ರ (High Severity)",
+      medSev: "ಮಧ್ಯಮ ತೀವ್ರ (Medium)",
+      lowSev: "ಕಡಿಮೆ ತೀವ್ರ (Low)",
+      aggScoreText: "ರಾಜ್ಯದ ಗರಿಷ್ಠ ಅಂಕಗಳಿಗೆ ಅನುಗುಣವಾಗಿ 0-100 ಅಳತೆಯಲ್ಲಿ ಠಾಣಾ ಅಂಕವನ್ನು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ."
     }
   }
 };
@@ -689,6 +739,11 @@ export default function App() {
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [isRadiusMode, setIsRadiusMode] = useState(false);
   const [radiusCenter, setRadiusCenter] = useState(null);
+  const [activeBaseLayer, setActiveBaseLayer] = useState('Standard (OSM)');
+  const [showStations, setShowStations] = useState(true);
+  const [showHotspots, setShowHotspots] = useState(true);
+  const [showPatrols, setShowPatrols] = useState(false);
+  const [isBaseLayerDropdownOpen, setIsBaseLayerDropdownOpen] = useState(false);
 
   // Selected Offender Drawer State
   const [selectedOffenderDrawer, setSelectedOffenderDrawer] = useState(null);
@@ -802,48 +857,50 @@ export default function App() {
   }, 0) || new Date('2026-12-31').getTime();
 
   // Filter cases array by Search, District, Time of Day, Crime Type, AND Timeline Date Window
-  const filteredCases = cases.filter(c => {
-    const q = searchQuery.toLowerCase();
-    const matchSearch = !q || c.crimeNo.toLowerCase().includes(q) || c.station.toLowerCase().includes(q) || c.crimeType.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
-    const matchDistrict = selectedDistrict === 'All Districts' || c.district === selectedDistrict || c.station.includes(selectedDistrict);
-    const matchTime = selectedTimeOfDay === 'All Times' || c.timeOfDay.includes(selectedTimeOfDay);
-    const matchCrime = selectedCrimeType === 'All Types' || c.crimeType === selectedCrimeType;
+  const filteredCases = React.useMemo(() => {
+    return cases.filter(c => {
+      const q = searchQuery.toLowerCase();
+      const matchSearch = !q || c.crimeNo.toLowerCase().includes(q) || c.station.toLowerCase().includes(q) || c.crimeType.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
+      const matchDistrict = selectedDistrict === 'All Districts' || c.district === selectedDistrict || c.station.includes(selectedDistrict);
+      const matchTime = selectedTimeOfDay === 'All Times' || c.timeOfDay.includes(selectedTimeOfDay);
+      const matchCrime = selectedCrimeType === 'All Types' || c.crimeType === selectedCrimeType;
 
-    // Relative Timeline Date Window Filter
-    const matchTimeline = (() => {
-      if (!c.date || timelineRange === 'Last Year' || timelineRange === 'All Time') return true;
-      const cTime = new Date(c.date).getTime();
-      if (isNaN(cTime)) return true;
-      const diffDays = (maxDatasetTime - cTime) / (1000 * 60 * 60 * 24);
-      
-      if (timelineRange === 'Playback') {
-        // Playback shows cumulative incidents up to the current playback day within the 30-day window
-        const playbackStartDiff = playbackMaxDays; // 30 days ago
-        const currentDiff = playbackMaxDays - playbackDayIndex;
-        return diffDays <= playbackStartDiff && diffDays >= currentDiff;
+      // Relative Timeline Date Window Filter
+      const matchTimeline = (() => {
+        if (!c.date || timelineRange === 'Last Year' || timelineRange === 'All Time') return true;
+        const cTime = new Date(c.date).getTime();
+        if (isNaN(cTime)) return true;
+        const diffDays = (maxDatasetTime - cTime) / (1000 * 60 * 60 * 24);
+        
+        if (timelineRange === 'Playback') {
+          // Playback shows cumulative incidents up to the current playback day within the 30-day window
+          const playbackStartDiff = playbackMaxDays; // 30 days ago
+          const currentDiff = playbackMaxDays - playbackDayIndex;
+          return diffDays <= playbackStartDiff && diffDays >= currentDiff;
+        }
+        
+        if (timelineRange === 'Last 24 Hours') return diffDays <= 1;
+        if (timelineRange === 'Last 7 Days') return diffDays <= 7;
+        if (timelineRange === 'Last Month') return diffDays <= 30;
+        return true;
+      })();
+
+      // Radius Filter
+      let matchRadius = true;
+      if (isRadiusMode && radiusCenter && c.lat && c.lng) {
+        const R = 6371; // km
+        const dLat = (radiusCenter.lat - c.lat) * Math.PI / 180;
+        const dLon = (radiusCenter.lng - c.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(c.lat * Math.PI / 180) * Math.cos(radiusCenter.lat * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        matchRadius = dist <= 5; // 5 km radius
       }
-      
-      if (timelineRange === 'Last 24 Hours') return diffDays <= 1;
-      if (timelineRange === 'Last 7 Days') return diffDays <= 7;
-      if (timelineRange === 'Last Month') return diffDays <= 30;
-      return true;
-    })();
 
-    // Radius Filter
-    let matchRadius = true;
-    if (isRadiusMode && radiusCenter && c.lat && c.lng) {
-      const R = 6371; // km
-      const dLat = (radiusCenter.lat - c.lat) * Math.PI / 180;
-      const dLon = (radiusCenter.lng - c.lng) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(c.lat * Math.PI / 180) * Math.cos(radiusCenter.lat * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      matchRadius = dist <= 5; // 5 km radius
-    }
-
-    return matchSearch && matchDistrict && matchTime && matchCrime && matchTimeline && matchRadius;
-  });
+      return matchSearch && matchDistrict && matchTime && matchCrime && matchTimeline && matchRadius;
+    });
+  }, [cases, searchQuery, selectedDistrict, selectedTimeOfDay, selectedCrimeType, timelineRange, maxDatasetTime, playbackMaxDays, playbackDayIndex, isRadiusMode, radiusCenter]);
 
   const searchSuggestions = React.useMemo(() => {
     if (!searchQuery || searchQuery.length < 2) return [];
@@ -1005,31 +1062,129 @@ export default function App() {
         style={isMapFullscreen ? { height: '100vh', width: '100vw', position: 'fixed', top: 0, left: 0, zIndex: 9999 } : { height: '600px' }} 
         className={`rounded-lg overflow-hidden border relative isolate ${isDark ? 'border-slate-800' : 'border-slate-200'} ${isMapFullscreen ? 'rounded-none border-none' : 'z-0'}`}
       >
-        <div className="absolute top-16 right-4 z-[999] flex flex-col gap-2">
-          <button 
-            onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-            className="bg-white text-slate-800 p-2 rounded shadow hover:bg-slate-100 font-bold text-xs flex items-center justify-center cursor-pointer"
-            title="Toggle Fullscreen"
-          >
-            {isMapFullscreen ? <X className="w-4 h-4" /> : <MapIcon className="w-4 h-4" />}
+        {/* LEFT CONTROL PANEL */}
+        <div className="absolute top-4 left-4 z-[999] flex flex-col gap-3 w-52">
+          
+          {/* Markers / Heatmap Toggle Pill */}
+          <div className="flex bg-white rounded-md shadow p-1 font-bold text-xs border border-slate-100">
+            <button 
+              onClick={() => setMapMode('markers')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded cursor-pointer transition-colors ${mapMode === 'markers' ? 'bg-[#1E3A5F] text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+            >
+              <MapPin className="w-3.5 h-3.5" /> Markers
+            </button>
+            <button 
+              onClick={() => setMapMode('heatmap')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded cursor-pointer transition-colors ${mapMode === 'heatmap' ? 'bg-[#1E3A5F] text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+            >
+              <Flame className="w-3.5 h-3.5" /> Heatmap
+            </button>
+          </div>
+
+          {/* Base Layer Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => setIsBaseLayerDropdownOpen(!isBaseLayerDropdownOpen)}
+              className="w-full bg-white rounded-md shadow py-2 px-3 flex items-center justify-between font-bold text-[11px] text-[#1E3A5F] cursor-pointer hover:bg-slate-50 border border-slate-100"
+            >
+              <div className="flex items-center gap-2">
+                <Layers className="w-3.5 h-3.5" />
+                {activeBaseLayer}
+              </div>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            {isBaseLayerDropdownOpen && (
+              <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-md shadow-lg overflow-hidden border border-slate-100 text-[11px] font-bold text-slate-700 flex flex-col z-[1000]">
+                {['Standard (OSM)', 'Satellite (Esri)', 'Dark Map', 'Terrain'].map(layer => (
+                  <button 
+                    key={layer}
+                    onClick={() => { setActiveBaseLayer(layer); setIsBaseLayerDropdownOpen(false); }}
+                    className={`text-left px-3 py-2 cursor-pointer hover:bg-blue-50 ${activeBaseLayer === layer ? 'bg-blue-50 text-blue-700' : ''}`}
+                  >
+                    {layer}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Overlays Card */}
+          <div className="bg-white/95 backdrop-blur rounded-md shadow p-3 flex flex-col gap-2.5 font-bold text-[11px] text-[#1E3A5F] border border-slate-100">
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" checked={showStations} onChange={(e) => setShowStations(e.target.checked)} className="w-3 h-3 rounded text-blue-600 focus:ring-blue-600" />
+              <Building2 className="w-3.5 h-3.5 text-blue-600" />
+              <span className="group-hover:text-blue-600 transition-colors">Stations</span>
+            </label>
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" checked={showHotspots} onChange={(e) => setShowHotspots(e.target.checked)} className="w-3 h-3 rounded text-blue-600 focus:ring-blue-600" />
+              <Flame className="w-3.5 h-3.5 text-blue-600" />
+              <span className="group-hover:text-blue-600 transition-colors">Hotspots</span>
+            </label>
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" checked={showPatrols} onChange={(e) => setShowPatrols(e.target.checked)} className="w-3 h-3 rounded text-blue-600 focus:ring-blue-600" />
+              <Navigation className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
+              <span className="text-slate-500 group-hover:text-blue-600 transition-colors">Patrols</span>
+            </label>
+          </div>
+        </div>
+
+        {/* RIGHT ACTION BAR */}
+        <div className="absolute top-4 right-4 z-[999] flex flex-col gap-2">
+          <button onClick={() => setIsMapFullscreen(!isMapFullscreen)} className="w-8 h-8 bg-white rounded-md shadow flex items-center justify-center text-[#1E3A5F] hover:bg-slate-50 cursor-pointer border border-slate-100" title="Fullscreen">
+            {isMapFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
-          <button 
-            onClick={() => setMapMode(mapMode === 'markers' ? 'heatmap' : 'markers')}
-            className="bg-white text-slate-800 p-2 rounded shadow hover:bg-slate-100 font-bold text-xs flex items-center justify-center cursor-pointer"
-            title="Toggle Markers / Heatmap"
-          >
-            {mapMode === 'markers' ? <Flame className="w-4 h-4 text-red-500" /> : <MapPin className="w-4 h-4 text-blue-500" />}
+          <button className="w-8 h-8 bg-[#1E3A5F] text-white rounded-md shadow flex items-center justify-center hover:bg-blue-900 cursor-pointer" title="Information">
+            <Info className="w-4 h-4" />
           </button>
-          <button 
-            onClick={() => {
-              setIsRadiusMode(!isRadiusMode);
-              if (isRadiusMode) setRadiusCenter(null);
-            }}
-            className={`p-2 rounded shadow font-bold text-xs flex items-center justify-center cursor-pointer ${isRadiusMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-slate-800 hover:bg-slate-100'}`}
-            title="Area Analysis (5km Radius)"
-          >
+          <button className="w-8 h-8 bg-white rounded-md shadow flex items-center justify-center text-[#1E3A5F] hover:bg-slate-50 cursor-pointer border border-slate-100" title="View Options">
+            <Eye className="w-4 h-4" />
+          </button>
+          <button onClick={() => setTimelineRange('Playback')} className={`w-8 h-8 bg-white rounded-md shadow flex items-center justify-center cursor-pointer border border-slate-100 ${timelineRange === 'Playback' ? 'text-blue-600 bg-blue-50' : 'text-[#1E3A5F] hover:bg-slate-50'}`} title="Timeline Playback">
+            <Play className="w-4 h-4 fill-current" />
+          </button>
+          <button className="w-8 h-8 bg-white rounded-md shadow flex items-center justify-center text-[#1E3A5F] hover:bg-slate-50 cursor-pointer border border-slate-100" title="Statistics">
+            <BarChart2 className="w-4 h-4" />
+          </button>
+          <button onClick={() => { setIsRadiusMode(!isRadiusMode); if (isRadiusMode) setRadiusCenter(null); }} className={`w-8 h-8 bg-white rounded-md shadow flex items-center justify-center cursor-pointer border border-slate-100 ${isRadiusMode ? 'text-blue-600 bg-blue-50' : 'text-[#1E3A5F] hover:bg-slate-50'}`} title="Area Target (5km)">
             <Target className="w-4 h-4" />
           </button>
+          <button className="w-8 h-8 bg-white rounded-md shadow flex items-center justify-center text-[#1E3A5F] hover:bg-slate-50 cursor-pointer border border-slate-100" title="Send Report">
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* BOTTOM RIGHT LEGEND */}
+        <div className="absolute bottom-6 right-4 z-[999] bg-white/90 backdrop-blur rounded-md shadow-lg p-3 w-56 border border-slate-200">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+            <div className="text-[10px] font-extrabold text-[#1E3A5F] flex items-center gap-1.5 uppercase">
+              <Info className="w-3 h-3" /> Map Legend
+            </div>
+            <div className="text-[9px] font-extrabold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded uppercase">
+              {mapMode}
+            </div>
+          </div>
+          
+          <div className="space-y-3 text-[10px] font-bold text-slate-700">
+            <div>
+              <div className="text-[9px] text-slate-500 uppercase mb-1">Crime Incidents</div>
+              <div className="space-y-1">
+                {['Theft', 'Robbery', 'Burglary', 'Vehicle Theft', 'Assault', 'Murder'].map(crime => (
+                  <div key={crime} className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: CRIME_COLORS[crime] || '#000' }}></div>
+                    <span>{crime}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <div className="text-[9px] text-slate-500 uppercase mb-1">DBSCAN Hotspots</div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full border-2 border-red-500"></div>
+                <span>Surge Anomaly</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {timelineRange === 'Playback' && (
@@ -1071,35 +1226,34 @@ export default function App() {
           </div>
         )}
 
-        <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%' }}>
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Standard (OSM)">
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Satellite (Esri)">
-              <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                attribution='Tiles &copy; Esri'
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Dark Map">
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; OpenStreetMap contributors &copy; CARTO'
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Terrain">
-              <TileLayer
-                url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-                attribution='Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
-              />
-            </LayersControl.BaseLayer>
+        <MapContainer center={[15.3, 75.7]} zoom={7} minZoom={6} maxZoom={14} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+          {activeBaseLayer === 'Standard (OSM)' && (
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; OpenStreetMap contributors'
+            />
+          )}
+          {activeBaseLayer === 'Satellite (Esri)' && (
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='Tiles &copy; Esri'
+            />
+          )}
+          {activeBaseLayer === 'Dark Map' && (
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; OpenStreetMap contributors &copy; CARTO'
+            />
+          )}
+          {activeBaseLayer === 'Terrain' && (
+            <TileLayer
+              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              attribution='Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
+            />
+          )}
 
-            <LayersControl.Overlay name="DBSCAN Hotspots">
-              <MarkerClusterGroup>
+          {showHotspots && (
+            <MarkerClusterGroup>
                 {filteredHotspots.map(h => (
                   <Circle
                     key={`hs-${h.id}`}
@@ -1131,11 +1285,11 @@ export default function App() {
                     </Popup>
                   </Circle>
                 ))}
-              </MarkerClusterGroup>
-            </LayersControl.Overlay>
+            </MarkerClusterGroup>
+          )}
 
-            <LayersControl.Overlay name="Police Stations" checked>
-              <MarkerClusterGroup>
+          {showStations && (
+            <MarkerClusterGroup>
                 {stationMarkers.map(s => (
                   <Marker key={s.name} position={[s.lat, s.lng]}>
                     <Popup>
@@ -1178,8 +1332,7 @@ export default function App() {
                   </Marker>
                 ))}
               </MarkerClusterGroup>
-            </LayersControl.Overlay>
-          </LayersControl>
+          )}
 
           <MapBoundsController cases={filteredCases} />
           
@@ -2277,7 +2430,7 @@ export default function App() {
               <div className="space-y-4">
                 {/* 2 Contextual Stat Cards for Risk Matrix */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <StatCard label={lang === 'kn' ? 'ಉನ್ನತ ಅಪಾಯದ ಠಾಣೆಗಳು' : 'High-Risk Stations'} value={riskScores.filter(r => r.level.includes('High')).length} subtext={lang === 'kn' ? 'ಗಂಭೀರತೆ ಸೂಚ್ಯಂಕ >= 75%' : 'Weighted severity index >= 75%'} isDark={isDark} />
+                  <StatCard label={lang === 'kn' ? 'ಉನ್ನತ ಅಪಾಯದ ಠಾಣೆಗಳು' : 'High-Risk Stations'} value={riskScores.filter(r => r.level?.includes('High') || r.threatStatus?.includes('High')).length} subtext={lang === 'kn' ? 'ಗಂಭೀರತೆ ಸೂಚ್ಯಂಕ >= 75%' : 'Weighted severity index >= 75%'} isDark={isDark} />
                   <StatCard label={lang === 'kn' ? 'ಹೆಚ್ಚಿನ ಅಪರಾಧ ಸಮಯ' : 'Peak Risk Window'} value="22:00 - 04:00" subtext={lang === 'kn' ? 'ರಾತ್ರಿ ಪಾಳಿ ಗಸ್ತು ಅವಧಿ' : 'Night shift patrol window'} isDark={isDark} />
                 </div>
 
@@ -2324,7 +2477,7 @@ export default function App() {
                           ) : r.topCrime;
 
                           const patrolKn = lang === 'kn' ? (
-                            r.predictedSurgeWindow
+                            (r.predictedSurgeWindow || '')
                               .replace('Night Vigilance', 'ರಾತ್ರಿ ಗಸ್ತು')
                               .replace('Evening Patrol', 'ಸಂಜೆ ಗಸ್ತು')
                               .replace('Morning Patrol', 'ಬೆಳಗಿನ ಗಸ್ತು')
@@ -2344,9 +2497,9 @@ export default function App() {
                               <td className={`py-3 px-3 ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>{patrolKn}</td>
                               <td className="py-3 px-3">
                                 <span className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase ${
-                                  r.level.includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
+                                  (r.level || r.threatStatus || '').includes('High') ? 'bg-red-100 text-red-900' : 'bg-amber-100 text-amber-900'
                                 }`}>
-                                  {lang === 'kn' ? (r.level.includes('High') ? 'ಉನ್ನತ ಅಪಾಯ' : 'ಎಚ್ಚರಿಕೆ') : r.level}
+                                  {lang === 'kn' ? ((r.level || r.threatStatus || '').includes('High') ? 'ಉನ್ನತ ಅಪಾಯ' : 'ಎಚ್ಚರಿಕೆ') : (r.level || r.threatStatus)}
                                 </span>
                               </td>
                               <td className="py-3 px-3">
@@ -2616,35 +2769,35 @@ export default function App() {
         )}
       </main>
 
-      {/* AI Reasoning Modal */}
+    {/* AI Reasoning Modal */}
       {aiReasoningModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className={`w-full max-w-lg rounded-xl shadow-2xl p-6 relative ${isDark ? 'bg-slate-900 border border-slate-700' : 'bg-white border border-slate-200'}`}>
             <button onClick={() => setAiReasoningModal(null)} className={`absolute top-4 right-4 p-1 rounded-md cursor-pointer ${isDark ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}><X className="w-5 h-5"/></button>
             <h2 className="text-xl font-extrabold flex items-center gap-2 mb-4 text-blue-600 dark:text-blue-400">
-              <Brain className="w-6 h-6" /> Explainable AI Reasoning
+              <Brain className="w-6 h-6" /> {t.aiModal.title}
             </h2>
             
             {aiReasoningModal.type === 'hotspot' && (
               <div className="space-y-4 text-sm">
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700">
-                  <p className="font-bold mb-1">Target Entity: Hotspot {aiReasoningModal.data.id}</p>
-                  <p><strong>Primary Station:</strong> {aiReasoningModal.data.primaryStation}</p>
-                  <p><strong>Anomaly Status:</strong> <span className={aiReasoningModal.data.isAnomaly ? 'text-red-600 font-bold' : ''}>{aiReasoningModal.data.isAnomaly ? 'Detected Surge' : 'Baseline Activity'}</span></p>
+                  <p className="font-bold mb-1">{t.aiModal.target} Hotspot {aiReasoningModal.data.id}</p>
+                  <p><strong>{t.aiModal.primaryStation}</strong> {aiReasoningModal.data.primaryStation}</p>
+                  <p><strong>{t.aiModal.anomalyStatus}</strong> <span className={aiReasoningModal.data.isAnomaly ? 'text-red-600 font-bold' : ''}>{aiReasoningModal.data.isAnomaly ? t.aiModal.detectedSurge : t.aiModal.baseline}</span></p>
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2 flex items-center gap-1 text-[#1E3A5F] dark:text-slate-200"><Radar className="w-4 h-4"/> Spatial Clustering (DBSCAN)</h3>
-                  <p className="text-slate-600 dark:text-slate-300 mb-2">This hotspot was mathematically generated using the DBSCAN algorithm over {aiReasoningModal.data.totalIncidents} geographically proximate incidents.</p>
+                  <h3 className="font-bold mb-2 flex items-center gap-1 text-[#1E3A5F] dark:text-slate-200"><Radar className="w-4 h-4"/> {t.aiModal.spatialTitle}</h3>
+                  <p className="text-slate-600 dark:text-slate-300 mb-2">{t.aiModal.spatialText1} {aiReasoningModal.data.totalIncidents} {t.aiModal.spatialText2}</p>
                   <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
-                    <li><strong>Epsilon (Radius):</strong> 0.05 degrees (~5.5 km)</li>
-                    <li><strong>MinPoints:</strong> 5 incidents required to form a cluster.</li>
-                    <li><strong>Density Confidence:</strong> {(Math.min(99, 85 + (aiReasoningModal.data.totalIncidents * 0.5))).toFixed(1)}%</li>
+                    <li><strong>{t.aiModal.epsilon}</strong> 0.05 degrees (~5.5 km)</li>
+                    <li><strong>{t.aiModal.minPoints}</strong> 5</li>
+                    <li><strong>{t.aiModal.densityConf}</strong> {(Math.min(99, 85 + (aiReasoningModal.data.totalIncidents * 0.5))).toFixed(1)}%</li>
                   </ul>
                 </div>
                 {aiReasoningModal.data.isAnomaly && (
                   <div>
-                    <h3 className="font-bold mb-2 flex items-center gap-1 text-red-600"><TrendingUp className="w-4 h-4"/> Temporal Anomaly Detection</h3>
-                    <p className="text-slate-600 dark:text-slate-300">A temporal surge was detected. The incident rate ({aiReasoningModal.data.surgeMetric}) exceeds the historical baseline by more than 2 standard deviations, triggering an active alert.</p>
+                    <h3 className="font-bold mb-2 flex items-center gap-1 text-red-600"><TrendingUp className="w-4 h-4"/> {t.aiModal.temporalTitle}</h3>
+                    <p className="text-slate-600 dark:text-slate-300">{t.aiModal.temporalText1}{aiReasoningModal.data.surgeMetric}{t.aiModal.temporalText2}</p>
                   </div>
                 )}
               </div>
@@ -2653,19 +2806,19 @@ export default function App() {
             {aiReasoningModal.type === 'station' && (
               <div className="space-y-4 text-sm">
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700">
-                  <p className="font-bold mb-1">Target Entity: {aiReasoningModal.data.name}</p>
-                  <p><strong>Risk Score:</strong> {aiReasoningModal.data.riskScore}/100</p>
-                  <p><strong>Threat Status:</strong> <span className={aiReasoningModal.data.riskScore > 75 ? 'text-red-600 font-bold' : aiReasoningModal.data.riskScore > 50 ? 'text-amber-600 font-bold' : 'text-emerald-600 font-bold'}>{aiReasoningModal.data.threatStatus}</span></p>
+                  <p className="font-bold mb-1">{t.aiModal.target} {aiReasoningModal.data.name}</p>
+                  <p><strong>{t.aiModal.riskScore}</strong> {aiReasoningModal.data.riskScore}/100</p>
+                  <p><strong>{t.aiModal.threatStatus}</strong> <span className={aiReasoningModal.data.riskScore > 75 ? 'text-red-600 font-bold' : aiReasoningModal.data.riskScore > 50 ? 'text-amber-600 font-bold' : 'text-emerald-600 font-bold'}>{aiReasoningModal.data.threatStatus}</span></p>
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2 flex items-center gap-1 text-[#1E3A5F] dark:text-slate-200"><ShieldAlert className="w-4 h-4"/> Severity-Weighted Risk Scoring</h3>
-                  <p className="text-slate-600 dark:text-slate-300 mb-2">The risk score is a deterministic calculation based on the severity of linked incidents within this jurisdiction.</p>
+                  <h3 className="font-bold mb-2 flex items-center gap-1 text-[#1E3A5F] dark:text-slate-200"><ShieldAlert className="w-4 h-4"/> {t.aiModal.severityTitle}</h3>
+                  <p className="text-slate-600 dark:text-slate-300 mb-2">{t.aiModal.severityText}</p>
                   <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
-                    <li><strong>High Severity</strong> (Murder, Kidnapping): Weight = 3.0</li>
-                    <li><strong>Medium Severity</strong> (Assault, Vehicle Theft): Weight = 2.0</li>
-                    <li><strong>Low Severity</strong> (Theft, Scam): Weight = 1.0</li>
+                    <li><strong>{t.aiModal.highSev}</strong> (Murder, Kidnapping): Weight = 3.0</li>
+                    <li><strong>{t.aiModal.medSev}</strong> (Assault, Vehicle Theft): Weight = 2.0</li>
+                    <li><strong>{t.aiModal.lowSev}</strong> (Theft, Scam): Weight = 1.0</li>
                   </ul>
-                  <p className="mt-2 text-slate-600 dark:text-slate-300">The aggregated station score is normalized on a 0-100 scale relative to the state maximum.</p>
+                  <p className="mt-2 text-slate-600 dark:text-slate-300">{t.aiModal.aggScoreText}</p>
                 </div>
               </div>
             )}
